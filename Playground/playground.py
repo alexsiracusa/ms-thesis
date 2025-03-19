@@ -31,10 +31,9 @@ model = Sequential2D(blocks)
 # X = [torch.zeros(8), torch.zeros(4), torch.zeros(2), torch.zeros(1)]
 
 np.random.seed(0)
-X, y = generate_linear_data(1000, 8)
+X, y = generate_linear_data(1000, 8, noise_std=0)
 X = torch.from_numpy(X).to(torch.float32)
 y = torch.from_numpy(y).to(torch.float32)
-
 
 
 # train
@@ -50,7 +49,8 @@ for epoch in range(1000):
     loss.backward()
     optimizer.step()
 
-    print(f'Loss: {loss}')
+    if (epoch + 1) % 100 == 0:
+        print(f'Loss: {loss}')
 
 
 

@@ -48,10 +48,18 @@ class Sequential2D(torch.nn.Module):
 
     """
     Args:
-        X (n, n_out): The input features where:
-                      'n' is the number of blocks
-                      'n_out' is the number of features in each block (may be different for each block)
+        X: The input features of shape:
+           (num_blocks, n_samples, block_dim)
+              'num_blocks' - number of blocks
+              'n_samples'  - number of samples in the mini-batch
+              'block_dim'  - number of features in each block (may be different for each block)
+                      
+    Returns:
+        y: The features for the next iteration (same shape as X)
     """
     def forward(self, X):
-        return [sum([f.forward(x) for f, x in zip(row, X) if f is not None]) for row in self.blocks]
+        return [
+            sum([f.forward(x) for f, x in zip(row, X) if f is not None])
+            for row in self.blocks
+        ]
 

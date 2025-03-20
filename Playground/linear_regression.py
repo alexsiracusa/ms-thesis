@@ -35,6 +35,7 @@ criterion = nn.MSELoss()
 optimizer = optim.Adam(model.parameters(), lr=0.01)
 
 for epoch in range(500 + 1):
+    print(X.shape)
     output = model.forward([X, torch.zeros(100, 4), torch.zeros(100, 2), torch.zeros(100, 1)])
     output = model.forward(output)
     output = model.forward(output)

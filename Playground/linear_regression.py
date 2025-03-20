@@ -6,17 +6,12 @@ import torch.optim as optim
 from util import generate_linear_data
 
 
+num_features = 8
+
+# define model
 I = torch.nn.Identity()
-f1 = torch.nn.Sequential(
-    torch.nn.Linear(in_features=8, out_features=4),
-    # torch.nn.ReLU()
-)
-
-f2 = torch.nn.Sequential(
-    torch.nn.Linear(in_features=4, out_features=2),
-    # torch.nn.ReLU()
-)
-
+f1 = torch.nn.Linear(in_features=8, out_features=4)
+f2 = torch.nn.Linear(in_features=4, out_features=2)
 f3 = torch.nn.Linear(in_features=2,    out_features=1)
 
 #          8     4     2     1
@@ -28,34 +23,29 @@ blocks = [[I,    None, None, None], # 8
 model = Sequential2D(blocks)
 
 
-# X = [torch.zeros(8), torch.zeros(4), torch.zeros(2), torch.zeros(1)]
-
+# generate dataset
 np.random.seed(0)
-torch.manual_seed(0)
-
-X, y = generate_linear_data(1000, 8, noise_std=0)
+X, y = generate_linear_data(100, num_features, noise_std=0.4)
 X = torch.from_numpy(X).to(torch.float32)
 y = torch.from_numpy(y).to(torch.float32)
 
 
 # train
 criterion = nn.MSELoss()
-optimizer = optim.Adam(model.parameters(), lr=0.00002)
+optimizer = optim.Adam(model.parameters(), lr=0.01)
 
-for epoch in range(10000):
-    output = model.forward([X, torch.zeros(1000, 4), torch.zeros(1000, 2), torch.zeros(1000, 1)])
+for epoch in range(500 + 1):
+    output = model.forward([X, torch.zeros(100, 4), torch.zeros(100, 2), torch.zeros(100, 1)])
     output = model.forward(output)
     output = model.forward(output)
 
     loss = criterion(output[3], y)
     loss.backward()
     optimizer.step()
+    optimizer.zero_grad()
 
-    if (epoch + 1) % 1000 == 0:
+    if epoch % 100 == 0:
         print(f'Loss: {loss}')
 
 
-
-# for tensor in X:
-#     print(tensor.detach().numpy())
 

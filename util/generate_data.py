@@ -2,7 +2,7 @@ import numpy as np
 
 def generate_linear_data(num_samples, num_features, noise_std=0.1):
     # Generate random features
-    X = np.random.rand(num_samples, num_features) * 10
+    X = np.random.rand(num_samples, num_features)
 
     # Generate random coefficients (true relationship between features and target)
     true_coefficients = np.random.rand(num_features)

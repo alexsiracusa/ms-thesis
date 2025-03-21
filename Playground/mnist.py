@@ -4,6 +4,7 @@ from torchvision import transforms
 from torchvision.datasets import MNIST
 from torch.utils.data import DataLoader
 from Sequential2D import Sequential2D
+from util import num_trainable_parameters
 
 
 def load_mnist(data_folder):
@@ -51,6 +52,7 @@ blocks = [[I,    None, None, None, None],
           [None, None, None, f4,   None]]
 
 model = Sequential2D(blocks)
+print(f'Trainable: {num_trainable_parameters(model)}')
 
 # train
 criterion = nn.CrossEntropyLoss()

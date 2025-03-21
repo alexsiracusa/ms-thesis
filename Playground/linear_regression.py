@@ -3,7 +3,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from util import generate_linear_data
+from util import generate_linear_data, num_trainable_parameters
 
 
 num_features = 8
@@ -21,6 +21,8 @@ blocks = [[I,    None, None, None], # 8
           [None, None, f3,   None]] # 1
 
 model = Sequential2D(blocks)
+
+print(f'Trainable: {num_trainable_parameters(model)}')
 
 
 # generate dataset

@@ -9,28 +9,27 @@ class Sequential2D(torch.nn.Module):
 
     The idea is to have a simple class that takes a 2D list (or list like) of modules and then applies them in sequence.  This just does a few things:
 
-    1)  Makes sure that the sizes match up.
-    2)  Implements the "+" combiner (which is what it means for the sizes to match up).
-    3)  Actually calls the modules and returns the result.
-    4)  It is efficient, since if a block is None, then it just acts as if the block returns a 0-vector of the correct size.
-
-    *Note, it requires that the modules have a "forward" method and that they have a "in_features" and "out_features" attribute.*
+    1)  Implements the "+" combiner (which is what it means for the sizes to match up).
+    2)  Actually calls the modules and returns the result.
+    3)  It is efficient, since if a block is None, then it just acts as if the block returns a 0-vector of the correct size.
 
     Also, it assumes that things like what parameters are in trainable in the model and how they are initialized are handled by the modules themselves.
-
-    There are some nice side effects:
-
-    1) Linear layers can be used as blocks.
-    2) MaskedLinear layers can be used as blocks.
-    3) SparseLinear layers can be used as blocks.
-    4) As can another Sequential2D!  This allows the blocks to be nested quite arbitrarily.
 
     Args:
         blocks: A list of lists of torch.nn.Module objects. The blocks[i][j] is the block that takes in_features_list[i] features and
                 outputs out_features_list[j] features.  If blocks[i][j] is None, then we assume that the output is
                 just a 0-vector of the correct size.
-    """
 
+    Examples:
+        blocks = [[I,    None, None],
+                  [f1,   None, None],
+                  [None, f2,   None]]
+
+        where:
+            I = torch.Identity()
+            f1 = torch.nn.Linear(x, h)
+            f2 = torch.nn.Linear(h, y)
+    """
     def __init__(self, blocks):
         super(Sequential2D, self).__init__()
 

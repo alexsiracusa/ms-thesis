@@ -5,6 +5,7 @@ from torchvision.datasets import MNIST
 from torch.utils.data import DataLoader
 from Sequential2D import Sequential2D, MaskedLinear
 from util import num_trainable_parameters
+import numpy as np
 
 
 def load_mnist(data_folder):
@@ -25,31 +26,28 @@ data_folder = "../data"
 train_loader, test_loader = load_mnist(data_folder)
 
 
-# define model
-I = nn.Identity()
-f1 = nn.Sequential(
-    MaskedLinear(in_features=2500, out_features=500),
-    torch.nn.ReLU()
-)
-f2 = nn.Sequential(
-    MaskedLinear(in_features=500, out_features=200),
-    torch.nn.ReLU()
-)
-f3 = nn.Sequential(
-    MaskedLinear(in_features=200, out_features=100),
-    torch.nn.ReLU()
-)
-f4 = nn.Sequential(
-    MaskedLinear(in_features=100, out_features=10),
-    torch.nn.ReLU()
-)
+sizes = [2500, 500, 200, 100, 10]
+blocks = np.empty((len(sizes), len(sizes)), dtype=object)
 
-#          2500  500   200   100   10
-blocks = [[I,    None, None, None, None],
-          [f1,   None, None, None, None],
-          [None, f2,   None, None, None],
-          [None, None, f3,   None, None],
-          [None, None, None, f4,   None]]
+for i in range(len(sizes)):
+    for j in range(len(sizes)):
+        if i == 0 and j == 0:
+            blocks[i, j] = torch.nn.Identity()
+        elif i == 0:
+            blocks[i, j] = None
+        else:
+            blocks[i, j] = nn.Sequential(
+                MaskedLinear.sparse_random(sizes[j], sizes[i], percent=0.5108),
+                torch.nn.ReLU()
+            )
+
+#            2500  500   200   100   10
+# blocks = [[I,    None, None, None, None],
+#           [f10,  f11,  f12,  f13,  f14 ],
+#           [f20,  f21,  f22,  f23,  f24 ],
+#           [f30,  f31,  f32,  f33,  f34 ],
+#           [f40,  f41,  f42,  f43,  f44 ]]
+
 
 model = Sequential2D(blocks)
 print(f'Trainable: {num_trainable_parameters(model)}')

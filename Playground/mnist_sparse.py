@@ -1,5 +1,6 @@
 import torch
 from torch import nn, optim
+import torch.nn.functional as F
 from torchvision import transforms
 from torchvision.datasets import MNIST
 from torch.utils.data import DataLoader
@@ -25,6 +26,9 @@ def load_mnist(data_folder):
 data_folder = "../data"
 train_loader, test_loader = load_mnist(data_folder)
 
+
+# normal trainable: 1371810
+# full trainable:   2685150
 
 sizes = [2500, 500, 200, 100, 10]
 blocks = np.empty((len(sizes), len(sizes)), dtype=object)
@@ -73,6 +77,9 @@ for epoch in range(100):
         output = model.forward(output)
         output = model.forward(output)
         output = model.forward(output)
+        # output = model.forward([F.relu(x) for x in output])
+        # output = model.forward([F.relu(x) for x in output])
+        # output = model.forward([F.relu(x) for x in output])
 
         loss = criterion(output[4], labels)
         losses.append(loss.item())

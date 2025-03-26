@@ -76,7 +76,7 @@ for epoch in range(100):
         output = model.forward(output)
         output = model.forward(output)
 
-        loss = criterion(output[4], labels)
+        loss = criterion(output[-1], labels)
         losses.append(loss.item())
         loss.backward()
         optimizer.step()

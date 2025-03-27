@@ -1,9 +1,10 @@
 import torch
 from torch import nn, optim
+import torch.nn.functional as F
 from torchvision import transforms
 from torchvision.datasets import MNIST
 from torch.utils.data import DataLoader
-from Sequential2D import Sequential2D, SparseLinear, SparseAdam
+from Sequential2D import Sequential2D, MaskedLinear
 from util import num_trainable_parameters
 import numpy as np
 
@@ -40,7 +41,7 @@ for i in range(len(sizes)):
             blocks[i, j] = None
         else:
             blocks[i, j] = nn.Sequential(
-                SparseLinear.sparse_random(sizes[j], sizes[i], percent=0.5108),
+                MaskedLinear.sparse_random(sizes[j], sizes[i], percent=0.5108),
                 torch.nn.ReLU()
             )
 
@@ -51,26 +52,19 @@ for i in range(len(sizes)):
 #           [f30,  f31,  f32,  f33,  f34 ],
 #           [f40,  f41,  f42,  f43,  f44 ]]
 
-device = torch.device('cpu')
-model = Sequential2D(blocks)
-model.to(device)
-print(f'Trainable: {num_trainable_parameters(model)}')
 
+model = Sequential2D(blocks)
+print(f'Trainable: {num_trainable_parameters(model)}')
 
 # train
 criterion = nn.CrossEntropyLoss()
-optimizer = SparseAdam(model.parameters(), lr=0.0001)
-# optimizer = optim.Adam(model.parameters(), lr=0.0001)
+optimizer = optim.Adam(model.parameters(), lr=0.0001)
 
 for epoch in range(100):
 
     losses = []
 
-    print(len(train_loader))
     for images, labels in train_loader:
-        images = images.to(device)
-        labels = labels.to(device)
-
         batch_size = images.shape[0]
 
         output = model.forward([
@@ -92,8 +86,6 @@ for epoch in range(100):
         loss.backward()
         optimizer.step()
         optimizer.zero_grad()
-
-        print(f'Loss: {sum(losses) / len(losses)}')
 
     if (epoch - 1) % 1 == 0:
         print(f'Loss: {sum(losses) / len(losses)}')

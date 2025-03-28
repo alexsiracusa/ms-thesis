@@ -4,9 +4,10 @@ import torch.nn.functional as F
 from torchvision import transforms
 from torchvision.datasets import MNIST
 from torch.utils.data import DataLoader
-from Sequential2D import Sequential2D, MaskedLinear
+from Sequential2D import Sequential2D, MaskedLinear, SparseAdam
 from util import num_trainable_parameters
 import numpy as np
+import time
 
 
 def load_mnist(data_folder):
@@ -41,8 +42,7 @@ for i in range(len(sizes)):
             blocks[i, j] = None
         else:
             blocks[i, j] = nn.Sequential(
-                MaskedLinear.sparse_random(sizes[j], sizes[i], percent=0.5108),
-                torch.nn.ReLU()
+                MaskedLinear.sparse_random(sizes[j], sizes[i], percent=1),
             )
 
 #            2500  500   200   100   10
@@ -58,14 +58,19 @@ print(f'Trainable: {num_trainable_parameters(model)}')
 
 # train
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.Adam(model.parameters(), lr=0.0001)
+# optimizer = optim.Adam(model.parameters(), lr=0.0001)
+optimizer = SparseAdam(model.parameters(), lr=0.0001)
 
 for epoch in range(100):
 
     losses = []
+    forward_times = []
+    backward_times = []
 
     for images, labels in train_loader:
         batch_size = images.shape[0]
+
+        start = time.time()  # TIMER START
 
         output = model.forward([
             images.view(batch_size, -1),
@@ -74,12 +79,13 @@ for epoch in range(100):
             torch.zeros(batch_size, 100),
             torch.zeros(batch_size, 10)
         ])
-        output = model.forward(output)
-        output = model.forward(output)
-        output = model.forward(output)
-        # output = model.forward([F.relu(x) for x in output])
-        # output = model.forward([F.relu(x) for x in output])
-        # output = model.forward([F.relu(x) for x in output])
+        output = model.forward([F.relu(x) for x in output])
+        output = model.forward([F.relu(x) for x in output])
+        output = model.forward([F.relu(x) for x in output])
+
+        forward_times.append(time.time() - start)  # TIMER END
+
+        start = time.time()  # TIMER START
 
         loss = criterion(output[4], labels)
         losses.append(loss.item())
@@ -87,7 +93,11 @@ for epoch in range(100):
         optimizer.step()
         optimizer.zero_grad()
 
+        backward_times.append(time.time() - start)  # TIMER END
+
         print(f'Loss: {sum(losses) / len(losses)}')
+        print(f'Forward:  {sum(forward_times) / len(forward_times)}')
+        print(f'Backward: {sum(backward_times) / len(backward_times)}')
 
     if (epoch - 1) % 1 == 0:
         print(f'{sum(losses) / len(losses)}')

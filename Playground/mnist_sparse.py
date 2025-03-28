@@ -1,4 +1,5 @@
 import torch
+import torch.nn.functional as F
 from torch import nn, optim
 from torchvision import transforms
 from torchvision.datasets import MNIST
@@ -41,7 +42,7 @@ for i in range(len(sizes)):
         else:
             blocks[i, j] = nn.Sequential(
                 SparseLinear.sparse_random(sizes[j], sizes[i], percent=0.5108),
-                torch.nn.ReLU()
+                # torch.nn.ReLU()
             )
 
 #            2500  500   200   100   10
@@ -80,12 +81,12 @@ for epoch in range(100):
             torch.zeros(batch_size, 100),
             torch.zeros(batch_size, 10)
         ])
-        output = model.forward(output)
-        output = model.forward(output)
-        output = model.forward(output)
-        # output = model.forward([F.relu(x) for x in output])
-        # output = model.forward([F.relu(x) for x in output])
-        # output = model.forward([F.relu(x) for x in output])
+        # output = model.forward(output)
+        # output = model.forward(output)
+        # output = model.forward(output)
+        output = model.forward([F.relu(x) for x in output])
+        output = model.forward([F.relu(x) for x in output])
+        output = model.forward([F.relu(x) for x in output])
 
         loss = criterion(output[4], labels)
         losses.append(loss.item())
@@ -93,7 +94,7 @@ for epoch in range(100):
         optimizer.step()
         optimizer.zero_grad()
 
-        print(f'Loss: {sum(losses) / len(losses)}')
+        print(f'{sum(losses) / len(losses)}')
 
     if (epoch - 1) % 1 == 0:
         print(f'Loss: {sum(losses) / len(losses)}')

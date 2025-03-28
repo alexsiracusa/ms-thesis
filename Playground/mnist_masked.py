@@ -87,5 +87,7 @@ for epoch in range(100):
         optimizer.step()
         optimizer.zero_grad()
 
+        print(f'Loss: {sum(losses) / len(losses)}')
+
     if (epoch - 1) % 1 == 0:
         print(f'Loss: {sum(losses) / len(losses)}')

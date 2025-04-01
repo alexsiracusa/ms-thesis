@@ -58,7 +58,7 @@ class Sequential2D(torch.nn.Module):
     """
     def forward(self, X):
         return [
-            sum([f.forward(x) for f, x in zip(row, X) if f is not None])
+            sum([f.forward(x) for f, x in zip(row, X) if f is not None and x is not None])
             for row in self.blocks
         ]
 

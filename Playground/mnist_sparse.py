@@ -1,14 +1,14 @@
 import torch
 import torch.nn.functional as F
 from torch import nn, optim
-from Sequential2D import Sequential2D, SparseLinear, SparseAdam
+from Sequential2D import IterativeSequential2D, SparseLinear, SparseAdam
 from util import num_trainable_parameters
 import numpy as np
 from training import train, load_mnist
 
 
 data_folder = "../data"
-train_loader, test_loader = load_mnist(data_folder)
+train_loader, test_loader = load_mnist(data_folder, flat=True)
 
 
 # normal trainable: 1371810
@@ -35,27 +35,7 @@ for i in range(len(sizes)):
 #           [f30,  f31,  f32,  f33,  f34 ],
 #           [f40,  f41,  f42,  f43,  f44 ]]
 
-class MaskedModel(nn.Module):
-    def __init__(self):
-        super(MaskedModel, self).__init__()
-        self.sequential = Sequential2D(blocks)
-
-    def forward(self, X):
-        batch_size = X.shape[0]
-
-        output = self.sequential.forward([
-            X.view(batch_size, -1),
-            torch.zeros(batch_size, 500),
-            torch.zeros(batch_size, 200),
-            torch.zeros(batch_size, 100),
-            torch.zeros(batch_size, 10)
-        ])
-        output = self.sequential.forward([F.relu(x) for x in output])
-        output = self.sequential.forward([F.relu(x) for x in output])
-        return self.sequential.forward([F.relu(x) for x in output])
-
-
-model = MaskedModel()
+model = IterativeSequential2D(blocks, 4, F.relu)
 print(f'Trainable: {num_trainable_parameters(model)}')
 
 
@@ -64,4 +44,4 @@ criterion = nn.CrossEntropyLoss()
 # optimizer = optim.Adam(model.parameters(), lr=0.0001)
 optimizer = SparseAdam(model.parameters(), lr=0.0001)
 
-train(model, train_loader, test_loader, criterion, optimizer)
+losses, forward_times, backward_times = train(model, train_loader, test_loader, criterion, optimizer)

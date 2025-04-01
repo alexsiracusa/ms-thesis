@@ -26,14 +26,15 @@ class SparseAdam(Optimizer):
                     continue
                 grad = p.grad
 
+                # Adam Algorithm:
                 # m_t = B_1 * m_t-1 + (1 - B_1) * g_t
                 # v_t = B_2 * v_t-1 + (1 - B_2) * g_t^2
-                # ^m_t = m_t / (1 - B_1)
-                # ^v_t = v_t / (1 - B_2)
-                # p = p - (lr * m_t / sqrt(^v_t + e))
+                # m_hat = m_t / (1 - B_1)
+                # v_hat = v_t / (1 - B_2)
+                # p = p - (lr * m_hat / sqrt(v_hat + e))
 
-                # Handle sparse tensors
                 if p.is_sparse_csr:
+                    # Sparse tensor operations
                     state = self.state[p]
                     if len(state) == 0:
                         state['step'] = 0

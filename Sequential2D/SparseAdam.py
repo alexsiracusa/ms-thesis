@@ -34,7 +34,6 @@ class SparseAdam(Optimizer):
 
                 # Handle sparse tensors
                 if p.is_sparse_csr:
-                    print("sparse")
                     state = self.state[p]
                     if len(state) == 0:
                         state['step'] = 0

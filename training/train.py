@@ -15,6 +15,8 @@ def train(
     epochs=1,
     print_every_nth_batch=None
 ):
+    model.to(device)
+
     losses = []
     forward_times = []
     backward_times = []
@@ -34,7 +36,7 @@ def train(
 
             # BACKWARD PASS
             start = time.time()  # TIMER START
-            loss = criterion(output[4], labels)
+            loss = criterion(output, labels)
             losses.append(loss.item())
             loss.backward()
             optimizer.step()

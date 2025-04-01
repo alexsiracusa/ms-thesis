@@ -1,10 +1,11 @@
 import torch
 import torch.nn.functional as F
-from torch import nn, optim
+from torch import nn
 from Sequential2D import IterativeSequential2D, SparseLinear, SparseAdam
 from util import num_trainable_parameters
 import numpy as np
 from training import train, load_mnist
+import matplotlib.pyplot as plt
 
 
 data_folder = "../data"
@@ -35,13 +36,27 @@ for i in range(len(sizes)):
 #           [f30,  f31,  f32,  f33,  f34 ],
 #           [f40,  f41,  f42,  f43,  f44 ]]
 
-model = IterativeSequential2D(blocks, 4, F.relu)
-print(f'Trainable: {num_trainable_parameters(model)}')
+model1 = IterativeSequential2D(blocks, 4, F.relu)
+print(f'Trainable: {num_trainable_parameters(model1)}')
 
 
 # train
 criterion = nn.CrossEntropyLoss()
-# optimizer = optim.Adam(model.parameters(), lr=0.0001)
-optimizer = SparseAdam(model.parameters(), lr=0.0001)
+optim = SparseAdam(model1.parameters(), lr=0.0001)
 
-losses, forward_times, backward_times = train(model, train_loader, test_loader, criterion, optimizer, print_every_nth_batch=1)
+losses, _, _ = train(model1, train_loader, test_loader, criterion, optim, print_every_nth_batch=1)
+iterations = np.arange(len(losses))
+
+
+plt.figure(figsize=(10, 5))
+plt.plot(iterations, losses, label='Loss', color='blue')
+
+# Labels and title
+plt.xlabel('Batch Num.')
+plt.ylabel('Loss')
+plt.title('Loss over Batches')
+plt.legend()
+
+# Save as PNG
+plt.savefig('training_metrics.png', dpi=300)
+plt.show()

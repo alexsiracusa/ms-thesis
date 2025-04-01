@@ -24,4 +24,4 @@ class IterativeSequential2D(nn.Module):
             X = self.sequential.forward(X)
             X = [self.activation(x) for x in X]
 
-        return X
+        return X[-1]

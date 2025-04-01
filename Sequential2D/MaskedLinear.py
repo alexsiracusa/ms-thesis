@@ -1,13 +1,6 @@
 import torch
 import torch.nn.functional as F
-
-def _random_boolean_tensor(rows, cols, num_true):
-    total_elements = rows * cols
-    values = torch.tensor([True] * num_true + [False] * (total_elements - num_true))
-    shuffled_values = values[torch.randperm(total_elements)]
-
-    return shuffled_values.view(rows, cols)
-
+from util import random_boolean_tensor
 
 class MaskedLinear(torch.nn.Module):
     def __init__(self, in_features, out_features, bias=True, mask=None):
@@ -22,7 +15,7 @@ class MaskedLinear(torch.nn.Module):
     @staticmethod
     def sparse_random(in_features, out_features, bias=True, percent=0.5):
         total_elements = in_features * out_features
-        mask = _random_boolean_tensor(in_features, out_features, int(percent * total_elements))
+        mask = random_boolean_tensor(in_features, out_features, int(percent * total_elements))
         return MaskedLinear(in_features, out_features, bias=bias, mask=mask)
 
 

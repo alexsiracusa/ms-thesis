@@ -73,9 +73,11 @@ def sparse_csr_divide(numerator: torch.Tensor, denominator: torch.Tensor, epsilo
     denom_values = denominator.values()
 
     # Avoid division by zero by replacing zeros with epsilon
-    safe_denom_values = torch.where(denom_values == 0,
-                                    torch.tensor(epsilon, dtype=denom_values.dtype, device=denom_values.device),
-                                    denom_values)
+    safe_denom_values = torch.where(
+        denom_values == 0,
+        torch.tensor(epsilon, dtype=denom_values.dtype, device=denom_values.device),
+        denom_values
+    )
 
     # Perform element-wise division
     result_values = num_values / safe_denom_values

@@ -3,15 +3,9 @@ import torch.nn.init as init
 import math
 import torch.nn.functional as F
 import warnings
+from util.random_mask import random_boolean_tensor
 
 warnings.filterwarnings("ignore", category=UserWarning, message=".*Sparse CSR tensor support is in beta.*")
-
-def _random_boolean_tensor(rows, cols, num_true):
-    total_elements = rows * cols
-    values = torch.tensor([True] * num_true + [False] * (total_elements - num_true))
-    shuffled_values = values[torch.randperm(total_elements)]
-
-    return shuffled_values.view(rows, cols)
 
 
 class SparseLinear(torch.nn.Module):
@@ -43,16 +37,12 @@ class SparseLinear(torch.nn.Module):
             init.uniform_(self.bias, -bound, bound)
 
     def forward(self, X):
-        # self.weight.register_hook(lambda grad: (grad.to_dense() * self.mask))
-
-        # print(self.weight.is_sparse_csr)
-        # return X @ self.weight.T + self.bias
         return F.linear(X, self.weight, self.bias)
 
     @staticmethod
     def sparse_random(in_features, out_features, bias=True, percent=0.5):
         total_elements = in_features * out_features
-        mask = _random_boolean_tensor(out_features, in_features, int(percent * total_elements))
+        mask = random_boolean_tensor(out_features, in_features, int(percent * total_elements))
         return SparseLinear(in_features, out_features, bias=bias, mask=mask)
 
 

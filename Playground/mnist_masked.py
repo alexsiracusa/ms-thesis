@@ -5,6 +5,8 @@ from training import train, load_mnist
 from Sequential2D import MaskedLinear, SparseAdam, IterativeSequential2D
 from util import num_trainable_parameters
 import numpy as np
+import matplotlib.pyplot as plt
+import copy
 
 
 
@@ -14,6 +16,7 @@ train_loader, test_loader = load_mnist(data_folder, flat=True)
 
 sizes = [2500, 500, 200, 100, 10]
 blocks = np.empty((len(sizes), len(sizes)), dtype=object)
+
 
 for i in range(len(sizes)):
     for j in range(len(sizes)):
@@ -33,14 +36,33 @@ for i in range(len(sizes)):
 #           [f30,  f31,  f32,  f33,  f34 ],
 #           [f40,  f41,  f42,  f43,  f44 ]]
 
-model = IterativeSequential2D(blocks, 4, F.relu)
-print(f'Trainable: {num_trainable_parameters(model)}')
+model1 = IterativeSequential2D(blocks, 4, F.relu)
+model2 = copy.deepcopy(model1)
+print(f'Trainable: {num_trainable_parameters(model1)}')
 
 
 # train
 criterion = nn.CrossEntropyLoss()
-# optimizer = optim.Adam(model.parameters(), lr=0.0001)
-optimizer = SparseAdam(model.parameters(), lr=0.0001)
+adam = optim.Adam(model1.parameters(), lr=0.0001)
+sparse_adam = SparseAdam(model2.parameters(), lr=0.0001)
 
-losses, forward_times, backward_times = train(model, train_loader, test_loader, criterion, optimizer)
+adam_losses, _, _ = train(model1, train_loader, test_loader, criterion, adam, print_every_nth_batch=1)
+sparse_adam_losses, _, _ = train(model2, train_loader, test_loader, criterion, sparse_adam, print_every_nth_batch=1)
+
+iterations = np.arange(len(sparse_adam_losses))
+
+
+plt.figure(figsize=(10, 5))
+plt.plot(iterations, adam_losses, label='Loss (Adam)', color='blue')
+plt.plot(iterations, sparse_adam_losses, label='Loss (SparseAdam)', color='red')
+
+# Labels and title
+plt.xlabel('Batch Num.')
+plt.ylabel('Loss')
+plt.title('Loss over Batches')
+plt.legend()
+
+# Save as PNG
+plt.savefig('training_metrics.png', dpi=300)
+plt.show()
 

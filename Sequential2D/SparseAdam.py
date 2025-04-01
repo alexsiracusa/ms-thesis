@@ -1,16 +1,24 @@
 import torch
 from torch.optim.optimizer import Optimizer
+from typing import Tuple
 from util import sparse_csr_divide, csr_divide, csr_power, csr_multiply, csr_transform, empty_csr, mask_with_csr
 
 class SparseAdam(Optimizer):
-    def __init__(self, params, lr=1e-3, betas=(0.9, 0.999), eps=1e-8, weight_decay=0):
-        defaults = dict(lr=lr, betas=betas, eps=eps, weight_decay=weight_decay)
+    def __init__(
+        self,
+        params,
+        lr: float = 1e-3,
+        betas: Tuple[float, float] = (0.9, 0.999),
+        eps: float = 1e-8,
+    ):
+        defaults = dict(lr=lr, betas=betas, eps=eps)
         super(SparseAdam, self).__init__(params, defaults)
 
     def step(self, closure=None):
         loss = None
         if closure is not None:
-            loss = closure()
+            with torch.enable_grad():
+                loss = closure()
 
         for group in self.param_groups:
             for p in group['params']:
@@ -21,11 +29,12 @@ class SparseAdam(Optimizer):
                 # m_t = B_1 * m_t-1 + (1 - B_1) * g_t
                 # v_t = B_2 * v_t-1 + (1 - B_2) * g_t^2
                 # ^m_t = m_t / (1 - B_1)
-                # ^v_t = v_t / (1 - B_2_
+                # ^v_t = v_t / (1 - B_2)
                 # p = p - (lr * m_t / sqrt(^v_t + e))
 
                 # Handle sparse tensors
                 if p.is_sparse_csr:
+                    print("sparse")
                     state = self.state[p]
                     if len(state) == 0:
                         state['step'] = 0
@@ -71,7 +80,6 @@ class SparseAdam(Optimizer):
                     m = m.to_dense()
                     grad = grad.to_dense()
                     v = v.to_dense()
-                    data = p.data.to_dense()
 
                     # Update m and v
                     m.mul_(beta1).add_(grad, alpha=1 - beta1)
@@ -86,9 +94,7 @@ class SparseAdam(Optimizer):
 
                     # Update dense gradient
                     denom = v_hat.sqrt().add_(group['eps'])
-                    data.addcdiv_(m_hat, denom, value=-group['lr'])
-                    # p.data = data
-                    p.data.copy_(data)
+                    p.data.addcdiv_(m_hat, denom, value=-group['lr'])
                 else:
                     raise Exception("not implemented yet")
 

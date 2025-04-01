@@ -44,4 +44,4 @@ criterion = nn.CrossEntropyLoss()
 # optimizer = optim.Adam(model.parameters(), lr=0.0001)
 optimizer = SparseAdam(model.parameters(), lr=0.0001)
 
-losses, forward_times, backward_times = train(model, train_loader, test_loader, criterion, optimizer)
+losses, forward_times, backward_times = train(model, train_loader, test_loader, criterion, optimizer, print_every_nth_batch=1)

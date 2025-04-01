@@ -12,16 +12,20 @@ def train(
     criterion,
     optimizer,
     device=torch.device('cpu'),
-    epochs=1
+    epochs=1,
+    print_every_nth_batch=None
 ):
     losses = []
     forward_times = []
     backward_times = []
 
     for epoch in range(epochs):
+        batch = 0
+
         for data, labels in train_loader:
             data = data.to(device)
             labels = labels.to(device)
+            batch += 1
 
             # FORWARD PASS
             start = time.time()  # TIMER START
@@ -37,7 +41,8 @@ def train(
             optimizer.zero_grad()
             backward_times.append(time.time() - start)  # TIMER END
 
-            print(f'{losses[-1]:.3f}  {forward_times[-1]:.3f}  {backward_times[-1]:.3f}')
+            if print_every_nth_batch is not None and (batch - 1) % print_every_nth_batch == 0:
+                print(f'{losses[-1]:.3f}  {forward_times[-1]:.3f}  {backward_times[-1]:.3f}  {batch}/{len(train_loader)}')
 
         if (epoch - 1) % 1 == 0:
             print(f'Loss: {sum(losses[-len(train_loader):]) / len(train_loader)}')

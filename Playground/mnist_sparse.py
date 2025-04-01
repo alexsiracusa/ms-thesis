@@ -8,6 +8,9 @@ from training import train, load_mnist
 import matplotlib.pyplot as plt
 
 
+# TODO there seems to some kind of memory leak when running this !!!
+
+
 data_folder = "../data"
 train_loader, test_loader = load_mnist(data_folder, flat=True)
 

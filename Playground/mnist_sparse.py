@@ -29,7 +29,7 @@ for i in range(len(sizes)):
             blocks[i, j] = None
         else:
             blocks[i, j] = nn.Sequential(
-                SparseLinear.sparse_random(sizes[j], sizes[i], percent=0.5108, device=torch.device('cuda')),
+                SparseLinear.sparse_random(sizes[j], sizes[i], percent=0.5108, device=torch.device('cpu')),
             )
 
 #            2500  500   200   100   10

@@ -17,6 +17,7 @@ class SparseLinear(torch.nn.Module):
 
         weight = torch.empty((out_features, in_features)).to_sparse_csr()
         self.weight = torch.nn.Parameter(weight)
+        self.register_buffer("weight", weight)
 
         if bias:
             self.bias = torch.nn.Parameter(torch.empty(out_features))
@@ -52,7 +53,7 @@ class SparseLinear(torch.nn.Module):
         return SparseLinear(in_features, out_features, bias=bias, mask=mask)
 
     def to(self, device):
-        print('custom too')
+        print('custom to')
         """Ensure sparse CSR components are properly moved."""
         new_model = super().to(device)  # Move dense tensors like bias
         new_model.weight = torch.sparse_csr_tensor(

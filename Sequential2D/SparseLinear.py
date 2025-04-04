@@ -16,7 +16,7 @@ class SparseLinear(torch.nn.Module):
         self.out_features = out_features
 
         weight = torch.empty((out_features, in_features)).to_sparse_csr()
-        self.weight = torch.nn.Parameter(weight)
+        # self.weight = torch.nn.Parameter(weight)
         self.register_buffer("weight", weight)
 
         if bias:

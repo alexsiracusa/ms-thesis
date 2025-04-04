@@ -16,6 +16,7 @@ def train(
     print_every_nth_batch=None
 ):
     model.to(device)
+    criterion.to(device)
 
     losses = []
     forward_times = []

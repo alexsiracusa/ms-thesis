@@ -1,4 +1,5 @@
 import torch
+from torch import nn
 import torch.nn.init as init
 import math
 import torch.nn.functional as F
@@ -16,7 +17,13 @@ class SparseLinear(torch.nn.Module):
         self.device = device
 
         self.register_buffer("mask", mask.to(device))
-        self.weight = None # Will be set in `reset_parameters()`
+        # self.weight = None # Will be set in `reset_parameters()`
+
+        # components of weights
+        self.values = nn.Parameter(torch.tensor([0]))
+        self.crow_indices = nn.Parameter(torch.tensor([]), requires_grad=False)
+        self.col_indices = nn.Parameter(torch.tensor([]), requires_grad=False)
+        self.shape = (in_features, out_features)
 
         if bias:
             self.bias = torch.nn.Parameter(torch.empty(out_features, device=self.device))
@@ -25,19 +32,36 @@ class SparseLinear(torch.nn.Module):
 
         self.reset_parameters()
 
-    def reset_parameters(self) -> None:
-        weight = torch.empty((self.out_features, self.in_features), device=self.device)
-        init.kaiming_uniform_(weight, a=math.sqrt(5))
-        weight = weight * self.mask
-        self.weight = torch.nn.Parameter(weight.to_sparse_csr())
+    def reset_parameters(self):
+        # weight = torch.empty((self.out_features, self.in_features))
+        # init.kaiming_uniform_(weight, a=math.sqrt(5))
+        # weight = weight * self.mask
+        # self.weight = torch.nn.Parameter(weight.to_sparse_csr())
+        self._initialize_weights()
 
         if self.bias is not None:
             fan_in, _ = init._calculate_fan_in_and_fan_out(self.weight)
             bound = 1 / math.sqrt(fan_in) if fan_in > 0 else 0
             init.uniform_(self.bias, -bound, bound)
 
+    def _initialize_weights(self):
+        w = self.mask.to_sparse_csr()
+        bound = math.sqrt(6 / ((1 + 0) * self.in_features))
+        values = torch.empty(len(w.values()))
+        init.uniform_(values, -bound, bound)
+
+        self.values = values
+        self.crow_indices = w.crow_indices
+        self.col_indices = w.col_indices
+
+
     def forward(self, X):
-        return F.linear(X, self.weight, self.bias)
+        weight = torch.sparse_csr_tensor(
+            self.crow_indices, self.col_indices, self.values, size=self.shape, device=self.values.device
+        )
+
+        return F.linear(X, weight, self.bias)
+        # return F.linear(X, self.weight, self.bias)
 
     @staticmethod
     def sparse_random(in_features, out_features, bias=True, percent=0.5, device=None):

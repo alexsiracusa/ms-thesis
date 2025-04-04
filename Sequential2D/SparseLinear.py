@@ -23,7 +23,7 @@ class SparseLinear(torch.nn.Module):
         self.values = nn.Parameter(torch.tensor([0], dtype=torch.float), requires_grad=True)
         self.crow_indices = nn.Parameter(torch.tensor([]), requires_grad=False)
         self.col_indices = nn.Parameter(torch.tensor([]), requires_grad=False)
-        self.shape = (in_features, out_features)
+        self.shape = (out_features, in_features)
 
         if bias:
             self.bias = torch.nn.Parameter(torch.empty(out_features, device=self.device))

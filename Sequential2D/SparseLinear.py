@@ -17,7 +17,6 @@ class SparseLinear(torch.nn.Module):
         self.device = device
 
         self.register_buffer("mask", mask.to(device))
-        # self.weight = None # Will be set in `reset_parameters()`
 
         # components of weights
         self.values = nn.Parameter(torch.tensor([0], dtype=torch.float), requires_grad=True)
@@ -32,27 +31,27 @@ class SparseLinear(torch.nn.Module):
 
         self.reset_parameters()
 
+    # this is meant to be the same as the default nn.Linear initialization
     def reset_parameters(self):
-        # weight = torch.empty((self.out_features, self.in_features))
-        # init.kaiming_uniform_(weight, a=math.sqrt(5))
-        # weight = weight * self.mask
-        # self.weight = torch.nn.Parameter(weight.to_sparse_csr())
         self._initialize_weights()
+        self._initialize_bias()
 
+    def _initialize_weights(self):
+        w = self.mask.to_sparse_csr()
+
+        samples = torch.empty(self.shape)
+        init.kaiming_uniform_(samples, a=math.sqrt(5))
+
+        self.values = nn.Parameter(samples.flatten()[:len(w.values())], requires_grad=True)
+        self.crow_indices = nn.Parameter(w.crow_indices(), requires_grad=False)
+        self.col_indices = nn.Parameter(w.col_indices(), requires_grad=False)
+
+    def _initialize_bias(self):
         if self.bias is not None:
             fan_in = self.in_features
             bound = 1 / math.sqrt(fan_in) if fan_in > 0 else 0
             init.uniform_(self.bias, -bound, bound)
 
-    def _initialize_weights(self):
-        w = self.mask.to_sparse_csr()
-        bound = math.sqrt(6 / ((1 + 0) * self.in_features))
-        values = torch.empty(len(w.values()))
-        init.uniform_(values, -bound, bound)
-
-        self.values = nn.Parameter(values, requires_grad=True)
-        self.crow_indices = nn.Parameter(w.crow_indices(), requires_grad=False)
-        self.col_indices = nn.Parameter(w.col_indices(), requires_grad=False)
 
 
     def forward(self, X):
@@ -61,19 +60,11 @@ class SparseLinear(torch.nn.Module):
         )
 
         return F.linear(X, weight, self.bias)
-        # return F.linear(X, self.weight, self.bias)
 
     @staticmethod
     def sparse_random(in_features, out_features, bias=True, percent=0.5, device=None):
         total_elements = in_features * out_features
         mask = random_boolean_tensor(out_features, in_features, int(percent * total_elements))
         return SparseLinear(in_features, out_features, bias=bias, mask=mask, device=device)
-
-    def to(self, *args, **kwargs):
-        """Ensure proper device transfer."""
-        self.values.data = self.values.data.to(*args, **kwargs)
-        self.crow_indices.data = self.crow_indices.data.to(*args, **kwargs)
-        self.col_indices.data = self.col_indices.data.to(*args, **kwargs)
-        return self  # Return self to allow method chaining
 
 

@@ -20,7 +20,7 @@ class SparseLinear(torch.nn.Module):
         # self.weight = None # Will be set in `reset_parameters()`
 
         # components of weights
-        self.values = nn.Parameter(torch.tensor([0]))
+        self.values = nn.Parameter(torch.tensor([0], dtype=torch.float), requires_grad=True)
         self.crow_indices = nn.Parameter(torch.tensor([]), requires_grad=False)
         self.col_indices = nn.Parameter(torch.tensor([]), requires_grad=False)
         self.shape = (in_features, out_features)

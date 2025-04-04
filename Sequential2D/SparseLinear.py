@@ -39,8 +39,9 @@ class SparseLinear(torch.nn.Module):
     def forward(self, X):
         print(X.device)
         print(self.weight.device)
-        print(self.weight._indices().device)
-        print(self.weight._values().device)
+        print(self.weight.crow_indices().device)
+        print(self.weight.col_indices().device)
+        print(self.weight.values().device)
         print(self.bias.device)
         return F.linear(X, self.weight, self.bias)
 

@@ -1,8 +1,6 @@
 import torch
 from torch import nn
 import time
-import numpy as np
-import matplotlib.pyplot as plt
 
 
 def train(
@@ -13,7 +11,8 @@ def train(
     optimizer,
     device=torch.device('cpu'),
     epochs=1,
-    print_every_nth_batch=None
+    nth_batch=None,
+    nth_epoch=1,
 ):
     model = model.to(device)
     criterion = criterion.to(device)
@@ -44,10 +43,10 @@ def train(
             optimizer.zero_grad()
             backward_times.append(time.time() - start)  # TIMER END
 
-            if print_every_nth_batch is not None and (batch - 1) % print_every_nth_batch == 0:
+            if nth_batch is not None and (batch - 1) % nth_batch == 0:
                 print(f'{losses[-1]:.3f}  {forward_times[-1]:.3f}  {backward_times[-1]:.3f}  {batch}/{len(train_loader)}')
 
-        if (epoch - 1) % 1 == 0:
+        if nth_epoch is not None and (epoch - 1) % nth_epoch == 0:
             print(f'Loss: {sum(losses[-len(train_loader):]) / len(train_loader)}')
 
     return losses, forward_times, backward_times

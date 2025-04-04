@@ -45,4 +45,11 @@ class SparseLinear(torch.nn.Module):
         mask = random_boolean_tensor(out_features, in_features, int(percent * total_elements))
         return SparseLinear(in_features, out_features, bias=bias, mask=mask, device=device)
 
+    def to(self, *args, **kwargs):
+        """Ensure proper device transfer."""
+        self.values.data = self.values.data.to(*args, **kwargs)
+        self.crow_indices.data = self.crow_indices.data.to(*args, **kwargs)
+        self.col_indices.data = self.col_indices.data.to(*args, **kwargs)
+        return self  # Return self to allow method chaining
+
 

@@ -40,13 +40,11 @@ for i in range(len(sizes)):
 #           [f40,  f41,  f42,  f43,  f44 ]]
 
 model1 = IterativeSequential2D(blocks, 4, F.relu)
-model1.to(torch.device('cuda'))
 print(f'Trainable: {num_trainable_parameters(model1)}')
 
 
 # train
 criterion = nn.CrossEntropyLoss()
-criterion.to(torch.device('cuda'))
 optim = SparseAdam(model1.parameters(), lr=0.0001)
 
 losses, _, _ = train(model1, train_loader, test_loader, criterion, optim,

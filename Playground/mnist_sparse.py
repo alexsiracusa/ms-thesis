@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 
 data_folder = "../data"
 train_loader, test_loader = load_mnist(data_folder, flat=True)
-device = torch.device('cuda')
+device = torch.device('cpu')
 
 
 # normal trainable: 1371810

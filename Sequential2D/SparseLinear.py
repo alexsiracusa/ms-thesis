@@ -15,7 +15,7 @@ class SparseLinear(torch.nn.Module):
         self.out_features = out_features
 
         self.register_buffer("mask", mask)
-        self.weight = None
+        self.weight = None # Will be set in `reset_parameters()`
 
         if bias:
             self.bias = torch.nn.Parameter(torch.empty(out_features))
@@ -50,5 +50,12 @@ class SparseLinear(torch.nn.Module):
         total_elements = in_features * out_features
         mask = random_boolean_tensor(out_features, in_features, int(percent * total_elements))
         return SparseLinear(in_features, out_features, bias=bias, mask=mask)
+
+    def to(self, device):
+        print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n\n\naaaaaaaaaa\n\\nn\aaaaaaaaa")
+        """Ensure the sparse weight tensor moves correctly with the model."""
+        super().to(device)
+        if self.weight is not None:
+            self.weight = torch.nn.Parameter(self.weight.to(device))
 
 

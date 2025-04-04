@@ -51,8 +51,8 @@ class SparseLinear(torch.nn.Module):
         init.uniform_(values, -bound, bound)
 
         self.values = nn.Parameter(values, requires_grad=True)
-        self.crow_indices = nn.Parameter(w.crow_indices, requires_grad=False)
-        self.col_indices = nn.Parameter(w.col_indices, requires_grad=False)
+        self.crow_indices = nn.Parameter(w.crow_indices(), requires_grad=False)
+        self.col_indices = nn.Parameter(w.col_indices(), requires_grad=False)
 
 
     def forward(self, X):

@@ -37,6 +37,12 @@ class SparseLinear(torch.nn.Module):
             init.uniform_(self.bias, -bound, bound)
 
     def forward(self, X):
+        print(X.device)
+        print(self.weight.device)
+        print(self.weight.crow_indices().device)
+        print(self.weight.col_indices().device)
+        print(self.weight.values().device)
+        print(self.bias.device)
         return F.linear(X, self.weight, self.bias)
 
     @staticmethod
@@ -46,6 +52,7 @@ class SparseLinear(torch.nn.Module):
         return SparseLinear(in_features, out_features, bias=bias, mask=mask)
 
     def to(self, device):
+        print('custom too')
         """Ensure sparse CSR components are properly moved."""
         new_model = super().to(device)  # Move dense tensors like bias
         new_model.weight = torch.sparse_csr_tensor(

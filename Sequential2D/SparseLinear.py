@@ -50,7 +50,7 @@ class SparseLinear(torch.nn.Module):
         values = torch.empty(len(w.values()))
         init.uniform_(values, -bound, bound)
 
-        self.values = values
+        self.values = nn.Parameter(values)
         self.crow_indices = w.crow_indices
         self.col_indices = w.col_indices
 

@@ -48,7 +48,7 @@ def csr_divide(sparse_csr, val):
     return csr_transform(sparse_csr, lambda v: v / val)
 
 def empty_csr(size, device):
-    return torch.sparse_csr_tensor(torch.tensor([0]), torch.tensor([]), torch.tensor([]), size=size, dtype=torch.float)
+    return torch.sparse_csr_tensor(torch.tensor([0]), torch.tensor([]), torch.tensor([]), size=size, dtype=torch.float, device=device)
 
 
 def sparse_csr_divide(numerator: torch.Tensor, denominator: torch.Tensor, epsilon: float) -> torch.Tensor:

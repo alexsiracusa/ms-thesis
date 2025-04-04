@@ -40,13 +40,11 @@ class SparseAdam(Optimizer):
                         state['step'] = 0
                         state['m'] = empty_csr(p.data.shape, device=p.device)
                         state['v'] = empty_csr(p.data.shape, device=p.device)
-                        print('init', p.device)
 
                     m, v = state['m'], state['v']
                     beta1, beta2 = group['betas']
                     state['step'] += 1
 
-                    print(m.device, p.device)
                     m = mask_with_csr(m, p)
                     v = mask_with_csr(v, p)
                     grad = mask_with_csr(grad, p)

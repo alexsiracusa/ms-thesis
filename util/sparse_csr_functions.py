@@ -13,9 +13,9 @@ def mask_with_csr(tensor, sparse_csr):
     torch.Tensor: The masked tensor with undefined values set to zero.
     """
     mask_values = torch.where(sparse_csr.values() > 0, torch.tensor(1, dtype=sparse_csr.dtype),
-                              torch.tensor(0, dtype=sparse_csr.dtype))
+                              torch.tensor(0, dtype=sparse_csr.dtype, device=tensor.device))
     mask = torch.sparse_csr_tensor(sparse_csr.crow_indices(), sparse_csr.col_indices(), mask_values,
-                                   size=sparse_csr.shape)
+                                   size=sparse_csr.shape, device=tensor.device)
 
     if tensor.is_sparse_csr:
         masked = tensor * mask

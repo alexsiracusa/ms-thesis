@@ -51,6 +51,7 @@ class SparseAdam(Optimizer):
 
                     # Update m and v
                     grad = grad.to(device=p.device)
+                    print(grad.device, m.device)
                     m = beta1 * m + (1 - beta1) * grad
                     v = beta2 * v + (1 - beta2) * csr_power(grad, 2)
 

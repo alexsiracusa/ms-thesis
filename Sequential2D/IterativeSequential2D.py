@@ -1,3 +1,4 @@
+import torch
 from torch import nn
 from .Sequential2D import Sequential2D
 import torch.nn.functional as F
@@ -22,6 +23,6 @@ class IterativeSequential2D(nn.Module):
 
         for _ in range(self.num_iterations):
             X = self.sequential.forward(X)
-            X = [self.activation(x) for x in X]
+            X = [self.activation(x) if torch.is_tensor(x) else None for x in X]
 
         return X[-1]

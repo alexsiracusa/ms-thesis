@@ -38,13 +38,21 @@ class SparseLinear(torch.nn.Module):
             bound = 1 / math.sqrt(fan_in) if fan_in > 0 else 0
             init.uniform_(self.bias, -bound, bound)
 
+        print('Reset parameters')
+        print('weight', self.weight.device)
+        print('row', self.weight.crow_indices().device)
+        print('col', self.weight.col_indices().device)
+        print('values', self.weight.values().device)
+        print('bias', self.bias.device)
+
     def forward(self, X):
-        print(X.device)
-        print(self.weight.device)
-        print(self.weight.crow_indices().device)
-        print(self.weight.col_indices().device)
-        print(self.weight.values().device)
-        print(self.bias.device)
+        print('Forward')
+        print('X', X.device)
+        print('weight', self.weight.device)
+        print('row', self.weight.crow_indices().device)
+        print('col', self.weight.col_indices().device)
+        print('values', self.weight.values().device)
+        print('bias', self.bias.device)
         return F.linear(X, self.weight, self.bias)
 
     @staticmethod

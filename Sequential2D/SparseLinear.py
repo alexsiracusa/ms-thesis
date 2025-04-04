@@ -15,7 +15,7 @@ class SparseLinear(torch.nn.Module):
         self.out_features = out_features
         self.device = device
 
-        self.register_buffer("mask", mask)
+        self.register_buffer("mask", mask.to(device))
         self.weight = None # Will be set in `reset_parameters()`
 
         if bias:

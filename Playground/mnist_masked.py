@@ -25,9 +25,7 @@ for i in range(len(sizes)):
         elif i == 0:
             blocks[i, j] = None
         else:
-            blocks[i, j] = nn.Sequential(
-                MaskedLinear.sparse_random(sizes[j], sizes[i], percent=0.5108),
-            )
+            blocks[i, j] = MaskedLinear.sparse_random(sizes[j], sizes[i], percent=0.5108)
 
 #            2500  500   200   100   10
 # blocks = [[I,    None, None, None, None],
@@ -46,8 +44,8 @@ criterion = nn.CrossEntropyLoss()
 adam = optim.Adam(model1.parameters(), lr=0.0001)
 sparse_adam = SparseAdam(model2.parameters(), lr=0.0001)
 
-adam_losses, _, _ = train(model1, train_loader, test_loader, criterion, adam, print_every_nth_batch=1)
-sparse_adam_losses, _, _ = train(model2, train_loader, test_loader, criterion, sparse_adam, print_every_nth_batch=1)
+adam_losses, _, _ = train(model1, train_loader, test_loader, criterion, adam, nth_batch=1)
+sparse_adam_losses, _, _ = train(model2, train_loader, test_loader, criterion, sparse_adam, nth_batch=1)
 
 iterations = np.arange(len(sparse_adam_losses))
 

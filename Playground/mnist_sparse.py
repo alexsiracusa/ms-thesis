@@ -13,10 +13,7 @@ import matplotlib.pyplot as plt
 
 data_folder = "../data"
 train_loader, test_loader = load_mnist(data_folder, flat=True)
-
-
-# normal trainable: 1371810
-# full trainable:   2685150
+device = torch.device('cuda')
 
 sizes = [2500, 500, 200, 100, 10]
 blocks = np.empty((len(sizes), len(sizes)), dtype=object)
@@ -28,9 +25,8 @@ for i in range(len(sizes)):
         elif i == 0:
             blocks[i, j] = None
         else:
-            blocks[i, j] = nn.Sequential(
-                SparseLinear.sparse_random(sizes[j], sizes[i], percent=0.5108),
-            )
+            # blocks[i, j] = SparseLinear.sparse_random(sizes[j], sizes[i], percent=0.5108, device=device)
+            blocks[i, j] = SparseLinear.sparse_random(sizes[j], sizes[i], percent=0.5108)
 
 #            2500  500   200   100   10
 # blocks = [[I,    None, None, None, None],
@@ -47,10 +43,7 @@ print(f'Trainable: {num_trainable_parameters(model1)}')
 criterion = nn.CrossEntropyLoss()
 optim = SparseAdam(model1.parameters(), lr=0.0001)
 
-losses, _, _ = train(model1, train_loader, test_loader, criterion, optim,
-    print_every_nth_batch=1,
-    device=torch.device('cuda')
-)
+losses, _, _ = train(model1, train_loader, test_loader, criterion, optim, nth_batch=1, device=device)
 iterations = np.arange(len(losses))
 
 

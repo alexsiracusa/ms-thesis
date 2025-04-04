@@ -47,6 +47,7 @@ class SparseAdam(Optimizer):
 
                     m = mask_with_csr(m, p)
                     v = mask_with_csr(v, p)
+                    print(grad.device, self.device)
                     grad = mask_with_csr(grad, p)
 
                     # Update m and v

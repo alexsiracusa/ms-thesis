@@ -9,23 +9,24 @@ warnings.filterwarnings("ignore", category=UserWarning, message=".*Sparse CSR te
 
 
 class SparseLinear(torch.nn.Module):
-    def __init__(self, in_features, out_features, bias=True, mask=None):
+    def __init__(self, in_features, out_features, bias=True, mask=None, device=None):
         super(SparseLinear, self).__init__()
         self.in_features = in_features
         self.out_features = out_features
+        self.device = device
 
         self.register_buffer("mask", mask)
         self.weight = None # Will be set in `reset_parameters()`
 
         if bias:
-            self.bias = torch.nn.Parameter(torch.empty(out_features))
+            self.bias = torch.nn.Parameter(torch.empty(out_features, device=self.device))
         else:
             self.register_parameter("bias", None)
 
         self.reset_parameters()
 
     def reset_parameters(self) -> None:
-        weight = torch.empty((self.out_features, self.in_features))
+        weight = torch.empty((self.out_features, self.in_features), device=self.device)
         init.kaiming_uniform_(weight, a=math.sqrt(5))
         weight = weight * self.mask
         self.weight = torch.nn.Parameter(weight.to_sparse_csr())
@@ -46,16 +47,9 @@ class SparseLinear(torch.nn.Module):
         return F.linear(X, self.weight, self.bias)
 
     @staticmethod
-    def sparse_random(in_features, out_features, bias=True, percent=0.5):
+    def sparse_random(in_features, out_features, bias=True, percent=0.5, device=None):
         total_elements = in_features * out_features
         mask = random_boolean_tensor(out_features, in_features, int(percent * total_elements))
-        return SparseLinear(in_features, out_features, bias=bias, mask=mask)
-
-    def to(self, device):
-        print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n\n\naaaaaaaaaa\n\\nn\aaaaaaaaa")
-        """Ensure the sparse weight tensor moves correctly with the model."""
-        super().to(device)
-        if self.weight is not None:
-            self.weight = torch.nn.Parameter(self.weight.to(device))
+        return SparseLinear(in_features, out_features, bias=bias, mask=mask, device=device)
 
 

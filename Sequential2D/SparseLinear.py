@@ -37,6 +37,9 @@ class SparseLinear(torch.nn.Module):
             init.uniform_(self.bias, -bound, bound)
 
     def forward(self, X):
+        print(X.device)
+        print(self.weight.device)
+        print(self.bias.device)
         return F.linear(X, self.weight, self.bias)
 
     @staticmethod

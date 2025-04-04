@@ -40,6 +40,7 @@ class SparseAdam(Optimizer):
                         state['step'] = 0
                         state['m'] = empty_csr(p.data.shape, device=p.device)
                         state['v'] = empty_csr(p.data.shape, device=p.device)
+                        print(p.device, state['m'].device, state['v'].device)
 
                     m, v = state['m'], state['v']
                     print(m.device, v.device, p.device, grad.device)

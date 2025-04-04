@@ -11,12 +11,11 @@ warnings.filterwarnings("ignore", category=UserWarning, message=".*Sparse CSR te
 class SparseLinear(torch.nn.Module):
     def __init__(self, in_features, out_features, bias=True, mask=None):
         super(SparseLinear, self).__init__()
-        self.mask = mask
         self.in_features = in_features
         self.out_features = out_features
 
-        weight = torch.empty((out_features, in_features)).to_sparse_csr()
-        self.weight = torch.nn.Parameter(weight)
+        self.register_buffer("mask", mask)
+        self.weight = None
 
         if bias:
             self.bias = torch.nn.Parameter(torch.empty(out_features))
@@ -51,29 +50,5 @@ class SparseLinear(torch.nn.Module):
         total_elements = in_features * out_features
         mask = random_boolean_tensor(out_features, in_features, int(percent * total_elements))
         return SparseLinear(in_features, out_features, bias=bias, mask=mask)
-
-    def to(self, *args, **kwargs):
-        print("to device*********")
-        device = kwargs.get("device", None)
-        if device is None and len(args) > 0:
-            device = args[0]
-
-        self.mask = self.mask.to(device)
-        self.reset_parameters()  # Recreate self.weight on new device
-
-        return super().to(*args, **kwargs)
-
-    # def to(self, device):
-    #     print('custom to')
-    #     """Ensure sparse CSR components are properly moved."""
-    #     new_model = super().to(device)  # Move dense tensors like bias
-    #     new_model.weight = torch.sparse_csr_tensor(
-    #         self.weight.crow_indices().to(device),
-    #         self.weight.col_indices().to(device),
-    #         self.weight.values().to(device),
-    #         self.weight.shape,
-    #         device=device,
-    #     )
-    #     return new_model
 
 

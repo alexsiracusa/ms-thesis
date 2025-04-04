@@ -40,7 +40,7 @@ class SparseLinear(torch.nn.Module):
         self._initialize_weights()
 
         if self.bias is not None:
-            fan_in, _ = init._calculate_fan_in_and_fan_out(self.weight)
+            fan_in = self.in_features
             bound = 1 / math.sqrt(fan_in) if fan_in > 0 else 0
             init.uniform_(self.bias, -bound, bound)
 

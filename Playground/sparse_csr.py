@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import torch.nn.functional as F
 import torch
 
-device = torch.device('cpu')
+device = torch.device('cuda')
 tensor_dim = 2000
 
 sparsity_values = np.arange(0, 1.1, 0.1)

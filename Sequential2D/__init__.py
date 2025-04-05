@@ -7,3 +7,4 @@ from .IterativeSequential2D import IterativeSequential2D
 from .MaskedLinear import *
 from .SparseLinear import *
 from .SparseAdam import *
+from .SparseLinearOld import *

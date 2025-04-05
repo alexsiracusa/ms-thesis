@@ -30,7 +30,6 @@ for sparsity in sparsity_values:
     for _ in range(100):
         X = F.linear(X, dense, bias)
     dense_times.append(time.time() - start) # END TIMER
-    print(X)
 
     X = torch.normal(0, 1, size=(100, tensor_dim)).to(device)
 
@@ -38,8 +37,9 @@ for sparsity in sparsity_values:
     for _ in range(100):
         X = F.linear(X, sparse, bias)
     sparse_times.append(time.time() - start)  # END TIMER
-    print(X)
 
+print(sparse_times)
+print(dense_times)
 
 plt.figure(figsize=(10, 5))
 plt.plot(sparsity_values, dense_times, label='Dense', color='red')

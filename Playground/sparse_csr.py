@@ -32,6 +32,7 @@ for sparsity in sparsity_values:
     start = time.time()  # START TIMER
     for _ in range(100):
         X = F.linear(X, sparse, None)
+        print(X.is_sparse_csr)
     sparse_times.append(time.time() - start)  # END TIMER
 
 

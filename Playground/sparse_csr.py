@@ -25,17 +25,19 @@ for sparsity in sparsity_values:
     X = torch.normal(0, 1, size=(100, tensor_dim)).to(device)
 
     start = time.time() # START TIMER
-    _ = F.linear(X, dense, None)
+    for _ in range(100):
+        X = F.linear(X, dense, None)
     dense_times.append(time.time() - start) # END TIMER
 
     start = time.time()  # START TIMER
-    _ = F.linear(X, sparse, None)
+    for _ in range(100):
+        X = F.linear(X, sparse, None)
     sparse_times.append(time.time() - start)  # END TIMER
 
 
 plt.figure(figsize=(10, 5))
 plt.plot(sparsity_values, dense_times, label='Dense', color='red')
-# plt.plot(sparsity_values, sparse_times, label='Sparse', color='blue')
+plt.plot(sparsity_values, sparse_times, label='Sparse', color='blue')
 
 # Labels and title
 plt.xlabel('Sparsity')

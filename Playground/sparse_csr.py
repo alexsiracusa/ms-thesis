@@ -22,17 +22,18 @@ for sparsity in sparsity_values:
     tensor = (full_tensor * mask)
     dense = tensor.to_dense().to(device)
     sparse = tensor.to_sparse_csr().to(device)
-    X = torch.normal(0, 1, size=(1, tensor_dim)).to(device)
+    bias = torch.normal(0, 1, size=(1, tensor_dim)).to(device)
+
+    X = torch.normal(0, 1, size=(100, tensor_dim)).to(device)
 
     start = time.time() # START TIMER
-    for _ in range(1000):
-        X = F.linear(X, dense, X)
+    for _ in range(100):
+        X = F.linear(X, dense, bias)
     dense_times.append(time.time() - start) # END TIMER
 
     start = time.time()  # START TIMER
-    for _ in range(1000):
-        X = F.linear(X, sparse, X)
-        print(X.is_sparse_csr)
+    for _ in range(100):
+        X = F.linear(X, sparse, bias)
     sparse_times.append(time.time() - start)  # END TIMER
 
 

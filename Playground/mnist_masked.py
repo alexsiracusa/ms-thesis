@@ -42,7 +42,7 @@ print(f'Trainable: {num_trainable_parameters(model1)}')
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model1.parameters(), lr=0.0001)
 
-losses, forward_times, backward_times = train(model1, train_loader, test_loader, criterion, adam, nth_batch=1, device=device)
+losses, forward_times, backward_times = train(model1, train_loader, test_loader, criterion, optimizer, nth_batch=1, device=device)
 iterations = np.arange(len(losses))
 
 print(f'Forward:  {sum(forward_times) / len(forward_times)}')

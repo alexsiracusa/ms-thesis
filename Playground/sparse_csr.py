@@ -24,6 +24,8 @@ for sparsity in sparsity_values:
     sparse = tensor.to_sparse_csr().to(device)
     bias = torch.normal(0, 1, size=(1, tensor_dim)).to(device)
 
+    print(sparse.device, sparse.values().device, sparse.crow_indices().device, sparse.col_indices().device)
+
     X_input = torch.normal(0, 1, size=(100, tensor_dim)).to(device)
 
     # DENSE

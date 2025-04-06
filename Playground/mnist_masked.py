@@ -12,6 +12,7 @@ import copy
 
 data_folder = "../data"
 train_loader, test_loader = load_mnist(data_folder, flat=True)
+device = torch.device('cuda')
 
 
 sizes = [2500, 500, 200, 100, 10]
@@ -44,8 +45,8 @@ criterion = nn.CrossEntropyLoss()
 adam = optim.Adam(model1.parameters(), lr=0.0001)
 sparse_adam = SparseAdam(model2.parameters(), lr=0.0001)
 
-adam_losses, _, _ = train(model1, train_loader, test_loader, criterion, adam, nth_batch=1)
-sparse_adam_losses, _, _ = train(model2, train_loader, test_loader, criterion, sparse_adam, nth_batch=1)
+adam_losses, _, _ = train(model1, train_loader, test_loader, criterion, adam, nth_batch=1, device=device)
+sparse_adam_losses, _, _ = train(model2, train_loader, test_loader, criterion, sparse_adam, nth_batch=1, device=device)
 
 iterations = np.arange(len(sparse_adam_losses))
 

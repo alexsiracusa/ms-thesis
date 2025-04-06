@@ -2,11 +2,10 @@ import torch
 from torch import nn, optim
 import torch.nn.functional as F
 from training import train, load_mnist
-from Sequential2D import MaskedLinear, SparseAdam, IterativeSequential2D
+from Sequential2D import MaskedLinear, IterativeSequential2D
 from util import num_trainable_parameters
 import numpy as np
 import matplotlib.pyplot as plt
-import copy
 
 
 

@@ -1,23 +1,22 @@
 import torch
-from torch import nn, optim
 import torch.nn.functional as F
-from training import train, load_mnist
-from Sequential2D import MaskedLinear, SparseAdam, IterativeSequential2D
+from torch import nn
+from Sequential2D import IterativeSequential2D, SparseLinear, SparseAdam
 from util import num_trainable_parameters
 import numpy as np
+from training import train, load_mnist
 import matplotlib.pyplot as plt
-import copy
 
+
+# TODO there seems to some kind of memory leak when running this !!!
 
 
 data_folder = "../data"
 train_loader, test_loader = load_mnist(data_folder, flat=True)
 device = torch.device('cuda')
 
-
 sizes = [2500, 500, 200, 100, 10]
 blocks = np.empty((len(sizes), len(sizes)), dtype=object)
-
 
 for i in range(len(sizes)):
     for j in range(len(sizes)):
@@ -26,7 +25,8 @@ for i in range(len(sizes)):
         elif i == 0:
             blocks[i, j] = None
         else:
-            blocks[i, j] = MaskedLinear.sparse_random(sizes[j], sizes[i], percent=0.5)
+            # blocks[i, j] = SparseLinear.sparse_random(sizes[j], sizes[i], percent=0.5108, device=device)
+            blocks[i, j] = SparseLinear.sparse_random(sizes[j], sizes[i], percent=0.5108)
 
 #            2500  500   200   100   10
 # blocks = [[I,    None, None, None, None],
@@ -41,13 +41,10 @@ print(f'Trainable: {num_trainable_parameters(model1)}')
 
 # train
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.Adam(model1.parameters(), lr=0.0001)
+optim = SparseAdam(model1.parameters(), lr=0.0001)
 
-losses, forward_times, backward_times = train(model1, train_loader, test_loader, criterion, adam, nth_batch=1, device=device)
+losses, forward_times, backward_times = train(model1, train_loader, test_loader, criterion, optim, nth_batch=1, device=device)
 iterations = np.arange(len(losses))
-
-print(f'Forward:  {sum(forward_times / len(forward_times))}')
-print(f'Backward: {sum(backward_times / len(backward_times))}')
 
 
 plt.figure(figsize=(10, 5))
@@ -62,4 +59,3 @@ plt.legend()
 # Save as PNG
 plt.savefig('training_metrics.png', dpi=300)
 plt.show()
-

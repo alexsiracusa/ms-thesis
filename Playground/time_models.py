@@ -1,8 +1,7 @@
 import torch
 from torch import nn
 from Sequential2D import SparseAdam
-from training import train, load_mnist
-from create_models import masked_model, sparse_model, old_sparse_model
+from training import train, load_mnist, masked_model, sparse_model, old_sparse_model
 import matplotlib.pyplot as plt
 
 

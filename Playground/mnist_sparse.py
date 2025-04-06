@@ -5,7 +5,7 @@ from util import num_trainable_parameters
 import numpy as np
 from training import train, load_mnist
 import matplotlib.pyplot as plt
-from create_models import sparse_model
+from training.create_models import sparse_model
 
 
 # TODO there seems to some kind of memory leak when running this w/ SparseAdam !!!

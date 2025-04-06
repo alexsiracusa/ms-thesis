@@ -26,7 +26,7 @@ for i in range(len(sizes)):
             blocks[i, j] = None
         else:
             # blocks[i, j] = SparseLinear.sparse_random(sizes[j], sizes[i], percent=0.5108, device=device)
-            blocks[i, j] = SparseLinear.sparse_random(sizes[j], sizes[i], percent=0.5)
+            blocks[i, j] = SparseLinear.sparse_random(sizes[j], sizes[i], percent=1)
 
 #            2500  500   200   100   10
 # blocks = [[I,    None, None, None, None],

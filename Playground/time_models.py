@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 data_folder = "../data"
 train_loader, test_loader = load_mnist(data_folder, flat=True)
-device = torch.device('cuda')
+device = torch.device('cpu')
 
 
 sizes = [2500, 500, 200, 100, 10]
@@ -49,9 +49,9 @@ plt.plot(sparsity_list, masked_forward_times, label='Masked Forward', color='red
 plt.plot(sparsity_list, sparse_forward_times, label='Sparse Forward', color='green')
 plt.plot(sparsity_list, old_sparse_forward_times, label='Old Sparse Forward', color='blue')
 
-plt.plot(sparsity_list, masked_backward_times, label='Masked Backward', color='darkred')
-plt.plot(sparsity_list, sparse_backward_times, label='Sparse Backward', color='darkgreen')
-plt.plot(sparsity_list, old_sparse_backward_times, label='Old Sparse Backward', color='darkblue')
+plt.plot(sparsity_list, masked_backward_times, label='Masked Backward', color='purple')
+plt.plot(sparsity_list, sparse_backward_times, label='Sparse Backward', color='gold')
+plt.plot(sparsity_list, old_sparse_backward_times, label='Old Sparse Backward', color='gray')
 
 # Labels and title
 plt.xlabel('Sparsity')

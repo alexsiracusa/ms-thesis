@@ -7,6 +7,7 @@ class MaskedLinear(torch.nn.Module):
         super(MaskedLinear, self).__init__()
         self.linear = torch.nn.Linear(in_features, out_features, bias=bias)
         self.mask = mask if mask is not None else torch.ones((in_features, out_features), dtype=torch.bool)
+        self.register_buffer('mask', mask)
 
     def forward(self, X):
         masked_weight = self.linear.weight * self.mask.T

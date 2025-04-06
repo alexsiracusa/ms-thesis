@@ -25,7 +25,7 @@ for i in range(len(sizes)):
         elif i == 0:
             blocks[i, j] = None
         else:
-            blocks[i, j] = MaskedLinear.sparse_random(sizes[j], sizes[i], percent=1)
+            blocks[i, j] = MaskedLinear.sparse_random(sizes[j], sizes[i], percent=0.1)
 
 #            2500  500   200   100   10
 # blocks = [[I,    None, None, None, None],

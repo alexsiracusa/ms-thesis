@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import torch.nn.functional as F
 import torch
 
-device = torch.device('cuda')
+device = torch.device('cpu')
 tensor_dim = 2000
 
 sparsity_values = np.arange(0, 1.1, 0.1)
@@ -23,8 +23,6 @@ for sparsity in sparsity_values:
     dense = tensor.to_dense().to(device)
     sparse = tensor.to_sparse_csr().to(device)
     bias = torch.normal(0, 1, size=(1, tensor_dim)).to(device)
-
-    print(sparse.device, sparse.values().device, sparse.crow_indices().device, sparse.col_indices().device)
 
     X_input = torch.normal(0, 1, size=(100, tensor_dim)).to(device)
 
@@ -49,8 +47,8 @@ for sparsity in sparsity_values:
     torch.cuda.synchronize()
     sparse_times.append(time.time() - start + output.sum().item() * 0)
 
-print("Sparse times:", sparse_times)
-print("Dense times:", dense_times)
+# print("Sparse times:", sparse_times)
+# print("Dense times:", dense_times)
 
 plt.figure(figsize=(10, 5))
 plt.plot(sparsity_values, dense_times, label='Dense', color='red')

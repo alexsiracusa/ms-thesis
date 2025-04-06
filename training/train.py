@@ -6,7 +6,6 @@ import time
 def train(
     model: nn.Module,
     train_loader,
-    test_loader,
     criterion,
     optimizer,
     device=torch.device('cpu'),

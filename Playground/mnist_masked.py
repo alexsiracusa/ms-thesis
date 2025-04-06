@@ -1,11 +1,10 @@
 import torch
 from torch import nn, optim
-import torch.nn.functional as F
 from training import train, load_mnist
-from Sequential2D import MaskedLinear, IterativeSequential2D
 from util import num_trainable_parameters
 import numpy as np
 import matplotlib.pyplot as plt
+from create_models import masked_model
 
 
 
@@ -15,17 +14,6 @@ device = torch.device('cuda')
 
 
 sizes = [2500, 500, 200, 100, 10]
-blocks = np.empty((len(sizes), len(sizes)), dtype=object)
-
-
-for i in range(len(sizes)):
-    for j in range(len(sizes)):
-        if i == 0 and j == 0:
-            blocks[i, j] = torch.nn.Identity()
-        elif i == 0:
-            blocks[i, j] = None
-        else:
-            blocks[i, j] = MaskedLinear.sparse_random(sizes[j], sizes[i], percent=0)
 
 #            2500  500   200   100   10
 # blocks = [[I,    None, None, None, None],
@@ -34,7 +22,7 @@ for i in range(len(sizes)):
 #           [f30,  f31,  f32,  f33,  f34 ],
 #           [f40,  f41,  f42,  f43,  f44 ]]
 
-model1 = IterativeSequential2D(blocks, 4, F.relu)
+model1 = masked_model(sizes=sizes, sparsity=0.5)
 print(f'Trainable: {num_trainable_parameters(model1)}')
 
 
@@ -42,7 +30,7 @@ print(f'Trainable: {num_trainable_parameters(model1)}')
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model1.parameters(), lr=0.0001)
 
-losses, forward_times, backward_times = train(model1, train_loader, test_loader, criterion, optimizer, nth_batch=1, device=device)
+losses, forward_times, backward_times = train(model1, train_loader, criterion, optimizer, nth_batch=1, device=device)
 iterations = np.arange(len(losses))
 
 print(f'Forward:  {sum(forward_times) / len(forward_times)}')

@@ -46,8 +46,8 @@ optim = SparseAdam(model1.parameters(), lr=0.0001)
 losses, forward_times, backward_times = train(model1, train_loader, test_loader, criterion, optim, nth_batch=1, device=device)
 iterations = np.arange(len(losses))
 
-print(f'Forward:  {sum(forward_times / len(forward_times))}')
-print(f'Backward: {sum(backward_times / len(backward_times))}')
+print(f'Forward:  {sum(forward_times) / len(forward_times)}')
+print(f'Backward: {sum(backward_times) / len(backward_times)}')
 
 
 plt.figure(figsize=(10, 5))

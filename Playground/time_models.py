@@ -11,7 +11,8 @@ device = torch.device('cuda')
 
 
 sizes = [2500, 500, 200, 100, 10]
-sparsity_list = [0, 0.25, 0.5, 0.75, 1.0]
+# sparsity_list = [0, 0.25, 0.5, 0.75, 1.0]
+sparsity_list = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
 
 masked_forward_times = []
 sparse_forward_times = []
@@ -31,9 +32,10 @@ for sparsity in sparsity_list:
     sparse_optim = SparseAdam(sparse.parameters(), lr=0.0001)
     old_sparse_optim = SparseAdam(old_sparse.parameters(), lr=0.0001)
 
-    masked_losses, m_forward_times, m_backward_times = train(masked, train_loader, criterion, masked_optim, device=device)
-    sparse_losses, s_forward_times, s_backward_times = train(sparse, train_loader, criterion, sparse_optim, device=device)
-    old_sparse_losses, os_forward_times, os_backward_times = train(old_sparse, train_loader, criterion, old_sparse_optim, device=device)
+    size = 6400
+    masked_losses, m_forward_times, m_backward_times = train(masked, train_loader[:size], criterion, masked_optim, device=device)
+    sparse_losses, s_forward_times, s_backward_times = train(sparse, train_loader[:size], criterion, sparse_optim, device=device)
+    old_sparse_losses, os_forward_times, os_backward_times = train(old_sparse, train_loader[:size], criterion, old_sparse_optim, device=device)
 
     masked_forward_times.append(sum(m_forward_times) / len(m_forward_times))
     sparse_forward_times.append(sum(s_forward_times) / len(s_forward_times))

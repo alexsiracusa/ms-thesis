@@ -41,7 +41,7 @@ for sparsity in sparsity_values:
     start = time.time()
     # total.backward()
     dense_grad.append(time.time() - start)
-    print(X.grad) # Prevent optimization
+    # print(X.grad) # Prevent optimization
 
 
     # SPARSE
@@ -58,7 +58,7 @@ for sparsity in sparsity_values:
     start = time.time()
     # total.backward()
     sparse_grad.append(time.time() - start)
-    print(X.grad) # Prevent optimization
+    # print(X.grad) # Prevent optimization
 
 print("Sparse times:", sparse_times)
 print("Dense times:", dense_times)

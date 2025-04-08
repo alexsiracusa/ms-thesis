@@ -28,9 +28,9 @@ for sparsity in sparsity_values:
     # DENSE
     torch.cuda.synchronize()
     start = time.time()
-    output = None
+    output = X_input
     for _ in range(1000):
-        output = F.linear(X_input, dense, bias)
+        output = F.linear(output, dense, bias)
     torch.cuda.synchronize()
     # Prevent optimization: force some computation using the output
     dense_times.append(time.time() - start)
@@ -41,9 +41,9 @@ for sparsity in sparsity_values:
 
     torch.cuda.synchronize()
     start = time.time()
-    output = None
+    output = X_input
     for _ in range(1000):
-        output = F.linear(X_input, sparse, bias)
+        output = F.linear(output, sparse, bias)
     torch.cuda.synchronize()
     sparse_times.append(time.time() - start)
     print(output.sum().item())

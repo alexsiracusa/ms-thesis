@@ -8,7 +8,7 @@ from torch.utils.data import Subset
 
 data_folder = "../data"
 train_loader, test_loader = load_mnist(data_folder, flat=True)
-device = torch.device('cuda')
+device = torch.device('cpu')
 
 size = 6400
 subset = Subset(train_loader.dataset, range(size))
@@ -49,6 +49,15 @@ for sparsity in sparsity_list:
     masked_backward_times.append(sum(m_backward_times) / len(m_backward_times))
     sparse_backward_times.append(sum(s_backward_times) / len(s_backward_times))
     old_sparse_backward_times.append(sum(os_backward_times) / len(os_backward_times))
+
+
+print('Masked Forward:    ', masked_forward_times)
+print('Sparse Forward:    ', sparse_forward_times)
+print('OldSparse Forward: ', old_sparse_forward_times)
+
+print('Masked Backward:   ', masked_backward_times)
+print('Sparse Backward:   ', sparse_backward_times)
+print('OldSparse Backward:', old_sparse_backward_times)
 
 
 plt.figure(figsize=(10, 5))

@@ -20,8 +20,8 @@ full_tensor = linear.weight.data.clone()
 
 for sparsity in sparsity_values:
     mask = random_boolean_tensor(tensor_dim, tensor_dim, int(tensor_dim**2 * sparsity))
-    mask.requires_grad = True
     tensor = full_tensor * mask
+    tensor.requires_grad = True
 
     dense = tensor.to_dense().to(device)
     sparse = tensor.to_sparse_csr().to(device)

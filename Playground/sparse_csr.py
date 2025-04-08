@@ -39,7 +39,7 @@ for sparsity in sparsity_values:
 
     total = torch.sum(y)
     start = time.time()
-    total.backward()
+    # total.backward()
     dense_grad.append(time.time() - start)
     print(X.grad) # Prevent optimization
 
@@ -56,7 +56,7 @@ for sparsity in sparsity_values:
 
     total = torch.sum(y)
     start = time.time()
-    total.backward()
+    # total.backward()
     sparse_grad.append(time.time() - start)
     print(X.grad) # Prevent optimization
 

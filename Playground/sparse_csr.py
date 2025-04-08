@@ -23,7 +23,9 @@ for sparsity in sparsity_values:
     tensor = full_tensor * mask
 
     dense = tensor.to_dense().to(device)
+    dense.requires_grad = True
     sparse = tensor.to_sparse_csr().to(device)
+    sparse.requires_grad = True
     bias = torch.normal(0, 1, size=(1, tensor_dim)).to(device)
 
     X_input = torch.normal(0, 1, size=(100, tensor_dim), requires_grad=True).to(device)

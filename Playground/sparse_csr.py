@@ -62,12 +62,14 @@ for sparsity in sparsity_values:
 
 print("Sparse times:", sparse_times)
 print("Dense times:", dense_times)
+print("Sparse grad:", sparse_grad)
+print("Dense grad:", dense_grad)
 
 plt.figure(figsize=(10, 5))
-# plt.plot(sparsity_values, dense_times, label='Dense', color='red')
-# plt.plot(sparsity_values, sparse_times, label='Sparse', color='blue')
-plt.plot(sparsity_values, dense_grad, label='Dense', color='red')
-plt.plot(sparsity_values, sparse_grad, label='Sparse', color='blue')
+plt.plot(sparsity_values, dense_times, label='Dense', color='red')
+plt.plot(sparsity_values, sparse_times, label='Sparse', color='blue')
+# plt.plot(sparsity_values, dense_grad, label='Dense', color='red')
+# plt.plot(sparsity_values, sparse_grad, label='Sparse', color='blue')
 
 plt.xlabel('Sparsity')
 plt.ylabel('Time')

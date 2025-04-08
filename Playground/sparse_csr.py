@@ -44,7 +44,7 @@ for sparsity in sparsity_values:
     start = time.time()
     total.backward()
     dense_grad.append(time.time() - start)
-    print(total.grad[0])
+    print(total.grad)
 
 
     # SPARSE
@@ -63,7 +63,7 @@ for sparsity in sparsity_values:
     start = time.time()
     total.backward()
     sparse_grad.append(time.time() - start)
-    print(total.grad[0])
+    print(total.grad)
 
 print("Sparse times:", sparse_times)
 print("Dense times:", dense_times)

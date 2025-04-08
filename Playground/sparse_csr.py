@@ -40,10 +40,11 @@ for sparsity in sparsity_values:
     dense_times.append(time.time() - start)
     print(output.sum().item())
 
+    total = torch.sum(output)
     start = time.time()
-    torch.sum(output).backward()
+    total.backward()
     dense_grad.append(time.time() - start)
-    print(output.grad[0])
+    print(total.grad[0])
 
 
     # SPARSE
@@ -58,10 +59,11 @@ for sparsity in sparsity_values:
     sparse_times.append(time.time() - start)
     print(output.sum().item())
 
+    total = torch.sum(output)
     start = time.time()
-    torch.sum(output).backward()
+    total.backward()
     sparse_grad.append(time.time() - start)
-    print(output.grad[0])
+    print(total.grad[0])
 
 print("Sparse times:", sparse_times)
 print("Dense times:", dense_times)

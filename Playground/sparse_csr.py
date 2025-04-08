@@ -12,6 +12,9 @@ sparsity_values = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
 dense_times = []
 sparse_times = []
 
+dense_grad = []
+sparse_grad = []
+
 linear = nn.Linear(tensor_dim, tensor_dim, bias=False)
 full_tensor = linear.weight.data.clone()
 
@@ -36,6 +39,12 @@ for sparsity in sparsity_values:
     dense_times.append(time.time() - start)
     print(output.sum().item())
 
+    start = time.time()
+    output.backward()
+    dense_grad.append(time.time() - start)
+    print(output.grad[0])
+
+
     # SPARSE
     X_input = torch.normal(0, 1, size=(100, tensor_dim)).to(device)
 
@@ -48,12 +57,19 @@ for sparsity in sparsity_values:
     sparse_times.append(time.time() - start)
     print(output.sum().item())
 
+    start = time.time()
+    output.backward()
+    sparse_grad.append(time.time() - start)
+    print(output.grad[0])
+
 print("Sparse times:", sparse_times)
 print("Dense times:", dense_times)
 
 plt.figure(figsize=(10, 5))
-plt.plot(sparsity_values, dense_times, label='Dense', color='red')
-plt.plot(sparsity_values, sparse_times, label='Sparse', color='blue')
+# plt.plot(sparsity_values, dense_times, label='Dense', color='red')
+# plt.plot(sparsity_values, sparse_times, label='Sparse', color='blue')
+plt.plot(sparsity_values, dense_grad, label='Dense', color='red')
+plt.plot(sparsity_values, sparse_grad, label='Sparse', color='blue')
 
 plt.xlabel('Sparsity')
 plt.ylabel('Time')

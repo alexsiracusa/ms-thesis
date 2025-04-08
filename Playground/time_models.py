@@ -3,11 +3,17 @@ from torch import nn
 from Sequential2D import SparseAdam
 from training import train, load_mnist, masked_model, sparse_model, old_sparse_model
 import matplotlib.pyplot as plt
+from torch.utils.data import Subset
 
 
 data_folder = "../data"
 train_loader, test_loader = load_mnist(data_folder, flat=True)
 device = torch.device('cuda')
+
+size = 6400
+subset = Subset(train_loader.dataset, range(size))
+subset_loader = torch.utils.data.DataLoader(subset, batch_size=train_loader.batch_size, shuffle=False)
+
 
 
 sizes = [2500, 500, 200, 100, 10]
@@ -32,10 +38,9 @@ for sparsity in sparsity_list:
     sparse_optim = SparseAdam(sparse.parameters(), lr=0.0001)
     old_sparse_optim = SparseAdam(old_sparse.parameters(), lr=0.0001)
 
-    size = 6400
-    masked_losses, m_forward_times, m_backward_times = train(masked, train_loader[:size], criterion, masked_optim, device=device)
-    sparse_losses, s_forward_times, s_backward_times = train(sparse, train_loader[:size], criterion, sparse_optim, device=device)
-    old_sparse_losses, os_forward_times, os_backward_times = train(old_sparse, train_loader[:size], criterion, old_sparse_optim, device=device)
+    masked_losses, m_forward_times, m_backward_times = train(masked, subset_loader, criterion, masked_optim, device=device)
+    sparse_losses, s_forward_times, s_backward_times = train(sparse, subset_loader, criterion, sparse_optim, device=device)
+    old_sparse_losses, os_forward_times, os_backward_times = train(old_sparse, subset_loader, criterion, old_sparse_optim, device=device)
 
     masked_forward_times.append(sum(m_forward_times) / len(m_forward_times))
     sparse_forward_times.append(sum(s_forward_times) / len(s_forward_times))

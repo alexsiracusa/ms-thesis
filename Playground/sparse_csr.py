@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import torch.nn.functional as F
 import torch
 
-device = torch.device('gpu')
+device = torch.device('cuda')
 tensor_dim = 2000
 
 sparsity_values = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
@@ -33,7 +33,8 @@ for sparsity in sparsity_values:
         output = F.linear(X_input, dense, bias)
     torch.cuda.synchronize()
     # Prevent optimization: force some computation using the output
-    dense_times.append(time.time() - start + output.sum().item() * 0)
+    dense_times.append(time.time())
+    print(output.sum().item())
 
     # SPARSE
     X_input = torch.normal(0, 1, size=(100, tensor_dim)).to(device)
@@ -44,7 +45,8 @@ for sparsity in sparsity_values:
     for _ in range(1000):
         output = F.linear(X_input, sparse, bias)
     torch.cuda.synchronize()
-    sparse_times.append(time.time() - start + output.sum().item() * 0)
+    sparse_times.append(time.time())
+    print(output.sum().item())
 
 print("Sparse times:", sparse_times)
 print("Dense times:", dense_times)

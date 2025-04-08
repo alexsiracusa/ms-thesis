@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 import torch.nn.functional as F
 import torch
 
-device = torch.device('cpu')
-tensor_dim = 2000
+device = torch.device('cuda')
+tensor_dim = 10000
 
 sparsity_values = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
 dense_times = []
@@ -27,43 +27,38 @@ for sparsity in sparsity_values:
     sparse = tensor.to_sparse_csr().to(device)
     bias = torch.normal(0, 1, size=(1, tensor_dim)).to(device)
 
-    X_input = torch.normal(0, 1, size=(100, tensor_dim), requires_grad=True).to(device)
-
     # DENSE
+    X = torch.normal(0, 1, size=(100, tensor_dim), requires_grad=True).to(device)
+
     torch.cuda.synchronize()
     start = time.time()
-    output = X_input
-    for _ in range(1000):
-        output = F.linear(output, dense, bias)
+    y = F.linear(X, dense, bias)
     torch.cuda.synchronize()
-    # Prevent optimization: force some computation using the output
     dense_times.append(time.time() - start)
-    print(output.sum().item())
+    print(y.sum().item()) # Prevent optimization
 
-    total = torch.sum(output)
+    total = torch.sum(y)
     start = time.time()
     total.backward()
     dense_grad.append(time.time() - start)
-    print(total.grad)
+    print(X.grad) # Prevent optimization
 
 
     # SPARSE
-    X_input = torch.normal(0, 1, size=(100, tensor_dim), requires_grad=True).to(device)
+    X = torch.normal(0, 1, size=(100, tensor_dim), requires_grad=True).to(device)
 
     torch.cuda.synchronize()
     start = time.time()
-    output = X_input
-    for _ in range(1000):
-        output = F.linear(output, sparse, bias)
+    y = F.linear(X, dense, bias)
     torch.cuda.synchronize()
     sparse_times.append(time.time() - start)
-    print(output.sum().item())
+    print(y.sum().item()) # Prevent optimization
 
-    total = torch.sum(output)
+    total = torch.sum(y)
     start = time.time()
     total.backward()
     sparse_grad.append(time.time() - start)
-    print(total.grad)
+    print(X.grad) # Prevent optimization
 
 print("Sparse times:", sparse_times)
 print("Dense times:", dense_times)

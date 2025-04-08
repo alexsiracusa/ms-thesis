@@ -42,7 +42,7 @@ for sparsity in sparsity_values:
     print(output.sum().item())
 
     start = time.time()
-    output.backward()
+    torch.sum(output).backward()
     dense_grad.append(time.time() - start)
     print(output.grad[0])
 
@@ -60,7 +60,7 @@ for sparsity in sparsity_values:
     print(output.sum().item())
 
     start = time.time()
-    output.backward()
+    torch.sum(output).backward()
     sparse_grad.append(time.time() - start)
     print(output.grad[0])
 

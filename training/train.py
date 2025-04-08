@@ -8,10 +8,10 @@ def train(
     train_loader,
     criterion,
     optimizer,
-    device=torch.device('cpu'),
-    epochs=1,
-    nth_batch=None,
-    nth_epoch=1,
+    epochs = 1,
+    nth_batch = None,
+    nth_epoch = 1,
+    device = torch.device('cpu'),
 ):
     model = model.to(device)
     criterion = criterion.to(device)

@@ -25,7 +25,6 @@ for i in range(len(sizes)):
         elif i == 0:
             blocks[i, j] = None
         else:
-            # blocks[i, j] = SparseLinear.sparse_random(sizes[j], sizes[i], percent=0.5108, device=device)
             blocks[i, j] = SparseLinear.sparse_random(sizes[j], sizes[i], percent=0.5108)
 
 #            2500  500   200   100   10

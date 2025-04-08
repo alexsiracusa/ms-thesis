@@ -1,6 +1,5 @@
 from util import random_boolean_tensor
 from torch import nn
-import numpy as np
 import time
 import matplotlib.pyplot as plt
 import torch.nn.functional as F
@@ -9,7 +8,7 @@ import torch
 device = torch.device('cpu')
 tensor_dim = 2000
 
-sparsity_values = np.arange(0, 1.1, 0.1)
+sparsity_values = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
 dense_times = []
 sparse_times = []
 
@@ -47,8 +46,8 @@ for sparsity in sparsity_values:
     torch.cuda.synchronize()
     sparse_times.append(time.time() - start + output.sum().item() * 0)
 
-# print("Sparse times:", sparse_times)
-# print("Dense times:", dense_times)
+print("Sparse times:", sparse_times)
+print("Dense times:", dense_times)
 
 plt.figure(figsize=(10, 5))
 plt.plot(sparsity_values, dense_times, label='Dense', color='red')

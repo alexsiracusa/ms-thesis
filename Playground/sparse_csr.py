@@ -23,29 +23,37 @@ for sparsity in sparsity_values:
     dense = tensor.to_dense().to(device)
     sparse = tensor.to_sparse_csr().to(device)
 
-    for i in range(2):
+    for i in range(25):
         x = torch.randn(size=(tensor_dim,), device=device)
         y = dense @ x
         print(y.sum().item())
-    print("a")
 
     # DENSE
-    X = torch.normal(0, 1, size=(10, tensor_dim), device=device)
+    X = torch.normal(0, 1, size=(1, tensor_dim), device=device)
 
     torch.cuda.synchronize()
     start = time.time()
-    y = dense @ X.T
+    for _ in range(10):
+        # y = F.linear(dense, X, None)
+        y = dense @ X.T
     torch.cuda.synchronize()
     dense_times.append(time.time() - start)
     print(y.sum().item()) # Prevent optimization
 
 
+    for i in range(25):
+        x = torch.randn(size=(tensor_dim,), device=device)
+        y = sparse @ x
+        print(y.sum().item())
+
     # SPARSE
-    X = torch.normal(0, 1, size=(10, tensor_dim), device=device)
+    X = torch.normal(0, 1, size=(1, tensor_dim), device=device)
 
     torch.cuda.synchronize()
     start = time.time()
-    y = sparse @ X.T
+    for _ in range(10):
+        # y = F.linear(sparse, X, None)
+        y = sparse @ X.T
     torch.cuda.synchronize()
     sparse_times.append(time.time() - start)
     print(y.sum().item()) # Prevent optimization

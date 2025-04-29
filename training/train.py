@@ -43,7 +43,7 @@ def train(
             backward_times.append(time.time() - start)  # TIMER END
 
             if nth_batch is not None and (batch - 1) % nth_batch == 0:
-                print(f'{losses[-1]:.3f}  {forward_times[-1]:.3f}  {backward_times[-1]:.3f}  {batch}/{len(train_loader)}')
+                print(f'{losses[-1]:.3f}  {forward_times[-1]:.8f}  {backward_times[-1]:.8f}  {batch}/{len(train_loader)}')
 
         if nth_epoch is not None and (epoch - 1) % nth_epoch == 0:
             print(f'Loss: {sum(losses[-len(train_loader):]) / len(train_loader)}')

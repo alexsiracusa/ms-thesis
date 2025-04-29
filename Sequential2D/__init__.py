@@ -4,7 +4,8 @@
 
 from .Sequential2D import *
 from .IterativeSequential2D import IterativeSequential2D
-from .MaskedLinear import *
-from .SparseLinear import *
 from .SparseAdam import *
-from .SparseLinearOld import *
+
+from .LinearLayers.MaskedLinear import *
+from .LinearLayers.SparseLinear import *
+from .LinearLayers.SparseLinearOld import *

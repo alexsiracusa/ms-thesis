@@ -3,6 +3,7 @@ from torch.optim.optimizer import Optimizer
 from typing import Tuple
 from util import sparse_csr_divide, csr_divide, csr_power, csr_multiply, csr_transform, empty_csr, mask_with_csr
 
+
 class SparseAdam(Optimizer):
     def __init__(
         self,

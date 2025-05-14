@@ -52,8 +52,6 @@ class SparseLinear(torch.nn.Module):
             bound = 1 / math.sqrt(fan_in) if fan_in > 0 else 0
             init.uniform_(self.bias, -bound, bound)
 
-
-
     def forward(self, X):
         weight = torch.sparse_csr_tensor(
             self.crow_indices, self.col_indices, self.values, size=self.shape, device=self.values.device

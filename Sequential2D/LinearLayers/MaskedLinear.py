@@ -2,6 +2,7 @@ import torch
 import torch.nn.functional as F
 from util import random_boolean_tensor
 
+
 class MaskedLinear(torch.nn.Module):
     def __init__(self, in_features, out_features, bias=True, mask=None):
         super(MaskedLinear, self).__init__()

@@ -1,8 +1,7 @@
 from typing import Optional
 import numpy as np
 import gymnasium as gym
-from lux_design_s3.src.luxai_s3.env import LuxAIS3Env
-
+from lux.lux_design_s3.src.luxai_s3 import LuxAIS3Env
 
 class LuxEnv(gym.Env):
 

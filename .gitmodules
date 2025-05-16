@@ -1,3 +1,3 @@
-[submodule "lux/Lux-Design-S3"]
-	path = lux/Lux-Design-S3
+[submodule "lux/lux_design_s3"]
+	path = lux/lux_design_s3
 	url = https://github.com/Lux-AI-Challenge/Lux-Design-S3.git

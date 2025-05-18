@@ -1,6 +1,6 @@
-from lux.lux_design_s3.src.luxai_s3.env import LuxAIS3Env
-from lux.lux_design_s3.src.luxai_s3.params import EnvParams, env_params_ranges
-from lux.lux_design_s3.src.luxai_s3.state import EnvObs, UnitState, MapTile
+from luxai_s3.env import LuxAIS3Env
+from luxai_s3.params import EnvParams, env_params_ranges
+from luxai_s3.state import EnvObs, UnitState, MapTile
 
 import gymnasium
 from gymnasium import spaces
@@ -278,7 +278,7 @@ if __name__ == '__main__':
         print("Infos from step:", infos)
 
         print("\nSimulating a few steps...")
-        for i in range(999):
+        for i in range(100):
             actions = {p_id: env.action_space[p_id].sample() for p_id in obs.keys()}
             obs, rewards, term, trunc, infos = env.step(actions)
             print(f"Step {i + 1}: Rewards: {rewards}, Term: {term['player_0']}, Trunc: {trunc['player_0']}")

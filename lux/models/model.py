@@ -2,12 +2,16 @@ from build_sequential2d import build_sequential2d
 from lux.util.obs_to_tensors import obs_to_tensors
 import json
 
+import torch
+import torch.nn as nn
+import torch.optim as optim
+
 # T is the number of teams (default is 2)          2
 # N is the max number of units per team            16
 # W, H are the width and height of the map         24x24
 # R is the max number of relic nodes               6
 
-# Total = 3043
+# Total = 3619
 input_sizes = [
             # SHAPE                    DIMS     NAME                    TYPE
     64,     # (T, N, 2) = 2 * 16 * 2  = 64       units position          coordinates
@@ -42,7 +46,7 @@ input_sizes = [
     1,      # (1)       = 1           = 1        unit_sensor_range       continuous
 ]
 
-# total = 4044
+# total = 4620
 hidden_sizes = [
     2304,   # spaces to remember map features
     576,
@@ -86,14 +90,33 @@ model_sizes = input_sizes + hidden_sizes + output_sizes
 model = build_sequential2d(model_sizes, num_input_blocks=len(input_sizes), num_iterations=5)
 
 with open('../data/actions_0.json', 'r') as file:
-    obs = json.load(file)
-
-obs, action = obs_to_tensors(obs[0])
+    action_data = json.load(file)
 
 
-output_tensor = model.forward(obs)
-print(output_tensor.shape)
-print(action.shape)
+criterion = nn.MSELoss()  # or CrossEntropyLoss(), depending on your task
+optimizer = optim.Adam(model.parameters(), lr=1e-3)
+
+model.train()
+
+num_epochs = 10
+
+for epoch in range(num_epochs):
+    total_loss = 0.0
+
+    for data in action_data:
+        obs, action = obs_to_tensors(data)  # preprocess inputs and targets
+
+        optimizer.zero_grad()  # clear previous gradients
+
+        output = model(obs)  # forward pass
+        loss = criterion(output, action)  # compute loss
+
+        loss.backward()  # backward pass
+        optimizer.step()  # update weights
+
+        total_loss += loss.item()
+
+    print(f"Epoch {epoch+1}/{num_epochs}, Loss: {total_loss:.4f}")
 
 
 

@@ -14,9 +14,11 @@ To verify your installation, you can run a match between two random agents:
 luxai-s3 --help
 ```
 ```shell
-luxai-s3 path/to/bot/main.py path/to/bot/main.py --output replay.json
+luxai-s3 agents/kit_agent.py agents/kit_agent.py --output replay.json
 ```
 Then upload the replay.json to the online visualizer here: https://s3vis.lux-ai.org/ (a link on the lux-ai.org website will be up soon)
+
+This will also create two output files `actions_0.json` and `actions_1.json` which will show all of the agents observations and corresponding actions.
 
 ## Agent Observation Space
 ```json
@@ -53,27 +55,29 @@ Then upload the replay.json to the online visualizer here: https://s3vis.lux-ai.
   "remainingOverageTime": int, // total amount of time your bot can use whenever it exceeds 2s in a turn
   "player": str, // your player id
   "info": {
-    "env_cfg": dict // some of the game's visible parameters
+    // some of the game's visible parameters
+    "env_cfg": {
+      "max_units": 16,
+      "match_count_per_episode": int,
+      "max_steps_in_match": int,
+      "map_height": int,
+      "map_width": int,
+      "num_teams": int,
+      "unit_move_cost": int,
+      "unit_sap_cost": int,
+      "unit_sap_range": int,
+      "unit_sensor_range": int
+    }
   }
 }
 ```
 
-Example `env_cfg` dictionary
-```json
-"env_cfg": {
-  "max_units": 16,
-  "match_count_per_episode": 5,
-  "max_steps_in_match": 100,
-  "map_height": 24,
-  "map_width": 24,
-  "num_teams": 2,
-  "unit_move_cost": 2,
-  "unit_sap_cost": 45,
-  "unit_sap_range": 5,
-  "unit_sensor_range": 3
-}
+## Agent Action Space
+The action space of the game is always a fixed (N, 3) array of integers to control up to units 0 to N-1 on your team where N is the max number of units each team can have (example code shows how to determine N). At any given point in time you might not have N units on your team so actions for those nonexistent units do not do anything.
 
-```
+For each unit's action, the first integer indicates the type of action, which can be 0 for doing nothing, 1 to move up, 2 to move right, 3 to move down, 4 to move left, and 5 to sap a tile. The next 2 integers are only for the sap action and indicate the location of the tile to sap from relative to the unit's position (a delta x and y value).
+
+For implementing a model, it is often easier to represent this as an (N, 8) space instead where the second dimension of 8 represents each unique action (do nothing, move up, down, left, right, sap, sap delta x, sap delta y) as a one-hot encoding (aside from the sap delta options)
 
 
 

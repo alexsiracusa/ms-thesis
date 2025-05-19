@@ -1,5 +1,7 @@
 import torch
 import numpy as np
+import torch.nn.functional as F
+
 
 """
 Observation JSON Format
@@ -55,33 +57,38 @@ Observation JSON Format
 
 """
 Output Tensors Format:
-
 [
             # SHAPE                    DIMS     NAME                    TYPE
-    64,     # (T, N, 2) = 2 * 16 * 2 = 64       units position          coordinates
-    32,     # (T, N, 1) = 2 * 16 * 1 = 32       units energy            continuous
-    32,     # (T, N)    = 2 * 16     = 32       units_mask              binary
-    576,    # (W, H)    = 24 * 24    = 576      sensor_mask             binary
-    576,    # (W, H)    = 24 * 24    = 576      map_features energy     continuous
-    576,    # (W, H)    = 24 * 24    = 576      map_features tile_type  categorical
-    6,      # (R)       = 6          = 6        relic_nodes_mask        binary
-    12,     # (R, 2)    = 6 * 2      = 12       relic_nodes             coordinates
-    2,      # (T)       = 2          = 2        team_points             continuous
-    2,      # (T)       = 2          = 2        team_wins               continuous
-    1,      # (1)       = 1          = 1        steps                   continuous
-    1,      # (1)       = 1          = 1        match_steps             continuous
-    1,      # (1)       = 1          = 1        remainingOverageTime    continuous
+    64,     # (T, N, 2) = 2 * 16 * 2  = 64       units position          coordinates
+    32,     # (T, N, 1) = 2 * 16 * 1  = 32       units energy            continuous
+    32,     # (T, N)    = 2 * 16      = 32       units_mask              binary
+    576,    # (W, H)    = 24 * 24     = 576      sensor_mask             binary
+    576,    # (W, H)    = 24 * 24     = 576      map_features energy     continuous
 
-    1,      # (1)       = 1          = 1        max_units               CONSTANT = 16
-    1,      # (1)       = 1          = 1        match_count_per_episode continuous
-    1,      # (1)       = 1          = 1        max_steps_in_match      continuous
-    1,      # (1)       = 1          = 1        map_height              CONSTANT = 24
-    1,      # (1)       = 1          = 1        map_width               CONSTANT = 24
-    1,      # (1)       = 1          = 1        num_teams               CONSTANT = 2
-    1,      # (1)       = 1          = 1        unit_move_cost          continuous
-    1,      # (1)       = 1          = 1        unit_sap_cost           continuous
-    1,      # (1)       = 1          = 1        unit_sap_range          continuous
-    1,      # (1)       = 1          = 1        unit_sensor_range       continuous
+    2304,   # (W, H, 4) = 24 * 24 * 4 = 2304     map_features tile_type  categorical
+            # UNKNOWN = -1
+            # EMPTY_TILE = 0
+            # NEBULA_TILE = 1
+            # ASTEROID_TILE = 2
+
+    6,      # (R)       = 6           = 6        relic_nodes_mask        binary
+    12,     # (R, 2)    = 6 * 2       = 12       relic_nodes             coordinates
+    2,      # (T)       = 2           = 2        team_points             continuous
+    2,      # (T)       = 2           = 2        team_wins               continuous
+    1,      # (1)       = 1           = 1        steps                   continuous
+    1,      # (1)       = 1           = 1        match_steps             continuous
+    1,      # (1)       = 1           = 1        remainingOverageTime    continuous
+
+    1,      # (1)       = 1           = 1        max_units               CONSTANT = 16
+    1,      # (1)       = 1           = 1        match_count_per_episode continuous
+    1,      # (1)       = 1           = 1        max_steps_in_match      continuous
+    1,      # (1)       = 1           = 1        map_height              CONSTANT = 24
+    1,      # (1)       = 1           = 1        map_width               CONSTANT = 24
+    1,      # (1)       = 1           = 1        num_teams               CONSTANT = 2
+    1,      # (1)       = 1           = 1        unit_move_cost          continuous
+    1,      # (1)       = 1           = 1        unit_sap_cost           continuous
+    1,      # (1)       = 1           = 1        unit_sap_range          continuous
+    1,      # (1)       = 1           = 1        unit_sensor_range       continuous
 ]
 """
 
@@ -94,31 +101,46 @@ Returns:
    tensors: tensor representation of the json in the form specified above
 """
 def obs_to_tensors(obs):
-    tensors = [
-        np.array(obs['obs']['units']['position']).flatten(),
-        np.array(obs['obs']['units']['energy']).flatten(),
-        np.array(obs['obs']['units_mask']).flatten(),
-        np.array(obs['obs']['sensor_mask']).flatten(),
-        np.array(obs['obs']['map_features']['energy']).flatten(),
-        np.array(obs['obs']['map_features']['tile_type']).flatten(),
-        np.array(obs['obs']['relic_nodes_mask']).flatten(),
-        np.array(obs['obs']['relic_nodes']).flatten(),
-        np.array(obs['obs']['team_points']).flatten(),
-        np.array(obs['obs']['team_wins']).flatten(),
-        np.array([obs['obs']['steps']]),
-        np.array([obs['obs']['match_steps']]),
-        np.array([obs['remainingOverageTime']]),
+    NUM_TILE_TYPES = 4
+    NUM_ACTION_TYPES = 6
 
-        np.array([obs['info']['env_cfg']['max_units']]),
-        np.array([obs['info']['env_cfg']['match_count_per_episode']]),
-        np.array([obs['info']['env_cfg']['max_steps_in_match']]),
-        np.array([obs['info']['env_cfg']['map_height']]),
-        np.array([obs['info']['env_cfg']['map_width']]),
-        np.array([obs['info']['env_cfg']['num_teams']]),
-        np.array([obs['info']['env_cfg']['unit_move_cost']]),
-        np.array([obs['info']['env_cfg']['unit_sap_cost']]),
-        np.array([obs['info']['env_cfg']['unit_sap_range']]),
-        np.array([obs['info']['env_cfg']['unit_sensor_range']]),
+    observations = [
+        torch.tensor(obs['obs']['units']['position']),
+        torch.tensor(obs['obs']['units']['energy']),
+        torch.tensor(obs['obs']['units_mask']),
+        torch.tensor(obs['obs']['sensor_mask']),
+        torch.tensor(obs['obs']['map_features']['energy']),
+        # converts tile_types to a one-hot encoding
+        F.one_hot(torch.tensor(obs['obs']['map_features']['tile_type']) + 1, num_classes=NUM_TILE_TYPES),
+        torch.tensor(obs['obs']['relic_nodes_mask']),
+        torch.tensor(obs['obs']['relic_nodes']),
+        torch.tensor(obs['obs']['team_points']),
+        torch.tensor(obs['obs']['team_wins']),
+        torch.tensor([obs['obs']['steps']]),
+        torch.tensor([obs['obs']['match_steps']]),
+        torch.tensor([obs['remainingOverageTime']]),
+
+        torch.tensor([obs['info']['env_cfg']['max_units']]),
+        torch.tensor([obs['info']['env_cfg']['match_count_per_episode']]),
+        torch.tensor([obs['info']['env_cfg']['max_steps_in_match']]),
+        torch.tensor([obs['info']['env_cfg']['map_height']]),
+        torch.tensor([obs['info']['env_cfg']['map_width']]),
+        torch.tensor([obs['info']['env_cfg']['num_teams']]),
+        torch.tensor([obs['info']['env_cfg']['unit_move_cost']]),
+        torch.tensor([obs['info']['env_cfg']['unit_sap_cost']]),
+        torch.tensor([obs['info']['env_cfg']['unit_sap_range']]),
+        torch.tensor([obs['info']['env_cfg']['unit_sensor_range']]),
     ]
 
-    return [torch.tensor(tensor, dtype=torch.float32) for tensor in tensors]
+    observations = [tensor.to(torch.float32).flatten() for tensor in observations]
+
+    actions = []
+    for action in obs['actions']:
+        actions.append(torch.cat([
+            F.one_hot(torch.tensor(action[0]), num_classes=NUM_ACTION_TYPES),
+            torch.tensor(action[1:])
+        ]))
+
+    actions = torch.cat(actions).to(torch.float32)
+
+    return observations, actions

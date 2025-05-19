@@ -57,7 +57,7 @@ This will also create two output files `actions_0.json` and `actions_1.json` whi
   "info": {
     // some of the game's visible parameters
     "env_cfg": {
-      "max_units": 16,
+      "max_units": int,
       "match_count_per_episode": int,
       "max_steps_in_match": int,
       "map_height": int,

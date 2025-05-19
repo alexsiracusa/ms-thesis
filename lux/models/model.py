@@ -7,38 +7,44 @@ import json
 # W, H are the width and height of the map         24x24
 # R is the max number of relic nodes               6
 
-# Total = 1890
+# Total = 3043
 input_sizes = [
             # SHAPE                    DIMS     NAME                    TYPE
-    64,     # (T, N, 2) = 2 * 16 * 2 = 64       units position          coordinates
-    32,     # (T, N, 1) = 2 * 16 * 1 = 32       units energy            continuous
-    32,     # (T, N)    = 2 * 16     = 32       units_mask              binary
-    576,    # (W, H)    = 24 * 24    = 576      sensor_mask             binary
-    576,    # (W, H)    = 24 * 24    = 576      map_features energy     continuous
-    576,    # (W, H)    = 24 * 24    = 576      map_features tile_type  categorical
-    6,      # (R)       = 6          = 6        relic_nodes_mask        binary
-    12,     # (R, 2)    = 6 * 2      = 12       relic_nodes             coordinates
-    2,      # (T)       = 2          = 2        team_points             continuous
-    2,      # (T)       = 2          = 2        team_wins               continuous
-    1,      # (1)       = 1          = 1        steps                   continuous
-    1,      # (1)       = 1          = 1        match_steps             continuous
-    1,      # (1)       = 1          = 1        remainingOverageTime    continuous
+    64,     # (T, N, 2) = 2 * 16 * 2  = 64       units position          coordinates
+    32,     # (T, N, 1) = 2 * 16 * 1  = 32       units energy            continuous
+    32,     # (T, N)    = 2 * 16      = 32       units_mask              binary
+    576,    # (W, H)    = 24 * 24     = 576      sensor_mask             binary
+    576,    # (W, H)    = 24 * 24     = 576      map_features energy     continuous
 
-    1,      # (1)       = 1          = 1        max_units               CONSTANT = 16
-    1,      # (1)       = 1          = 1        match_count_per_episode continuous
-    1,      # (1)       = 1          = 1        max_steps_in_match      continuous
-    1,      # (1)       = 1          = 1        map_height              CONSTANT = 24
-    1,      # (1)       = 1          = 1        map_width               CONSTANT = 24
-    1,      # (1)       = 1          = 1        num_teams               CONSTANT = 2
-    1,      # (1)       = 1          = 1        unit_move_cost          continuous
-    1,      # (1)       = 1          = 1        unit_sap_cost           continuous
-    1,      # (1)       = 1          = 1        unit_sap_range          continuous
-    1,      # (1)       = 1          = 1        unit_sensor_range       continuous
+    2304,   # (W, H, 4) = 24 * 24 * 4 = 2304     map_features tile_type  categorical
+            # UNKNOWN = -1
+            # EMPTY_TILE = 0
+            # NEBULA_TILE = 1
+            # ASTEROID_TILE = 2
+
+    6,      # (R)       = 6           = 6        relic_nodes_mask        binary
+    12,     # (R, 2)    = 6 * 2       = 12       relic_nodes             coordinates
+    2,      # (T)       = 2           = 2        team_points             continuous
+    2,      # (T)       = 2           = 2        team_wins               continuous
+    1,      # (1)       = 1           = 1        steps                   continuous
+    1,      # (1)       = 1           = 1        match_steps             continuous
+    1,      # (1)       = 1           = 1        remainingOverageTime    continuous
+
+    1,      # (1)       = 1           = 1        max_units               CONSTANT = 16
+    1,      # (1)       = 1           = 1        match_count_per_episode continuous
+    1,      # (1)       = 1           = 1        max_steps_in_match      continuous
+    1,      # (1)       = 1           = 1        map_height              CONSTANT = 24
+    1,      # (1)       = 1           = 1        map_width               CONSTANT = 24
+    1,      # (1)       = 1           = 1        num_teams               CONSTANT = 2
+    1,      # (1)       = 1           = 1        unit_move_cost          continuous
+    1,      # (1)       = 1           = 1        unit_sap_cost           continuous
+    1,      # (1)       = 1           = 1        unit_sap_range          continuous
+    1,      # (1)       = 1           = 1        unit_sensor_range       continuous
 ]
 
-# total = 2892
+# total = 4044
 hidden_sizes = [
-    576,    # spaces to remember map features
+    2304,   # spaces to remember map features
     576,
     576,
     64,     # spaces to remember unit information
@@ -58,21 +64,23 @@ hidden_sizes = [
     64,
 ]
 
-# 8 possible actions
-#   - do nothing
-#   - move uo
-#   - move right
-#   - move down
-#   - move left
-#   - sap
-#   - sap delta x
-#   - sap delta y
+# 5 possible actions
+#   DO_NOTHING = 0
+#   MOVE_UP = 1
+#   MOVE_RIGHT = 2
+#   MOVE DOWN = 3
+#   MOVE_LEFT = 4
+#   SAP = 5
+
+# With two additional parameters for the SAP action
+#   DELTA_X = int
+#   DELTA_Y = int
 output_sizes = [
     128     # (N, 8)    = 16 * 8    = 128       actions                 categorical
 ]
 
-# print(f'Input Total:  {sum(input_sizes)}')
-# print(f'Hidden Total: {sum(hidden_sizes)}')
+print(f'Input Total:  {sum(input_sizes)}')
+print(f'Hidden Total: {sum(hidden_sizes)}')
 
 model_sizes = input_sizes + hidden_sizes + output_sizes
 model = build_sequential2d(model_sizes, num_input_blocks=len(input_sizes), num_iterations=5)
@@ -80,11 +88,12 @@ model = build_sequential2d(model_sizes, num_input_blocks=len(input_sizes), num_i
 with open('../data/actions_0.json', 'r') as file:
     obs = json.load(file)
 
-input_tensor = obs_to_tensors(obs[0])
+obs, action = obs_to_tensors(obs[0])
 
 
-output_tensor = model.forward(input_tensor)
+output_tensor = model.forward(obs)
 print(output_tensor.shape)
+print(action.shape)
 
 
 

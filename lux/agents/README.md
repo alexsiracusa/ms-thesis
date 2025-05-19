@@ -12,7 +12,7 @@ class MyAgent:
         return actions
 
 if __name__ == "__main__":
-    main(agent_fn(KitAgent))
+    main(agent_fn(MyAgent))
 ```
 
 This last part for when `__name__ == "__main__"` allows it to work with the `luxai-s3` command line tool like so:

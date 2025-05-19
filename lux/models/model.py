@@ -1,3 +1,6 @@
+from build_sequential2d import build_sequential2d
+from lux.util.obs_to_tensors import obs_to_tensors
+import json
 
 # T is the number of teams (default is 2)          2
 # N is the max number of units per team            16
@@ -19,6 +22,7 @@ input_sizes = [
     2,      # (T)       = 2          = 2        team_wins               continuous
     1,      # (1)       = 1          = 1        steps                   continuous
     1,      # (1)       = 1          = 1        match_steps             continuous
+    1,      # (1)       = 1          = 1        remainingOverageTime    continuous
 
     1,      # (1)       = 1          = 1        max_units               CONSTANT = 16
     1,      # (1)       = 1          = 1        match_count_per_episode continuous
@@ -54,9 +58,33 @@ hidden_sizes = [
     64,
 ]
 
+# 8 possible actions
+#   - do nothing
+#   - move uo
+#   - move right
+#   - move down
+#   - move left
+#   - sap
+#   - sap delta x
+#   - sap delta y
+output_sizes = [
+    128     # (N, 8)    = 16 * 8    = 128       actions                 categorical
+]
+
 # print(f'Input Total:  {sum(input_sizes)}')
 # print(f'Hidden Total: {sum(hidden_sizes)}')
 
+model_sizes = input_sizes + hidden_sizes + output_sizes
+model = build_sequential2d(model_sizes, num_input_blocks=len(input_sizes), num_iterations=5)
+
+with open('../data/actions_0.json', 'r') as file:
+    obs = json.load(file)
+
+input_tensor = obs_to_tensors(obs[0])
+
+
+output_tensor = model.forward(input_tensor)
+print(output_tensor.shape)
 
 
 

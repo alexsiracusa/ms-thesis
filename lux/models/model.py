@@ -4,6 +4,7 @@
 # W, H are the width and height of the map         24x24
 # R is the max number of relic nodes               6
 
+# Total = 1890
 input_sizes = [
             # SHAPE                    DIMS     NAME                    TYPE
     64,     # (T, N, 2) = 2 * 16 * 2 = 64       units position          coordinates
@@ -30,6 +31,31 @@ input_sizes = [
     1,      # (1)       = 1          = 1        unit_sap_range          continuous
     1,      # (1)       = 1          = 1        unit_sensor_range       continuous
 ]
+
+# total = 2892
+hidden_sizes = [
+    576,    # spaces to remember map features
+    576,
+    576,
+    64,     # spaces to remember unit information
+    64,
+    64,
+    12,     # space to remember relic nodes
+
+    144,    # Generic extra spaces for the model to figure out
+    144,
+    144,
+    144,
+    64,
+    64,
+    64,
+    64,
+    64,
+    64,
+]
+
+# print(f'Input Total:  {sum(input_sizes)}')
+# print(f'Hidden Total: {sum(hidden_sizes)}')
 
 
 

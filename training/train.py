@@ -29,21 +29,25 @@ def train(
             batch += 1
 
             # FORWARD PASS
-            torch.cuda.synchronize()
+            if device == 'cuda':
+                torch.cuda.synchronize()
             start = time.time()  # TIMER START
             output = model.forward(data)
-            torch.cuda.synchronize()
+            if device == 'cuda':
+                torch.cuda.synchronize()
             forward_times.append(time.time() - start)  # TIMER END
 
             # BACKWARD PASS
-            torch.cuda.synchronize()
+            if device == 'cuda':
+                torch.cuda.synchronize()
             start = time.time()  # TIMER START
             loss = criterion(output, labels)
             losses.append(loss.item())
             loss.backward()
             optimizer.step()
             optimizer.zero_grad()
-            torch.cuda.synchronize()
+            if device == 'cuda':
+                torch.cuda.synchronize()
             backward_times.append(time.time() - start)  # TIMER END
 
             if nth_batch is not None and (batch - 1) % nth_batch == 0:

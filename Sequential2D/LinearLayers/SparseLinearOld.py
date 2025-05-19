@@ -3,7 +3,7 @@ import torch.nn.init as init
 import math
 import torch.nn.functional as F
 import warnings
-from util.random_mask import random_boolean_tensor
+from Sequential2D.util.random_mask import random_boolean_tensor
 
 warnings.filterwarnings("ignore", category=UserWarning, message=".*Sparse CSR tensor support is in beta.*")
 

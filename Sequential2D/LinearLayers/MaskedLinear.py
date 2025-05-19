@@ -1,6 +1,6 @@
 import torch
 import torch.nn.functional as F
-from util import random_boolean_tensor
+from Sequential2D.util.random_mask import random_boolean_tensor
 
 
 class MaskedLinear(torch.nn.Module):

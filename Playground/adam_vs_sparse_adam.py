@@ -2,9 +2,9 @@ import torch
 import torch.nn.functional as F
 from torch import nn
 from Sequential2D import IterativeSequential2D, SparseLinear, SparseAdam
-from util import num_trainable_parameters
+from Playground.util import num_trainable_parameters
 import numpy as np
-from training import train, load_mnist
+from Playground.training import train, load_mnist
 import matplotlib.pyplot as plt
 
 

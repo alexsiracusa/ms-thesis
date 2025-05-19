@@ -1,7 +1,7 @@
 import torch
 from torch import nn
 from Sequential2D import SparseAdam
-from training import train, load_mnist, masked_model, sparse_model, old_sparse_model
+from Playground.training import train, load_mnist, masked_model, sparse_model, old_sparse_model
 import matplotlib.pyplot as plt
 from torch.utils.data import Subset
 from statistics import median

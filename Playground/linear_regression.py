@@ -3,7 +3,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from util import generate_linear_data, num_trainable_parameters
+from Playground.util import generate_linear_data, num_trainable_parameters
 
 
 num_features = 8

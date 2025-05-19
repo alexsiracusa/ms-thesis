@@ -1,7 +1,7 @@
 from torch import nn, optim
 from Sequential2D import IterativeSequential2D
-from util import num_trainable_parameters
-from training import load_mnist, train
+from Playground.util import num_trainable_parameters
+from Playground.training import load_mnist, train
 import torch.nn.functional as F
 import numpy as np
 import matplotlib.pyplot as plt

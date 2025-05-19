@@ -1,10 +1,10 @@
 import torch
 from torch import nn, optim
-from training import train, load_mnist
-from util import num_trainable_parameters
+from Playground.training import train, load_mnist
+from Playground.util import num_trainable_parameters
 import numpy as np
 import matplotlib.pyplot as plt
-from training.create_models import masked_model
+from Playground.training.create_models import masked_model
 
 
 

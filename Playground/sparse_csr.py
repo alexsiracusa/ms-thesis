@@ -1,8 +1,7 @@
-from util import random_boolean_tensor
+from Playground.util import random_boolean_tensor
 from torch import nn
 import time
 import matplotlib.pyplot as plt
-import torch.nn.functional as F
 import torch
 
 device = torch.device('cpu')

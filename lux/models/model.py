@@ -93,6 +93,11 @@ with open('../data/actions_0.json', 'r') as file:
     action_data = json.load(file)
 
 
+
+
+# TRAINING
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 criterion = nn.MSELoss()  # or CrossEntropyLoss(), depending on your task
 optimizer = optim.Adam(model.parameters(), lr=1e-3)
 

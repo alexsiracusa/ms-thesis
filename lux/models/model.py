@@ -97,31 +97,46 @@ with open('../data/actions_0.json', 'r') as file:
 
 # TRAINING
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print(f'Device: {device}')
 
-criterion = nn.MSELoss()  # or CrossEntropyLoss(), depending on your task
+ce_loss = nn.CrossEntropyLoss()
+mse_loss = nn.MSELoss()
 optimizer = optim.Adam(model.parameters(), lr=1e-3)
 
+model.to(device)
 model.train()
 
 num_epochs = 10
 
 for epoch in range(num_epochs):
-    total_loss = 0.0
+    total_ce_loss = 0.0
+    total_mse_loss = 0.0
 
     for data in action_data:
-        obs, action = obs_to_tensors(data)  # preprocess inputs and targets
+        obs, action = obs_to_tensors(data, device=device)  # preprocess inputs and targets
 
         optimizer.zero_grad()  # clear previous gradients
 
         output = model(obs)  # forward pass
-        loss = criterion(output, action)  # compute loss
+        total_loss = torch.tensor(0.0, device=device)
 
-        loss.backward()  # backward pass
+        # For each agent we want a separate CE loss for action type and MSE loss for the sap actions delta x and y
+        for i in range(0, 128, 8):
+            loss1 = ce_loss(output[i:i+6], action[i:i+6])
+            loss2 = mse_loss(output[i+6:i+8], action[i+6:i+8])
+
+            total_loss += loss1 + loss2
+
+            total_ce_loss += loss1.item()
+            total_mse_loss += loss2.item()
+
+        total_loss.backward()
         optimizer.step()  # update weights
 
-        total_loss += loss.item()
+    avg_ce_loss = total_ce_loss / len(action_data) / 16
+    avg_mse_loss = total_mse_loss / len(action_data) / 16
 
-    print(f"Epoch {epoch+1}/{num_epochs}, Loss: {total_loss:.4f}")
+    print(f"Epoch {epoch+1}/{num_epochs}, CE Loss: {avg_ce_loss:.4f} MSE Loss: {avg_mse_loss:.4f}")
 
 
 

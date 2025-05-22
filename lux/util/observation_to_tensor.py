@@ -100,7 +100,7 @@ Args:
 Returns:
    tensors: tensor representation of the json in the form specified above
 """
-def observation_to_tensor(obs, device=None):
+def observation_to_tensor(obs):
     NUM_TILE_TYPES = 4
     NUM_ACTION_TYPES = 6
 
@@ -132,7 +132,7 @@ def observation_to_tensor(obs, device=None):
         torch.tensor([obs['info']['env_cfg']['unit_sensor_range']]),
     ]
 
-    observation = [tensor.to(device, dtype=torch.float32).flatten() for tensor in observation]
+    observation = torch.cat([tensor.to(torch.float32).flatten() for tensor in observation])
 
     actions = []
     for action in obs['actions']:
@@ -141,6 +141,6 @@ def observation_to_tensor(obs, device=None):
             torch.tensor(action[1:])
         ]))
 
-    actions = torch.cat(actions).to(device, dtype=torch.float32)
+    actions = torch.cat(actions).to(torch.float32)
 
     return observation, actions

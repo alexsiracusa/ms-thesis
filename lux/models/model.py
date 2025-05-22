@@ -1,3 +1,4 @@
+from torch.utils.data import DataLoader
 from build_sequential2d import build_sequential2d
 from lux.util import load_action_dataset
 
@@ -101,7 +102,8 @@ ce_loss = nn.CrossEntropyLoss()
 mse_loss = nn.MSELoss()
 optimizer = optim.Adam(model.parameters(), lr=1e-3)
 
-dataloader = load_action_dataset('../data', device=device)
+dataset = load_action_dataset('../data')
+dataloader = DataLoader(dataset, batch_size=2, shuffle=True)
 num_epochs = 10
 
 
@@ -110,6 +112,8 @@ for epoch in range(num_epochs):
     total_mse_loss = 0.0
 
     for batch_obs, batch_act in dataloader:
+        batch_obs.to(device)
+        batch_act.to(device)
         optimizer.zero_grad()
 
         output = model(batch_obs)

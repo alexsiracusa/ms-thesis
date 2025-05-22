@@ -8,7 +8,7 @@ class IterativeSequential2D(nn.Module):
     def __init__(
             self,
             blocks,
-            num_iterations,
+            num_iterations=1,
             activations=F.relu,
             return_last=True
     ):
@@ -59,7 +59,7 @@ class FlatIterativeSequential2D(nn.Module):
             self,
             blocks,
             sizes,
-            num_iterations,
+            num_iterations=1,
             activations=F.relu,
     ):
         super(FlatIterativeSequential2D, self).__init__()

@@ -83,17 +83,17 @@ class FlatSequential2D(torch.nn.Module):
         self.sequential = Sequential2D(blocks)
 
     """
-        Args:
-            X: The input features of shape:
-                (batch_size, in_features)
-                  'batch_size'  - number of samples in the mini-batch
-                  'in_features' - the total number of input features = sum(self.block_in_features_list)
+    Args:
+        X: The input features of shape:
+            (batch_size, in_features)
+              'batch_size'  - number of samples in the mini-batch
+              'in_features' - the total number of input features = sum(self.block_in_features_list)
 
-        Returns:
-            y: The output features of shape:
-                (batch_size, out_features)
-                  'batch_size'   - number of samples in the mini-batch
-                  'out_features' - the total number of output features = sum(self.block_out_features_list)
+    Returns:
+        y: The output features of shape:
+            (batch_size, out_features)
+              'batch_size'   - number of samples in the mini-batch
+              'out_features' - the total number of output features = sum(self.block_out_features_list)
     """
     def forward(self, X):
         in_blocks = [

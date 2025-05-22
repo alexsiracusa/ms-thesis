@@ -48,13 +48,17 @@ class Sequential2D(torch.nn.Module):
     """
     Args:
         X: The input features of shape:
-           (num_blocks, n_samples, block_dim)
-              'num_blocks' - number of blocks
-              'n_samples'  - number of samples in the mini-batch
-              'block_dim'  - number of features in each block (may be different for each block)
-                      
+            (num_blocks, batch_size, block_size)
+              'num_blocks' - number of block columns (input)
+              'batch_size' - number of samples in the mini-batch
+              'block_size' - number of input features in each block (inhomogeneous: may be different for each block)
+                        
     Returns:
-        y: The features for the next iteration (same shape as X)
+        y: The output features of shape:
+            (num_blocks, batch_size, block_size)
+              'num_blocks' - number of block rows (output)
+              'batch_size' - number of samples in the mini-batch
+              'block_size' - number of output features in each block (inhomogeneous: may be different for each block)
     """
     def forward(self, X):
         return [

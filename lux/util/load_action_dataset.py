@@ -1,5 +1,6 @@
 import os
 import json
+import numpy as np
 from torch.utils.data import Dataset, DataLoader
 from lux.util.observation_to_tensor import observation_to_tensor
 
@@ -16,7 +17,7 @@ class LuxEpisodeDataset(Dataset):
         return self.observations[idx], self.actions[idx]
 
 
-def load_action_dataset(data_dir: str):
+def load_action_dataset(data_dir: str, device=None):
     files = [f for f in os.listdir(data_dir) if os.path.isfile(os.path.join(data_dir, f))]
 
     observations = []
@@ -35,11 +36,20 @@ def load_action_dataset(data_dir: str):
         actions.append(obs)
 
     def collate_fn(batch):
+        # (batch_size, seq_len, num_blocks, block_size)
+
+        # (seq_len, num_blocks, batch_size, block_size)
         obs_batch, act_batch = zip(*batch)
+
+        obs_batch = np.transpose(obs_batch, (1, 2, 0))
+        act_batch = np.transpose(act_batch, (1, 2, 0))
+
+        print(obs_batch.shape, act_batch.shape)
+
         return list(obs_batch), list(act_batch)
 
     dataset = LuxEpisodeDataset(observations, actions)
-    return DataLoader(dataset, batch_size=2, shuffle=True)
+    return DataLoader(dataset, batch_size=2, shuffle=True, collate_fn=collate_fn)
 
 
 if __name__ == "__main__":

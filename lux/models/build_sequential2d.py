@@ -1,4 +1,5 @@
-from Sequential2D import IterativeSequential2D, MaskedLinear
+from Sequential2D import RecurrentSequential2D, MaskedLinear
+import torch.nn.functional as F
 import torch
 import numpy as np
 
@@ -35,4 +36,8 @@ def build_sequential2d(sizes, num_input_blocks=1, num_iterations=1, densities=No
                 density = densities[i][j] if densities is not None else 1
                 blocks[i, j] = MaskedLinear.sparse_random(sizes[j], sizes[i], percent=density)
 
-    return IterativeSequential2D(blocks, num_iterations=num_iterations)
+    return RecurrentSequential2D(
+        blocks,
+        num_iterations=num_iterations,
+        activations=[F.relu] * (len(sizes) - 1) + [None]
+    )

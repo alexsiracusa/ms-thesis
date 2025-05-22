@@ -1,6 +1,5 @@
 from build_sequential2d import build_sequential2d
-from lux.util import load_action_dataset, pad_and_pack_batch
-
+from lux.util import load_action_dataset
 
 import torch
 import torch.nn as nn
@@ -90,10 +89,11 @@ print(f'Hidden Total: {sum(hidden_sizes)}')
 
 # TRAINING
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# device = torch.device("cpu")
 print(f'Device: {device}')
 
 model_sizes = input_sizes + hidden_sizes + output_sizes
-model = build_sequential2d(model_sizes, num_input_blocks=len(input_sizes), num_iterations=5)
+model = build_sequential2d(model_sizes, num_input_blocks=len(input_sizes), num_iterations=3)
 model.to(device)
 model.train()
 
@@ -101,7 +101,7 @@ ce_loss = nn.CrossEntropyLoss()
 mse_loss = nn.MSELoss()
 optimizer = optim.Adam(model.parameters(), lr=1e-3)
 
-dataloader = load_action_dataset('../data')
+dataloader = load_action_dataset('../data', device=device)
 num_epochs = 10
 
 
@@ -110,25 +110,24 @@ for epoch in range(num_epochs):
     total_mse_loss = 0.0
 
     for batch_obs, batch_act in dataloader:
-        batch_obs, batch_act = pad_and_pack_batch(batch_obs, batch_act)
-
         optimizer.zero_grad()
 
         output = model(batch_obs)
+        print(output)
         total_loss = torch.tensor(0.0, device=device)
 
         # For each agent we want a separate CE loss for action type and MSE loss for the sap actions delta x and y
-        for i in range(0, 128, 8):
-            loss1 = ce_loss(output[i:i+6], action[i:i+6])
-            loss2 = mse_loss(output[i+6:i+8], action[i+6:i+8])
-
-            total_loss += loss1 + loss2
-
-            total_ce_loss += loss1.item()
-            total_mse_loss += loss2.item()
-
-        total_loss.backward()
-        optimizer.step()  # update weights
+        # for i in range(0, 128, 8):
+        #     loss1 = ce_loss(output[i:i+6], action[i:i+6])
+        #     loss2 = mse_loss(output[i+6:i+8], action[i+6:i+8])
+        #
+        #     total_loss += loss1 + loss2
+        #
+        #     total_ce_loss += loss1.item()
+        #     total_mse_loss += loss2.item()
+        #
+        # total_loss.backward()
+        # optimizer.step()  # update weights
 
     avg_ce_loss = total_ce_loss / len(dataloader) / 16
     avg_mse_loss = total_mse_loss / len(dataloader) / 16

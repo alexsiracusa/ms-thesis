@@ -3,7 +3,9 @@
 # Torchvision: 0.17.1
 
 from .Sequential2D import *
-from .IterativeSequential2D import IterativeSequential2D
+from .FlatSequential2D import *
+from .IterativeSequential2D import *
+from .RecurrentSequential2D import *
 from .SparseAdam import *
 
 from .LinearLayers.MaskedLinear import *

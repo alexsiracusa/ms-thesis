@@ -25,6 +25,6 @@ class IterativeSequential2D(nn.Module):
 
         for _ in range(self.num_iterations):
             X = self.sequential.forward(X)
-            X = [activation(x) if torch.is_tensor(x) else None for x, activation in zip(X, activations)]
+            X = [activation(x) if activation is not None else x if torch.is_tensor(x) else None for x, activation in zip(X, activations)]
 
         return X

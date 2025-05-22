@@ -95,6 +95,7 @@ class FlatIterativeSequential2D(nn.Module):
         for _ in range(self.num_iterations):
             X = self.sequential.forward(X)
 
+            # do activation functions
             for i in range(len(self.sizes)):
                 start = sum(self.sizes[:i])
                 end = sum(self.sizes[:i + 1])

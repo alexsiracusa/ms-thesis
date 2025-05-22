@@ -12,11 +12,31 @@ class RecurrentSequential2D(nn.Module):
         activations=F.relu
     ):
         super(RecurrentSequential2D, self).__init__()
+
         self.blocks = blocks
         self.num_iterations = num_iterations
         self.sequential = IterativeSequential2D(blocks, num_iterations=num_iterations, activations=activations)
         self.activations = activations
 
+    """
+    NOTE: this is really annoying to use, please don't.  Use the flat version instead
+    
+    Args:
+        input_seq: The input sequences of shape:
+            (seq_len, num_blocks, batch_size, block_size)
+              'seq_len'    - length of the sequences
+              'num_blocks' - number of blocks in sequential2d model
+              'batch_size' - number of samples in the mini-batch
+              'block_size' - number of output features in each block (inhomogeneous: may be different for each block)
+
+    Returns:
+        output_seq: The output sequences of shape:
+            (seq_len, num_blocks, batch_size, block_size)
+              'seq_len'    - length of the sequences
+              'num_blocks' - number of blocks in sequential2d model
+              'batch_size' - number of samples in the mini-batch
+              'block_size' - number of output features in each block (inhomogeneous: may be different for each block)
+    """
     def forward(self, input_seq, hidden=None):
         # input_seq: (seq_len, num_blocks, batch_size, block_size)
 

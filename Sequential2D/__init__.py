@@ -6,8 +6,5 @@ from .Sequential2D import *
 from .FlatSequential2D import *
 from .IterativeSequential2D import *
 from .RecurrentSequential2D import *
-from .SparseAdam import *
+from Sequential2D.MaskedLinear import *
 
-from .LinearLayers.MaskedLinear import *
-from .LinearLayers.SparseLinear import *
-from .LinearLayers.SparseLinearOld import *

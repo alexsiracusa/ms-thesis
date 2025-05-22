@@ -7,7 +7,6 @@ import matplotlib.pyplot as plt
 from Playground.training.create_models import masked_model
 
 
-
 data_folder = "../data"
 train_loader, test_loader = load_mnist(data_folder, flat=True)
 device = torch.device('cpu')
@@ -22,15 +21,15 @@ sizes = [2500, 500, 200, 100, 10]
 #           [f30,  f31,  f32,  f33,  f34 ],
 #           [f40,  f41,  f42,  f43,  f44 ]]
 
-model1 = masked_model(sizes=sizes, sparsity=0.5)
-print(f'Trainable: {num_trainable_parameters(model1)}')
+model = masked_model(sizes=sizes, sparsity=0.5)
+print(f'Trainable: {num_trainable_parameters(model)}')
 
 
 # train
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.Adam(model1.parameters(), lr=0.0001)
+optimizer = optim.Adam(model.parameters(), lr=0.0001)
 
-losses, forward_times, backward_times = train(model1, train_loader, criterion, optimizer, nth_batch=1, device=device)
+losses, forward_times, backward_times = train(model, train_loader, criterion, optimizer, nth_batch=1, device=device)
 iterations = np.arange(len(losses))
 
 print(f'Forward:  {sum(forward_times) / len(forward_times)}')

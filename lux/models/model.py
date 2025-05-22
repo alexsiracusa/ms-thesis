@@ -1,10 +1,11 @@
 from build_sequential2d import build_sequential2d
-from lux.util.obs_to_tensors import obs_to_tensors
-import json
+from lux.util import load_action_dataset, pad_and_pack_batch
+
 
 import torch
 import torch.nn as nn
 import torch.optim as optim
+
 
 # T is the number of teams (default is 2)          2
 # N is the max number of units per team            16
@@ -86,38 +87,34 @@ output_sizes = [
 print(f'Input Total:  {sum(input_sizes)}')
 print(f'Hidden Total: {sum(hidden_sizes)}')
 
-model_sizes = input_sizes + hidden_sizes + output_sizes
-model = build_sequential2d(model_sizes, num_input_blocks=len(input_sizes), num_iterations=5)
-
-with open('../data/actions_0.json', 'r') as file:
-    action_data = json.load(file)
-
-
-
 
 # TRAINING
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f'Device: {device}')
 
+model_sizes = input_sizes + hidden_sizes + output_sizes
+model = build_sequential2d(model_sizes, num_input_blocks=len(input_sizes), num_iterations=5)
+model.to(device)
+model.train()
+
 ce_loss = nn.CrossEntropyLoss()
 mse_loss = nn.MSELoss()
 optimizer = optim.Adam(model.parameters(), lr=1e-3)
 
-model.to(device)
-model.train()
-
+dataloader = load_action_dataset('../data')
 num_epochs = 10
+
 
 for epoch in range(num_epochs):
     total_ce_loss = 0.0
     total_mse_loss = 0.0
 
-    for data in action_data:
-        obs, action = obs_to_tensors(data, device=device)  # preprocess inputs and targets
+    for batch_obs, batch_act in dataloader:
+        batch_obs, batch_act = pad_and_pack_batch(batch_obs, batch_act)
 
-        optimizer.zero_grad()  # clear previous gradients
+        optimizer.zero_grad()
 
-        output = model(obs)  # forward pass
+        output = model(batch_obs)
         total_loss = torch.tensor(0.0, device=device)
 
         # For each agent we want a separate CE loss for action type and MSE loss for the sap actions delta x and y
@@ -133,8 +130,8 @@ for epoch in range(num_epochs):
         total_loss.backward()
         optimizer.step()  # update weights
 
-    avg_ce_loss = total_ce_loss / len(action_data) / 16
-    avg_mse_loss = total_mse_loss / len(action_data) / 16
+    avg_ce_loss = total_ce_loss / len(dataloader) / 16
+    avg_mse_loss = total_mse_loss / len(dataloader) / 16
 
     print(f"Epoch {epoch+1}/{num_epochs}, CE Loss: {avg_ce_loss:.4f} MSE Loss: {avg_mse_loss:.4f}")
 

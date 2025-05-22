@@ -3,6 +3,7 @@ import torch.nn.functional as F
 import torch
 import numpy as np
 
+
 """
 Args:
     sizes (N): list of integers representing the dimensions of each of the blocks

@@ -26,7 +26,7 @@ y = model.forward(X)
 assert (y.allclose(torch.tensor([[1, 1, 1, 1, 6, 6, 6, 6]])))
 
 
-model = FlatIterativeSequential2D(blocks, sizes, num_iterations=1, activations=[I, I, I, F.relu])
+model = FlatIterativeSequential2D(blocks, sizes, num_iterations=1, activations=[I, None, I, F.relu])
 
 X = torch.tensor([[-1, -1, -1, -1, -1, -1, -1, -1]])
 y = model.forward(X)

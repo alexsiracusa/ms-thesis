@@ -49,7 +49,10 @@ class IterativeSequential2D(nn.Module):
 
         for _ in range(self.num_iterations):
             X = self.sequential.forward(X)
-            X = [activation(x) if activation is not None else x if torch.is_tensor(x) else None for x, activation in zip(X, activations)]
+            X = [
+                activation(x) if activation is not None and x is not None else None
+                for x, activation in zip(X, activations)
+            ]
 
         return X[-1] if self.return_last else X
 
@@ -99,6 +102,8 @@ class FlatIterativeSequential2D(nn.Module):
             for i in range(len(self.sizes)):
                 start = sum(self.sizes[:i])
                 end = sum(self.sizes[:i + 1])
-                X[:, start:end] = activations[i](X[:, start:end])
+                X[:, start:end] = activations[i](X[:, start:end]) if activations[i] else X[:, start:end]
+
+        print('\n')
 
         return X

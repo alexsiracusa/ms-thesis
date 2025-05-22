@@ -75,7 +75,12 @@ class FlatRecurrentSequential2D(nn.Module):
         self.blocks = blocks
         self.sizes = sizes
         self.num_iterations = num_iterations
-        self.sequential = FlatIterativeSequential2D(blocks, sizes, num_iterations=num_iterations, activations=activations)
+        self.sequential = FlatIterativeSequential2D(
+            blocks,
+            sizes,
+            num_iterations=num_iterations,
+            activations=activations
+        )
         self.activations = activations
 
     """
@@ -93,16 +98,19 @@ class FlatRecurrentSequential2D(nn.Module):
               'batch_size'  - number of samples in the mini-batch
               'output_size' - number of output features
         """
-    def forward(self, input_seq):
+    def forward(self, input_seq, batch_first=False):
+
+        if batch_first:
+            input_seq = torch.transpose(input_seq, 0, 1)
 
         seq_len = len(input_seq)
 
         output_seq = []
         for t in range(seq_len):
             input_t = output_seq[-1] if output_seq else input_seq[t]
-            input_t[:, :input_seq[t].size(1)] = input_seq[t]
+            input_t[:, :input_seq[t].size(1)] = input_seq[t]  # (batch_size, input_size)
 
-            output = self.sequential(input_t)
+            output = self.sequential(input_t)  # (batch_size, output_size)
             output_seq.append(output)
 
         return torch.stack(output_seq)

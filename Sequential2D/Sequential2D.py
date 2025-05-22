@@ -61,8 +61,11 @@ class Sequential2D(torch.nn.Module):
               'block_size' - number of output features in each block (inhomogeneous: may be different for each block)
     """
     def forward(self, X):
+        def safe_sum(arr):
+            return sum(arr) if arr else None
+
         return [
-            sum([f.forward(x) for f, x in zip(row, X) if f is not None and x is not None])
+            safe_sum([f.forward(x) for f, x in zip(row, X) if f is not None and x is not None])
             for row in self.blocks
         ]
 
@@ -101,8 +104,9 @@ class FlatSequential2D(torch.nn.Module):
             for i in range(len(self.block_in_features))
         ]
 
-        out = torch.stack(self.sequential(in_blocks))  # (num_blocks, batch_size, block_size)
-        out = torch.transpose(out, dim0=0, dim1=1)     # (batch_size, num_blocks, block_size)
-        out = torch.flatten(out, start_dim=1)          # (batch_size, out_features)
+        out = self.sequential(in_blocks)                      # (num_blocks, batch_size, block_size)
+        out = list(zip(*out))                                 # (batch_size, num_blocks, block_size)
+        out = [torch.cat(tensors, dim=0) for tensors in out]  # (batch_size, out_features)
+        out = torch.stack(out)                                # (batch_size, out_features)
         return out
 

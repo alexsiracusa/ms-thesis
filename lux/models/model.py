@@ -1,6 +1,6 @@
 from torch.utils.data import DataLoader
 from build_sequential2d import build_sequential2d
-from lux.util import load_action_dataset
+from lux.util import load_action_dataset, action_collate_fn
 
 import torch
 import torch.nn as nn
@@ -90,7 +90,6 @@ print(f'Hidden Total: {sum(hidden_sizes)}')
 
 # TRAINING
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-# device = torch.device("cpu")
 print(f'Device: {device}')
 
 model_sizes = input_sizes + hidden_sizes + output_sizes
@@ -102,22 +101,25 @@ ce_loss = nn.CrossEntropyLoss()
 mse_loss = nn.MSELoss()
 optimizer = optim.Adam(model.parameters(), lr=1e-3)
 
+
 dataset = load_action_dataset('../data')
-dataloader = DataLoader(dataset, batch_size=2, shuffle=True)
+dataloader = DataLoader(dataset, batch_size=2, collate_fn=action_collate_fn)
 num_epochs = 10
 
 
+print(f"Memory allocated: {torch.cuda.memory_allocated(device) / (1024**2):.2f} MB")
 for epoch in range(num_epochs):
     total_ce_loss = 0.0
     total_mse_loss = 0.0
 
-    for batch_obs, batch_act in dataloader:
-        batch_obs.to(device)
-        batch_act.to(device)
+    for batch_obs, batch_act, lengths in dataloader:
+        batch_obs = batch_obs.to(device)  # (batch_size, max_seq_len, input_dim)
+        batch_act = batch_act.to(device)  # (batch_size, max_seq_len, output_dim)
+
         optimizer.zero_grad()
 
-        output = model(batch_obs)
-        print(output)
+        output = model(batch_obs, batch_first=True)  # (batch_size, max_seq_len, output_dim)
+        print(output.shape)
         total_loss = torch.tensor(0.0, device=device)
 
         # For each agent we want a separate CE loss for action type and MSE loss for the sap actions delta x and y

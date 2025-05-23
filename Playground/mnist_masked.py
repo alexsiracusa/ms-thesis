@@ -9,7 +9,7 @@ from Playground.training.create_models import masked_model
 
 data_folder = "../data"
 train_loader, test_loader = load_mnist(data_folder, flat=True)
-device = torch.device('cpu')
+device = torch.device('cuda')
 
 
 sizes = [2500, 500, 200, 100, 10]

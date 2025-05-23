@@ -104,6 +104,4 @@ class FlatIterativeSequential2D(nn.Module):
                 end = sum(self.sizes[:i + 1])
                 X[:, start:end] = activations[i](X[:, start:end]) if activations[i] else X[:, start:end]
 
-        print('\n')
-
         return X

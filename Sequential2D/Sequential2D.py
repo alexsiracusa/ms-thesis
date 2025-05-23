@@ -100,7 +100,7 @@ class FlatSequential2D(torch.nn.Module):
     """
     def forward(self, X):
         in_blocks = [
-            X[:, sum(self.block_in_features[:i]):sum(self.block_in_features[:i+1])]
+            X[:, sum(self.block_in_features[:i]):sum(self.block_in_features[:i+1])].clone()
             for i in range(len(self.block_in_features))
         ]
 

@@ -98,7 +98,7 @@ Args:
     obs: json of the form specified above
 
 Returns:
-   tensors: tensor representation of the json in the form specified above
+    tensors: tensor representation of the json in the form specified above
 """
 def observation_to_tensor(obs):
     NUM_TILE_TYPES = 4
@@ -135,12 +135,12 @@ def observation_to_tensor(obs):
     observation = torch.cat([tensor.to(torch.float32).flatten() for tensor in observation])
 
     actions = []
+    sap_deltas = []
     for action in obs['actions']:
-        actions.append(torch.cat([
-            F.one_hot(torch.tensor(action[0]), num_classes=NUM_ACTION_TYPES),
-            torch.tensor(action[1:])
-        ]))
+        actions += action[0:1]
+        sap_deltas += action[1:]
 
-    actions = torch.cat(actions).to(torch.float32)
+    actions = torch.tensor(actions, dtype=torch.long)
+    sap_deltas = torch.tensor(sap_deltas, dtype=torch.float32)
 
-    return observation, actions
+    return observation, actions, sap_deltas

@@ -8,31 +8,34 @@ from lux.util.observation_to_tensor import observation_to_tensor
 
 
 class LuxEpisodeDataset(Dataset):
-    def __init__(self, observations, actions):
+    def __init__(self, observations, actions, sap_deltas):
         self.observations = observations  # (n_samples, seq_len, input_dim)
         self.actions = actions            # (n_samples, seq_len, output_dim)
+        self.sap_deltas = sap_deltas      # (n_samples, seq_len, output_dim)
 
     def __len__(self):
         return len(self.observations)
 
     def __getitem__(self, idx):
-        return self.observations[idx], self.actions[idx]
+        return self.observations[idx], self.actions[idx], self.sap_deltas[idx]
 
 
 def action_collate_fn(batch):
-    batch_obs, batch_act = zip(*batch)
+    batch_obs, batch_act, batch_sap = zip(*batch)
     lengths = torch.tensor([seq.size(0) for seq in batch_obs])
 
     # Sort by lengths (descending) for packing
     lengths, perm_idx = lengths.sort(0, descending=True)
     batch_obs = [batch_obs[i] for i in perm_idx]
     batch_act = [batch_act[i] for i in perm_idx]
+    batch_sap = [batch_sap[i] for i in perm_idx]
 
     # Pad sequences
     padded_obs = pad_sequence(batch_obs, batch_first=True)  # (batch_size, max_seq_len, input_dim)
     padded_act = pad_sequence(batch_act, batch_first=True)  # (batch_size, max_seq_len, output_dim)
+    padded_sap = pad_sequence(batch_sap, batch_first=True)  # (batch_size, max_seq_len, output_dim)
 
-    return padded_obs, padded_act, lengths
+    return padded_obs, padded_act, padded_sap, lengths
 
 
 def load_action_dataset(data_dir: str):
@@ -40,6 +43,7 @@ def load_action_dataset(data_dir: str):
 
     observations = []   # (n_samples, seq_len, in_size)
     actions = []        # (n_samples, seq_len, out_size)
+    sap_deltas = []     # (n_samples, seq_len, out_size)
 
     for file in files:
         try:
@@ -49,11 +53,12 @@ def load_action_dataset(data_dir: str):
             print(f'Failed to read {file}: {e}')
             continue
 
-        obs, act = zip(*[observation_to_tensor(action_data) for action_data in episode])
+        obs, act, sap = zip(*[observation_to_tensor(action_data) for action_data in episode])
         observations.append(torch.stack(obs))   # (seq_len, in_size)
         actions.append(torch.stack(act))        # (seq_len, out_size)
+        sap_deltas.append(torch.stack(sap))     # (seq_len, out_size)
 
-    return LuxEpisodeDataset(observations, actions)
+    return LuxEpisodeDataset(observations, actions, sap_deltas)
 
 
 if __name__ == "__main__":

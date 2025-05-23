@@ -97,43 +97,58 @@ model = build_sequential2d(model_sizes, num_input_blocks=len(input_sizes), num_i
 model.to(device)
 model.train()
 
-ce_loss = nn.CrossEntropyLoss()
-mse_loss = nn.MSELoss()
-optimizer = optim.Adam(model.parameters(), lr=1e-3)
+ce_loss_fn = nn.CrossEntropyLoss()
+mse_loss_fn = nn.MSELoss()
+optimizer = optim.Adam(model.parameters(), lr=1e-6)
 
 
 dataset = load_action_dataset('../data')
-dataloader = DataLoader(dataset, batch_size=2, collate_fn=action_collate_fn)
+dataloader = DataLoader(dataset, batch_size=1, collate_fn=action_collate_fn)
 num_epochs = 10
+
+
+def compute_loss(
+        output,
+        batch_act,  # (batch_size, max_seq_len, 16)
+        batch_sap   # (batch_size, max_seq_len, 32)
+):
+    output = output[:, :, -128:]  # (batch_size, max_seq_len, output_dim=128)
+
+    # Reshape targets
+    flat_actions = batch_act.reshape(-1)         # (batch_size * max_seq_len * 16)
+    flat_sap_deltas = batch_sap.reshape(-1, 32)  # (batch_size * max_seq_len, 32)
+
+    # Reshape predictions
+    actions_hat = output[:, :, :96]     # (batch_size, max_seq_len, 96)
+    sap_deltas_hat = output[:, :, 96:]  # (batch_size, max_seq_len, 32)
+
+    flat_actions_hat = torch.reshape(actions_hat, (-1, 6))         # (batch_size * max_seq_len * 16, 6)
+    flat_sap_deltas_hat = torch.reshape(sap_deltas_hat, (-1, 32))  # (batch_size * max_seq_len, 32)
+
+    ce_loss = ce_loss_fn(flat_actions_hat[:slice], flat_actions[:slice])
+    mse_loss = mse_loss_fn(flat_sap_deltas_hat[:1], flat_sap_deltas[:1])
+
+    return ce_loss, mse_loss
 
 
 for epoch in range(num_epochs):
     total_ce_loss = 0.0
     total_mse_loss = 0.0
 
-    for batch_obs, batch_act, lengths in dataloader:
+    for batch_obs, batch_act, batch_sap, lengths in dataloader:
         batch_obs = batch_obs.to(device)  # (batch_size, max_seq_len, input_dim)
-        batch_act = batch_act.to(device)  # (batch_size, max_seq_len, output_dim)
+        batch_act = batch_act.to(device)  # (batch_size, max_seq_len, target_dim=16)
+        batch_sap = batch_sap.to(device)  # (batch_size, max_seq_len, target_dim=32)
+
+        output = model(batch_obs, batch_first=True)  # (batch_size, max_seq_len, output_dim=48)
+        ce_loss, mse_loss = compute_loss(output, batch_act, batch_sap)
+        total_loss = ce_loss + mse_loss
+
+        print(f"CE Loss: {ce_loss.item():.4f} MSE Loss: {mse_loss.item():.4f}")
 
         optimizer.zero_grad()
-
-        output = model(batch_obs, batch_first=True)  # (batch_size, max_seq_len, output_dim)
-        print(f"Peak Memory allocated: {torch.cuda.max_memory_allocated() / (1024 ** 2):.2f} MB")
-
-        total_loss = torch.tensor(0.0, device=device)
-
-        # For each agent we want a separate CE loss for action type and MSE loss for the sap actions delta x and y
-        # for i in range(0, 128, 8):
-        #     loss1 = ce_loss(output[i:i+6], action[i:i+6])
-        #     loss2 = mse_loss(output[i+6:i+8], action[i+6:i+8])
-        #
-        #     total_loss += loss1 + loss2
-        #
-        #     total_ce_loss += loss1.item()
-        #     total_mse_loss += loss2.item()
-        #
-        # total_loss.backward()
-        # optimizer.step()  # update weights
+        total_loss.backward()
+        optimizer.step()
 
     avg_ce_loss = total_ce_loss / len(dataloader) / 16
     avg_mse_loss = total_mse_loss / len(dataloader) / 16

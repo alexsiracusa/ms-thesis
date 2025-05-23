@@ -115,17 +115,10 @@ for epoch in range(num_epochs):
         batch_obs = batch_obs.to(device)  # (batch_size, max_seq_len, input_dim)
         batch_act = batch_act.to(device)  # (batch_size, max_seq_len, output_dim)
 
-        # only do first 20 for memory reasons
-        max_length = 20
-        batch_obs = batch_obs[:, :max_length]
-        batch_act = batch_act[:, :max_length]
-        lengths = [min(max_length, l) for l in lengths]
-
         optimizer.zero_grad()
 
         output = model(batch_obs, batch_first=True)  # (batch_size, max_seq_len, output_dim)
-        print(f"Memory allocated: {torch.cuda.memory_allocated() / (1024 ** 2):.2f} MB")
-        print(output.shape)
+        print(f"Peak Memory allocated: {torch.cuda.max_memory_allocated() / (1024 ** 2):.2f} MB")
 
         total_loss = torch.tensor(0.0, device=device)
 

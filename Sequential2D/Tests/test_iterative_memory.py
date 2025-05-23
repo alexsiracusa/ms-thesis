@@ -18,7 +18,7 @@ blocks = [
 ]
 
 device = torch.device('cuda')
-num_iterations = 10
+num_iterations = 1
 
 # Sequential2D
 model = IterativeSequential2D(blocks, num_iterations=num_iterations)
@@ -53,7 +53,9 @@ data = data.to(device)
 
 for _ in range(num_iterations):
     data = model.forward(data)
-print(f"Memory allocated: {torch.cuda.memory_allocated() / (1024 ** 2):.2f} MB")
+    print(f"Memory allocated: {torch.cuda.memory_allocated() / (1024 ** 2):.2f} MB")
+
+print(f"Peak Memory allocated: {torch.cuda.max_memory_allocated() / (1024 ** 2):.2f} MB")
 
 
 

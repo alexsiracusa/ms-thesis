@@ -1,5 +1,4 @@
 import torch
-import torch.nn.functional as F
 
 
 def random_mask(rows, cols, num_true):
@@ -17,8 +16,10 @@ class MaskedLinear(torch.nn.Module):
         self.register_buffer('mask', mask)
 
     def forward(self, X):
-        masked_weight = self.linear.weight * self.mask.T if self.mask is not None else self.linear.weight
-        return F.linear(X, masked_weight, self.linear.bias)
+        with torch.no_grad():
+            self.linear.weight.data *= self.mask.T
+
+        return self.linear.forward(X)
 
     @staticmethod
     def sparse_random(in_features, out_features, bias=True, percent=0.5):

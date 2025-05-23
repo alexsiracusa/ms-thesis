@@ -34,8 +34,9 @@ def build_sequential2d(sizes, num_input_blocks=1, num_iterations=1, flat=True, d
         )
 
 
-sizes = [2500, 2000, 2000, 1000]
-num_iterations = 2
+# sizes = [2500, 2000, 2000, 1000]
+sizes = [2500, 2500, 2500]
+num_iterations = 4
 device = torch.device('cuda')
 
 

@@ -89,7 +89,8 @@ print(f'Hidden Total: {sum(hidden_sizes)}')
 
 
 # TRAINING
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+device = torch.device('cpu')
 print(f'Device: {device}')
 
 model_sizes = input_sizes + hidden_sizes + output_sizes
@@ -99,12 +100,12 @@ model.train()
 
 ce_loss_fn = nn.CrossEntropyLoss()
 mse_loss_fn = nn.MSELoss()
-optimizer = optim.Adam(model.parameters(), lr=1e-6)
+optimizer = optim.Adam(model.parameters(), lr=1e-3)
 
 
 dataset = load_action_dataset('../data')
 dataloader = DataLoader(dataset, batch_size=1, collate_fn=action_collate_fn)
-num_epochs = 10
+num_epochs = 25
 
 
 def compute_loss(
@@ -125,8 +126,8 @@ def compute_loss(
     flat_actions_hat = torch.reshape(actions_hat, (-1, 6))         # (batch_size * max_seq_len * 16, 6)
     flat_sap_deltas_hat = torch.reshape(sap_deltas_hat, (-1, 32))  # (batch_size * max_seq_len, 32)
 
-    ce_loss = ce_loss_fn(flat_actions_hat[:slice], flat_actions[:slice])
-    mse_loss = mse_loss_fn(flat_sap_deltas_hat[:1], flat_sap_deltas[:1])
+    ce_loss = ce_loss_fn(flat_actions_hat, flat_actions)
+    mse_loss = mse_loss_fn(flat_sap_deltas_hat, flat_sap_deltas)
 
     return ce_loss, mse_loss
 
@@ -136,15 +137,22 @@ for epoch in range(num_epochs):
     total_mse_loss = 0.0
 
     for batch_obs, batch_act, batch_sap, lengths in dataloader:
-        batch_obs = batch_obs.to(device)  # (batch_size, max_seq_len, input_dim)
-        batch_act = batch_act.to(device)  # (batch_size, max_seq_len, target_dim=16)
-        batch_sap = batch_sap.to(device)  # (batch_size, max_seq_len, target_dim=32)
+        start = 100
+        max_seq_len = 20
+        batch_size = batch_obs.shape[0]
+
+        batch_obs = batch_obs.to(device)[:, start:start+max_seq_len]  # (batch_size, max_seq_len, input_dim)
+        batch_act = batch_act.to(device)[:, start:start+max_seq_len]  # (batch_size, max_seq_len, target_dim=16)
+        batch_sap = batch_sap.to(device)[:, start:start+max_seq_len]  # (batch_size, max_seq_len, target_dim=32)
 
         output = model(batch_obs, batch_first=True)  # (batch_size, max_seq_len, output_dim=48)
         ce_loss, mse_loss = compute_loss(output, batch_act, batch_sap)
-        total_loss = ce_loss + mse_loss
+        total_loss = ce_loss # + mse_loss
 
-        print(f"CE Loss: {ce_loss.item():.4f} MSE Loss: {mse_loss.item():.4f}")
+        num_ce = batch_size * max_seq_len * 16
+        num_mse = batch_size * max_seq_len * 32
+        # print(batch_act[0][0][0], output[0][0][:6])
+        print(f"CE Loss: {ce_loss.item() / num_ce:.4f} MSE Loss: {mse_loss.item() / num_mse:.4f}")
 
         optimizer.zero_grad()
         total_loss.backward()

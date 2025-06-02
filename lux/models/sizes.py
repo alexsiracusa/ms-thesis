@@ -73,9 +73,13 @@ hidden_sizes = [
 #   DELTA_X = int
 #   DELTA_Y = int
 output_sizes = [
-    128     # (N, 8)    = 16 * 8    = 128       actions                 categorical
+    96,     # (N, 6)    = 16 * 6    = 96         actions                 categorical
+    32,     # (N, 2)    = 16 * 2    = 32         actions                 continuous (int)
 ]
 
 if __name__ == '__main__':
     print(f'Input Total:  {sum(input_sizes)}')
     print(f'Hidden Total: {sum(hidden_sizes)}')
+    print(f'Output Total: {sum(output_sizes)}')
+    print(f'-------------------------')
+    print(f'Grand Total:  {sum(input_sizes + hidden_sizes + output_sizes)}')

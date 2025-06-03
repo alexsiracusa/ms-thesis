@@ -24,7 +24,7 @@ model.train()
 
 optimizer = optim.Adam(model.parameters(), lr=1e-3)
 
-dataset = load_action_dataset('../../data')
+dataset = load_action_dataset('../../data/train')
 random_index = int(random.random() * len(dataset))
 obs, act, sap = dataset[random_index]
 
@@ -42,14 +42,7 @@ for epoch in range(num_epochs):
     ce_loss, mse_loss = compute_loss(output, act, sap)
     total_loss = ce_loss + mse_loss
 
-    # Record loss values
-    num_ce = 1 * max_seq_len * 16
-    num_mse = 1 * max_seq_len * 32
-
-    avg_ce_loss = ce_loss.item() / num_ce
-    avg_mse_loss = mse_loss.item() / num_mse
-
-    print(f"CE Loss: {avg_ce_loss:.4f} MSE Loss: {avg_mse_loss:.4f}")
+    print(f"CE Loss: {ce_loss.item():.4f} MSE Loss: {mse_loss.item():.4f}")
 
     # print actions for random agent
     # agent_num = int(random.random() * 16)

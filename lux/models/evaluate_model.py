@@ -7,13 +7,13 @@ from torch.utils.data import DataLoader
 import random
 
 
-device = torch.device('cpu')
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f'Device: {device}')
 
 dataset = load_action_dataset('../data/test')
 dataloader = DataLoader(dataset, batch_size=6, collate_fn=action_collate_fn)
 
-model = torch.load('model_0_505-3.pth', weights_only=False)
+model = torch.load('model_0_505-4.pth', weights_only=False)
 model.to(device)
 model.eval()
 

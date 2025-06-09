@@ -19,42 +19,36 @@ class RecurrentSequential2D(nn.Module):
             blocks,
             num_iterations=num_iterations,
             activations=activations,
-            return_last=False
         )
         self.activations = activations
 
     """
-    NOTE: this is really annoying to use, please don't.  Use the flat version instead
+    NOTE: This is really annoying to use as the entire input_seq cannot be a tensor due to the block_size 
+          dimension being inhomogeneous, making it hard to reshape.  Use the flat version instead
+    
+    Parameter Values:
+        'seq_len'    - length of the sequences
+        'num_blocks' - number of blocks in sequential2d model
+        'batch_size' - number of samples in the mini-batch
+        'block_size' - number of output features in each block (inhomogeneous: may be different for each block)
     
     Args:
-        input_seq: The input sequences of shape:
-            (seq_len, num_blocks, batch_size, block_size)
-              'seq_len'    - length of the sequences
-              'num_blocks' - number of blocks in sequential2d model
-              'batch_size' - number of samples in the mini-batch
-              'block_size' - number of output features in each block (inhomogeneous: may be different for each block)
+        input_seq:  (seq_len, num_blocks, batch_size, block_size) - The input sequences
 
     Returns:
-        output_seq: The output sequences of shape:
-            (seq_len, num_blocks, batch_size, block_size)
-              'seq_len'    - length of the sequences
-              'num_blocks' - number of blocks in sequential2d model
-              'batch_size' - number of samples in the mini-batch
-              'block_size' - number of output features in each block (inhomogeneous: may be different for each block)
+        output_seq: (seq_len, num_blocks, batch_size, block_size) - The output sequences
     """
     def forward(self, input_seq, hidden=None):
-        # input_seq: (seq_len, num_blocks, batch_size, block_size)
-
         seq_len = len(input_seq)
 
-        # output_seq: (seq_len, num_blocks, batch_size, block_size)
-        output_seq = []
+        output_seq = []  # (seq_len, num_blocks, batch_size, block_size)
+
         for t in range(seq_len):
             input_t = input_seq[t]  # (num_blocks, batch_size, block_size)
             output_t = output_seq[-1] if output_seq else hidden
 
             if output_t is not None:
-                input_t += [torch.detach(t) if t is not None else t for t in output_t[len(input_t):]]
+                input_t += output_t[len(input_t):]
 
             output = self.sequential(input_t)
             output_seq.append(output)
@@ -84,19 +78,16 @@ class FlatRecurrentSequential2D(nn.Module):
         self.activations = activations
 
     """
+    Parameter Values:
+        'seq_len'    - length of the sequences
+        'batch_size' - number of samples in the mini-batch
+        'input_size' - number of input features = number of output features
+    
     Args:
-        input_seq: The input sequences of shape:
-            (seq_len, batch_size, input_size)
-              'seq_len'    - length of the sequences
-              'batch_size' - number of samples in the mini-batch
-              'input_size' - number of input features
-
+        input_seq: (seq_len, batch_size, input_size) - The input sequences
+            
     Returns:
-        output_seq: The output sequences of shape:
-            (seq_len, batch_size, input_size)
-              'seq_len'     - length of the sequences
-              'batch_size'  - number of samples in the mini-batch
-              'output_size' - number of output features
+        output_seq: (seq_len, batch_size, input_size) - The output sequences
     """
     def forward(self, input_seq, batch_first=False):
         if batch_first:

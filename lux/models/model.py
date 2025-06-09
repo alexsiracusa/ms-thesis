@@ -10,8 +10,7 @@ from torch.utils.data import DataLoader
 
 
 # TRAINING
-# device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-device = torch.device('cpu')
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f'Device: {device}')
 
 model_sizes = input_sizes + hidden_sizes + output_sizes
@@ -21,11 +20,11 @@ model = build_sequential2d(
     num_output_blocks=2,
     num_iterations=2
 )
-model = torch.load('model_0_505-3.pth', weights_only=False)
+model = torch.load('model_0_505-4.pth', weights_only=False)
 model.to(device)
 model.train()
 
-optimizer = optim.Adam(model.parameters(), lr=1e-4)
+optimizer = optim.Adam(model.parameters(), lr=1e-5)
 
 
 dataset = load_action_dataset('../data/train')

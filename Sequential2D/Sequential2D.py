@@ -1,5 +1,4 @@
 import torch
-
 import numpy as np
 
 
@@ -7,18 +6,21 @@ class Sequential2D(torch.nn.Module):
     """
     A 2D version of the torch.nn.Sequential module.
 
-    The idea is to have a simple class that takes a 2D list (or list like) of modules and then applies them in sequence.  This just does a few things:
+    The idea is to have a simple class that takes a 2D list (or list like) of modules and then applies them in
+    sequence.  This just does a few things:
 
     1)  Implements the "+" combiner (which is what it means for the sizes to match up).
     2)  Actually calls the modules and returns the result.
-    3)  It is efficient, since if a block is None, then it just acts as if the block returns a 0-vector of the correct size.
+    3)  It is efficient, since if a block is None, then it just acts as if the block returns a 0-vector of the
+        correct size.
 
-    Also, it assumes that things like what parameters are in trainable in the model and how they are initialized are handled by the modules themselves.
+    Also, it assumes that things like what parameters are in trainable in the model and how they are initialized
+    are handled by the modules themselves.
 
     Args:
-        blocks: A list of lists of torch.nn.Module objects. The blocks[i][j] is the block that takes in_features_list[i] features and
-                outputs out_features_list[j] features.  If blocks[i][j] is None, then we assume that the output is
-                just a 0-vector of the correct size.
+        blocks: A 2D list of lists of torch.nn.Module objects. The blocks[i][j] is the block that takes
+                in_features_list[i] features and outputs out_features_list[j] features.  If blocks[i][j] is None,
+                then we assume that the output is just a 0-vector of the correct size.
 
     Examples:
         blocks = [[I,    None, None],
@@ -46,19 +48,17 @@ class Sequential2D(torch.nn.Module):
             })
 
     """
+    Parameter Values:
+        'num_blocks' - number of block rows (output)
+        'batch_size' - number of samples in the mini-batch
+        'block_size' - number of output features in each block (inhomogeneous: may be different for each block)
+        
     Args:
-        X: The input features of shape:
-            (num_blocks, batch_size, block_size)
-              'num_blocks' - number of block columns (input)
-              'batch_size' - number of samples in the mini-batch
-              'block_size' - number of input features in each block (inhomogeneous: may be different for each block)
+        X: (num_blocks, batch_size, block_size) - The input features
                         
     Returns:
-        y: The output features of shape:
-            (num_blocks, batch_size, block_size)
-              'num_blocks' - number of block rows (output)
-              'batch_size' - number of samples in the mini-batch
-              'block_size' - number of output features in each block (inhomogeneous: may be different for each block)
+        y: (num_blocks, batch_size, block_size) - The output features
+              
     """
     def forward(self, X):
         def safe_sum(arr):
@@ -86,17 +86,16 @@ class FlatSequential2D(torch.nn.Module):
         self.sequential = Sequential2D(blocks)
 
     """
+    Parameter Values:
+        'batch_size'   - number of samples in the mini-batch
+        'in_features'  - the total number of input features = sum(self.block_in_features_list)
+        'out_features' - the total number of output features = sum(self.block_out_features_list)
+        
     Args:
-        X: The input features of shape:
-            (batch_size, in_features)
-              'batch_size'  - number of samples in the mini-batch
-              'in_features' - the total number of input features = sum(self.block_in_features_list)
+        X: (batch_size, in_features) - The input features
 
     Returns:
-        y: The output features of shape:
-            (batch_size, out_features)
-              'batch_size'   - number of samples in the mini-batch
-              'out_features' - the total number of output features = sum(self.block_out_features_list)
+        y: (batch_size, out_features) - The output features
     """
     def forward(self, X):
         in_blocks = [

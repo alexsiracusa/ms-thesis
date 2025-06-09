@@ -9,8 +9,7 @@ class IterativeSequential2D(nn.Module):
             self,
             blocks,
             num_iterations=1,
-            activations=F.relu,
-            return_last=True
+            activations=F.relu
     ):
         super(IterativeSequential2D, self).__init__()
 
@@ -18,7 +17,6 @@ class IterativeSequential2D(nn.Module):
         self.num_iterations = num_iterations
         self.sequential = Sequential2D(blocks)
         self.activations = activations
-        self.return_last = return_last
 
     # pads input with 'None' blocks to be correct length
     def format_input(self, X):
@@ -29,19 +27,16 @@ class IterativeSequential2D(nn.Module):
             return [X] + [None] * (n - 1)
 
     """
+    Parameter Values:
+        'num_blocks' - number of block rows (output)
+        'batch_size' - number of samples in the mini-batch
+        'block_size' - number of output features in each block (inhomogeneous: may be different for each block)
+    
     Args:
-        X: The input features of shape:
-            (num_blocks, batch_size, block_size)
-              'num_blocks' - number of block columns (input)
-              'batch_size' - number of samples in the mini-batch
-              'block_size' - number of input features in each block (inhomogeneous: may be different for each block)
+        X: (num_blocks, batch_size, block_size) - The input features
 
     Returns:
-        y: The output features of shape:
-            (num_blocks, batch_size, block_size)
-              'num_blocks' - number of block rows (output)
-              'batch_size' - number of samples in the mini-batch
-              'block_size' - number of output features in each block (inhomogeneous: may be different for each block)
+        y: (num_blocks, batch_size, block_size) - The output features
     """
     def forward(self, X):
         X = self.format_input(X)
@@ -54,7 +49,7 @@ class IterativeSequential2D(nn.Module):
                 for x, activation in zip(X, activations)
             ]
 
-        return X[-1] if self.return_last else X
+        return X
 
 
 class FlatIterativeSequential2D(nn.Module):
@@ -79,17 +74,15 @@ class FlatIterativeSequential2D(nn.Module):
         return F.pad(X, (0, pad_amount))
 
     """
+    Parameter Values:
+        'batch_size'   - number of samples in the mini-batch
+        'num_features' - the total number of input features = total number of output features
+    
     Args:
-        X: The input features of shape:
-            (batch_size, in_features)
-              'batch_size'  - number of samples in the mini-batch
-              'num_features' - the total number of input features = total number of output features
+        X: (batch_size, in_features) - The input features
 
     Returns:
-        y: The output features of shape:
-            (batch_size, out_features)
-              'batch_size'   - number of samples in the mini-batch
-              'num_features' - the total number of output features = total number of input features
+        y: (batch_size, out_features) - The output features
     """
     def forward(self, X):
         X = self.format_input(X)

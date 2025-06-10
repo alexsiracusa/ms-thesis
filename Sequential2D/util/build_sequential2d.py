@@ -6,8 +6,13 @@ from .build_blocks import build_blocks
 
 
 """
+NOTE: See `build_blocks.py` for more detailed documentation on how the blocks and activation functions are determined
+NOTE: See `IterativeSequential2D` and/or `RecurrentSequential2D` for more detailed on how the `flat` and 'recurrent`
+      parameters affect the model's expected input and output shapes.
+
 Args:
-    sizes:                see `in_features` and `out_features` in `build_blocks.py`
+    sizes:                see `in_features` and/or `out_features` in `build_blocks.py`
+    activations:          see `build_blocks.py`
     flat (Boolean):       whether the sequential2d model should take in a flat input vector or a list of blocks
     recurrent (Boolean):  whether the sequential2d model should take in sequences of inputs
     num_input_blocks:     see `build_blocks.py`
@@ -20,6 +25,7 @@ Returns:
 """
 def build_sequential2d(
         sizes,
+        activations=F.relu,
         flat=False,
         recurrent=False,
         num_input_blocks=1,
@@ -29,7 +35,7 @@ def build_sequential2d(
 ):
     blocks, activations = build_blocks(
         sizes, sizes,
-        activations=F.relu,
+        activations=activations,
         num_input_blocks=num_input_blocks,
         num_output_blocks=num_output_blocks,
         densities=densities,

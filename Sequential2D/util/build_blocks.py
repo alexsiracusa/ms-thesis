@@ -37,16 +37,15 @@ Returns:
     Example:
     
           Blocks                                Activations
-        [[I      None   None   ...    None]    [None            } Input space = `num_input_blocks`
-        [None   I      None   ...    None]      None            }
-        [...    ...    I      ...    None]      None            } 
-        [f      f      f      ...    f   ]      F.relu          } Hidden space
-        [f      f      f      ...    f   ]      F.relu          }
-        [...    ...    ...    ...    ... ]      ...             }
-        [f      f      f      ...    f   ]      F.relu          }
-        [f      f      f      ...    f   ]]     None            } Output space = `num_output_blocks`
-        [...    ...    ...    ...    ... ]      ...             } 
-        [f      f      f      ...    f   ]]     None]           }
+       [[I      None   None   ...    None]    [None            } Input space = `num_input_blocks`
+        [None   I      None   ...    ... ]     ...             }
+        [...    ...    I      ...    None]     None            } 
+        [f      f      f      ...    f   ]     F.relu          } Hidden space
+        [...    ...    ...    ...    ... ]     ...             }
+        [f      f      f      ...    f   ]     F.relu          }
+        [f      f      f      ...    f   ]     None            } Output space = `num_output_blocks`
+        [...    ...    ...    ...    ... ]     ...             } 
+        [f      f      f      ...    f   ]]    None]           }
 
         where the first 'num_input_blocks' rows is an identity map for the input blocks, and everything else is a 
         MaskedLinear block with densities determined the 'densities' parameter.
@@ -59,6 +58,7 @@ def build_blocks(
         num_output_blocks=1,
         densities=None
 ):
+    # Build blocks
     blocks = np.empty((len(out_features), len(in_features)), dtype=object)
 
     for i in range(len(out_features)):
@@ -72,6 +72,7 @@ def build_blocks(
                 density = densities[i][j] if densities is not None else 1
                 blocks[i, j] = MaskedLinear.sparse_random(in_features[j], out_features[i], percent=density)
 
+    # Build activations
     if isinstance(activations, list):
         activations = activations + [None] * (len(out_features) - len(activations))
     elif activations is not None:

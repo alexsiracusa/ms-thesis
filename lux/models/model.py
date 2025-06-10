@@ -1,4 +1,4 @@
-from build_sequential2d import build_sequential2d
+from Sequential2D.util import build_sequential2d
 from sizes import input_sizes, hidden_sizes, output_sizes
 from compute_loss import compute_loss
 
@@ -16,6 +16,7 @@ print(f'Device: {device}')
 model_sizes = input_sizes + hidden_sizes + output_sizes
 model = build_sequential2d(
     model_sizes,
+    flat=True, recurrent=True,
     num_input_blocks=len(input_sizes),
     num_output_blocks=2,
     num_iterations=2

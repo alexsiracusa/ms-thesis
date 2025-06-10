@@ -10,8 +10,8 @@ blocks = [[I, None, None, None],  # 2
           [I, I, I, I]]  # 2
 
 model = FlatSequential2D(
-    block_in_features=[2, 2, 2, 2],
-    block_out_features=[2, 2, 2, 2],
+    in_features=[2, 2, 2, 2],
+    out_features=[2, 2, 2, 2],
     blocks=blocks
 )
 

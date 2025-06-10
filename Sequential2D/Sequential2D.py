@@ -54,10 +54,10 @@ class Sequential2D(torch.nn.Module):
         'block_size' - number of output features in each block (inhomogeneous: may be different for each block)
         
     Args:
-        X: (num_blocks, batch_size, block_size) - The input features
+        X (num_blocks, batch_size, block_size): The input features
                         
     Returns:
-        y: (num_blocks, batch_size, block_size) - The output features
+        y (num_blocks, batch_size, block_size): The output features
               
     """
     def forward(self, X):
@@ -75,13 +75,13 @@ class FlatSequential2D(torch.nn.Module):
     def __init__(
             self,
             blocks,
-            block_in_features: list,
-            block_out_features: list
+            in_features: list,
+            out_features: list
     ):
         super(FlatSequential2D, self).__init__()
         self.blocks = blocks
-        self.block_in_features = block_in_features
-        self.block_out_features = block_out_features
+        self.in_features = in_features
+        self.out_features = out_features
 
         self.sequential = Sequential2D(blocks)
 
@@ -92,15 +92,15 @@ class FlatSequential2D(torch.nn.Module):
         'out_features' - the total number of output features = sum(self.block_out_features_list)
         
     Args:
-        X: (batch_size, in_features) - The input features
+        X (batch_size, in_features): The input features
 
     Returns:
-        y: (batch_size, out_features) - The output features
+        y (batch_size, out_features): The output features
     """
     def forward(self, X):
         in_blocks = [
-            X[:, sum(self.block_in_features[:i]):sum(self.block_in_features[:i+1])].clone()
-            for i in range(len(self.block_in_features))
+            X[:, sum(self.in_features[:i]):sum(self.in_features[:i + 1])].clone()
+            for i in range(len(self.in_features))
         ]
 
         out = self.sequential(in_blocks)                      # (num_blocks, batch_size, block_size)

@@ -24,7 +24,7 @@ class RecurrentSequential2D(nn.Module):
 
     """
     NOTE: This is really annoying to use as the entire input_seq cannot be a tensor due to the block_size 
-          dimension being inhomogeneous, making it hard to reshape.  Use the flat version instead
+          dimension being inhomogeneous, making it hard to reshape properly.  Use the flat version instead.
     
     Parameter Values:
         'seq_len'    - length of the sequences
@@ -33,10 +33,10 @@ class RecurrentSequential2D(nn.Module):
         'block_size' - number of output features in each block (inhomogeneous: may be different for each block)
     
     Args:
-        input_seq:  (seq_len, num_blocks, batch_size, block_size) - The input sequences
+        input_seq (seq_len, num_blocks, batch_size, block_size): The input sequences
 
     Returns:
-        output_seq: (seq_len, num_blocks, batch_size, block_size) - The output sequences
+        output_seq (seq_len, num_blocks, batch_size, block_size): The output sequences
     """
     def forward(self, input_seq, hidden=None):
         seq_len = len(input_seq)
@@ -84,10 +84,10 @@ class FlatRecurrentSequential2D(nn.Module):
         'input_size' - number of input features = number of output features
     
     Args:
-        input_seq: (seq_len, batch_size, input_size) - The input sequences
+        input_seq (seq_len, batch_size, input_size): The input sequences
             
     Returns:
-        output_seq: (seq_len, batch_size, input_size) - The output sequences
+        output_seq (seq_len, batch_size, input_size): The output sequences
     """
     def forward(self, input_seq, batch_first=False):
         if batch_first:

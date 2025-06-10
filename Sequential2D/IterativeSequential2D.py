@@ -33,10 +33,10 @@ class IterativeSequential2D(nn.Module):
         'block_size' - number of output features in each block (inhomogeneous: may be different for each block)
     
     Args:
-        X: (num_blocks, batch_size, block_size) - The input features
+        X (num_blocks, batch_size, block_size): The input features
 
     Returns:
-        y: (num_blocks, batch_size, block_size) - The output features
+        y (num_blocks, batch_size, block_size): The output features
     """
     def forward(self, X):
         X = self.format_input(X)
@@ -65,7 +65,7 @@ class FlatIterativeSequential2D(nn.Module):
         self.blocks = blocks
         self.sizes = sizes
         self.num_iterations = num_iterations
-        self.sequential = FlatSequential2D(blocks, block_in_features=sizes, block_out_features=sizes)
+        self.sequential = FlatSequential2D(blocks, in_features=sizes, out_features=sizes)
         self.activations = activations
 
     # pads input with zeros to be the correct length
@@ -79,10 +79,10 @@ class FlatIterativeSequential2D(nn.Module):
         'num_features' - the total number of input features = total number of output features
     
     Args:
-        X: (batch_size, in_features) - The input features
+        X (batch_size, in_features): The input features
 
     Returns:
-        y: (batch_size, out_features) - The output features
+        y (batch_size, out_features): The output features
     """
     def forward(self, X):
         X = self.format_input(X)

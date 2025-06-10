@@ -4,6 +4,5 @@
 
 from .Sequential2D import Sequential2D, FlatSequential2D
 from .IterativeSequential2D import IterativeSequential2D, FlatIterativeSequential2D
-from .RecurrentSequential2D import *
+from .RecurrentSequential2D import RecurrentSequential2D, FlatRecurrentSequential2D
 from .MaskedLinear import MaskedLinear
-

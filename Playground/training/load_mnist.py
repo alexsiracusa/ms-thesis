@@ -2,6 +2,7 @@ from torchvision import transforms
 from torchvision.datasets import MNIST
 from torch.utils.data import DataLoader
 
+
 def load_mnist(data_folder, flat=False):
     transform_list = [
         transforms.Resize((50, 50)),

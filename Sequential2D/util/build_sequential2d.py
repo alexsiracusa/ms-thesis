@@ -19,6 +19,7 @@ Args:
     num_output_blocks:    see `build_blocks.py`
     num_iterations (int): how many times to iterate the sequential2d model on each input
     densities:            see `build_blocks.py`
+    flat_init:            see `build_blocks.py`
     
 Returns:
     model: A sequential2d model
@@ -31,7 +32,8 @@ def build_sequential2d(
         num_input_blocks=1,
         num_output_blocks=1,
         num_iterations=1,
-        densities=None
+        densities=None,
+        flat_init=True,
 ):
     blocks, activations = build_blocks(
         sizes, sizes,
@@ -39,6 +41,7 @@ def build_sequential2d(
         num_input_blocks=num_input_blocks,
         num_output_blocks=num_output_blocks,
         densities=densities,
+        flat_init=flat_init,
     )
 
     model_type = (

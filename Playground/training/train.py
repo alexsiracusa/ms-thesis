@@ -32,7 +32,7 @@ def train(
             if device == 'cuda':
                 torch.cuda.synchronize()
             start = time.time()  # TIMER START
-            output = model.forward(data)
+            output = model.forward(data)[-1]
             if device == 'cuda':
                 torch.cuda.synchronize()
             forward_times.append(time.time() - start)  # TIMER END

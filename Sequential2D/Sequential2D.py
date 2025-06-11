@@ -18,9 +18,8 @@ class Sequential2D(torch.nn.Module):
     are handled by the modules themselves.
 
     Args:
-        blocks: A 2D list of lists of torch.nn.Module objects. The blocks[i][j] is the block that takes
-                in_features_list[i] features and outputs out_features_list[j] features.  If blocks[i][j] is None,
-                then we assume that the output is just a 0-vector of the correct size.
+        blocks: A 2D list of lists of torch.nn.Module objects. If blocks[i][j] is None, then we assume that the
+                output is just a 0-vector of the correct size.
 
     Examples:
         blocks = [[I,    None, None],
@@ -57,8 +56,7 @@ class Sequential2D(torch.nn.Module):
         X (num_blocks, batch_size, block_size): The input features
                         
     Returns:
-        y (num_blocks, batch_size, block_size): The output features
-              
+        y (num_blocks, batch_size, block_size): The output features      
     """
     def forward(self, X):
         def safe_sum(arr):
@@ -71,7 +69,14 @@ class Sequential2D(torch.nn.Module):
 
 
 class FlatSequential2D(torch.nn.Module):
-
+    """
+    Args:
+        blocks: A 2D list of lists of torch.nn.Module objects. The blocks[i][j] is the block that takes
+                in_features[i] features and outputs out_features[j] features.  If blocks[i][j] is None,
+                then we assume that the output is just a 0-vector of the correct size.
+        in_features: A list containing the number of input features for each column in blocks
+        out_features: A list containing the number of output features for each row in blocks
+    """
     def __init__(
             self,
             blocks,
@@ -88,8 +93,8 @@ class FlatSequential2D(torch.nn.Module):
     """
     Parameter Values:
         'batch_size'   - number of samples in the mini-batch
-        'in_features'  - the total number of input features = sum(self.block_in_features_list)
-        'out_features' - the total number of output features = sum(self.block_out_features_list)
+        'in_features'  - the total number of input features = sum(self.in_features)
+        'out_features' - the total number of output features = sum(self.out_features)
         
     Args:
         X (batch_size, in_features): The input features
@@ -108,4 +113,24 @@ class FlatSequential2D(torch.nn.Module):
         out = [torch.cat(tensors, dim=0) for tensors in out]  # (batch_size, out_features)
         out = torch.stack(out)                                # (batch_size, out_features)
         return out
+
+
+# class LinearSequential2D(torch.nn.Module):
+#
+#     def __init__(
+#             self,
+#             in_features: list,
+#             out_features: list,
+#             num_input_blocks=1,
+#             num_output_blocks=1,
+#             densities=1,
+#     ):
+#         super(LinearSequential2D, self).__init__()
+#
+#         self.in_features = in_features
+#         self.out_features = out_features
+#
+
+
+
 

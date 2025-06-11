@@ -1,4 +1,3 @@
-import torch
 from torch import nn
 from Sequential2D import Sequential2D, FlatSequential2D
 import torch.nn.functional as F
@@ -33,7 +32,7 @@ class IterativeSequential2D(nn.Module):
         'block_size' - number of output features in each block (inhomogeneous: may be different for each block)
     
     Args:
-        X (num_blocks, batch_size, block_size): The input features
+        X (num_blocks, batch_size, block_size): The input features. Will pad input with 'None' blocks if necessary
 
     Returns:
         y (num_blocks, batch_size, block_size): The output features
@@ -79,7 +78,7 @@ class FlatIterativeSequential2D(nn.Module):
         'num_features' - the total number of input features = total number of output features
     
     Args:
-        X (batch_size, in_features): The input features
+        X (batch_size, in_features): The input features. Will pad input with 0's if necessary
 
     Returns:
         y (batch_size, out_features): The output features

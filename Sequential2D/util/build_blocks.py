@@ -2,8 +2,8 @@ import torch.nn.functional as F
 import torch
 import numpy as np
 
+# from Sequential2D import MaskedLinear
 from ..MaskedLinear import MaskedLinear
-
 
 """
 Args:

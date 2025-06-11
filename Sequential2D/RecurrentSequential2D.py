@@ -33,7 +33,7 @@ class RecurrentSequential2D(nn.Module):
         'block_size' - number of output features in each block (inhomogeneous: may be different for each block)
     
     Args:
-        input_seq (seq_len, num_blocks, batch_size, block_size): The input sequences
+        input_seq (seq_len, num_blocks, batch_size, block_size): The input sequences. Will pad input with 'None' blocks if necessary
 
     Returns:
         output_seq (seq_len, num_blocks, batch_size, block_size): The output sequences
@@ -84,7 +84,7 @@ class FlatRecurrentSequential2D(nn.Module):
         'input_size' - number of input features = number of output features
     
     Args:
-        input_seq (seq_len, batch_size, input_size): The input sequences
+        input_seq (seq_len, batch_size, input_size): The input sequences. Will pad input with 0's if necessary
             
     Returns:
         output_seq (seq_len, batch_size, input_size): The output sequences

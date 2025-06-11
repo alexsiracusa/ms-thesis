@@ -1,5 +1,6 @@
 import torch
 import numpy as np
+import torch.nn.functional as F
 
 
 class Sequential2D(torch.nn.Module):
@@ -43,8 +44,16 @@ class Sequential2D(torch.nn.Module):
         # This makes sure that each of the modules parameters are registered as parameters of the Sequential2D module.
         with torch.no_grad():
             self.module_dict = torch.nn.ModuleDict({
-                f'{i},{j}' : value for (i, j), value in np.ndenumerate(blocks)
+                f'{i},{j}': value for (i, j), value in np.ndenumerate(blocks)
             })
+
+    # pads input with 'None' blocks to be correct length
+    def format_input(self, X):
+        n = len(self.blocks[0])
+        if isinstance(X, list):
+            return X + [None] * (n - len(X))
+        else:
+            return [X] + [None] * (n - 1)
 
     """
     Parameter Values:
@@ -53,12 +62,14 @@ class Sequential2D(torch.nn.Module):
         'block_size' - number of output features in each block (inhomogeneous: may be different for each block)
         
     Args:
-        X (num_blocks, batch_size, block_size): The input features
+        X (num_blocks, batch_size, block_size): The input features. Will pad input with 'None' blocks if necessary
                         
     Returns:
         y (num_blocks, batch_size, block_size): The output features      
     """
     def forward(self, X):
+        X = self.format_input(X)
+
         def safe_sum(arr):
             return sum(arr) if arr else None
 
@@ -90,6 +101,11 @@ class FlatSequential2D(torch.nn.Module):
 
         self.sequential = Sequential2D(blocks)
 
+    # pads input with zeros to be the correct length
+    def format_input(self, X):
+        pad_amount = sum(self.in_features) - X.size(1)
+        return F.pad(X, (0, pad_amount))
+
     """
     Parameter Values:
         'batch_size'   - number of samples in the mini-batch
@@ -97,12 +113,14 @@ class FlatSequential2D(torch.nn.Module):
         'out_features' - the total number of output features = sum(self.out_features)
         
     Args:
-        X (batch_size, in_features): The input features
+        X (batch_size, in_features): The input features. Will pad input with 0's if necessary
 
     Returns:
         y (batch_size, out_features): The output features
     """
     def forward(self, X):
+        X = self.format_input(X)
+
         in_blocks = [
             X[:, sum(self.in_features[:i]):sum(self.in_features[:i + 1])].clone()
             for i in range(len(self.in_features))

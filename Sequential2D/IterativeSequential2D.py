@@ -17,14 +17,6 @@ class IterativeSequential2D(nn.Module):
         self.sequential = Sequential2D(blocks)
         self.activations = activations
 
-    # pads input with 'None' blocks to be correct length
-    def format_input(self, X):
-        n = len(self.blocks)
-        if isinstance(X, list):
-            return X + [None] * (n - len(X))
-        else:
-            return [X] + [None] * (n - 1)
-
     """
     Parameter Values:
         'num_blocks' - number of block rows (output)
@@ -38,7 +30,6 @@ class IterativeSequential2D(nn.Module):
         y (num_blocks, batch_size, block_size): The output features
     """
     def forward(self, X):
-        X = self.format_input(X)
         activations = self.activations if type(self.activations) is list else [self.activations] * len(self.blocks)
 
         for _ in range(self.num_iterations):
@@ -67,11 +58,6 @@ class FlatIterativeSequential2D(nn.Module):
         self.sequential = FlatSequential2D(blocks, in_features=sizes, out_features=sizes)
         self.activations = activations
 
-    # pads input with zeros to be the correct length
-    def format_input(self, X):
-        pad_amount = sum(self.sizes) - X.size(1)
-        return F.pad(X, (0, pad_amount))
-
     """
     Parameter Values:
         'batch_size'   - number of samples in the mini-batch
@@ -84,7 +70,6 @@ class FlatIterativeSequential2D(nn.Module):
         y (batch_size, out_features): The output features
     """
     def forward(self, X):
-        X = self.format_input(X)
         activations = self.activations if type(self.activations) is list else [self.activations] * len(self.blocks)
 
         for _ in range(self.num_iterations):

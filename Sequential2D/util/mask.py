@@ -24,7 +24,17 @@ def random_mask(rows, cols, percent):
 Args:
     row_blocks (N): The sizes for each row of blocks
     col_blocks (M): The sizes for each column of blocks
-    densities (N, M): The density of each [i, j] block
+    
+    densities (Union[List[List[float]], float]): 
+        Defines the densities for each block[i, j] in blocks.
+        
+        - If a list:
+            A 2D list of shape (N, M) specifying the density (from 0.0 to 1.0) for each linear layer 
+            in the resulting `Sequential2D` block matrix. The first `num_input_blocks` rows are ignored 
+            as they are all set to torch.Identity or None.
+            
+        - If a float:
+            Sets all linear blocks to the specified density.
     
 Returns:
     tensor (n_rows, n_cols): A tensor with varying densities per block where:
@@ -53,7 +63,8 @@ def variable_mask(row_blocks, col_blocks, densities):
             c_start = sum(col_blocks[:j])
             c_end = sum(col_blocks[:j + 1])
 
-            mask_part = random_mask(row_blocks[i], col_blocks[j], densities[i][j])
+            density = densities[i][j] if isinstance(densities, list) else densities
+            mask_part = random_mask(row_blocks[i], col_blocks[j], density)
             mask[r_start:r_end, c_start:c_end].copy_(mask_part)
 
     return mask

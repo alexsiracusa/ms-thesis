@@ -93,6 +93,7 @@ class LinearIterativeSequential2D(nn.Module):
             num_iterations=1,
             num_input_blocks=1,
             densities=1,
+            weighted_init=True,
     ):
         super(LinearIterativeSequential2D, self).__init__()
 
@@ -105,6 +106,7 @@ class LinearIterativeSequential2D(nn.Module):
             num_input_blocks=num_input_blocks,
             bias=bias,
             densities=densities,
+            weighted_init=weighted_init,
         )
 
     """

@@ -8,23 +8,8 @@ from Sequential2D.MaskedLinear import MaskedLinear
 Args:
     in_features (N): A list of input feature sizes, one for each column of blocks.
     out_features (N): A list of output feature sizes, one for each row of blocks.
-    
-    activations (Union[List[Optional[nn.Module]], nn.Module]):
-        Defines the activation functions applied to each row of the output blocks.
-
-        - If a list: 
-            Should contain one activation function (or `None`) for each row. If the list is 
-            shorter than `len(out_features)`, it will be padded with `None`.
-        - If a single nn.Module: 
-            The same activation will be applied to all rows, excluding the input 
-            and output blocks as defined by `num_input_blocks` and `num_output_blocks`.
-
-        Example:
-            - `activations = [nn.ReLU(), None, nn.Tanh()]`  # Per-row specification
-            - `activations = nn.ReLU()`  # Shared activation, will be skipped for I/O rows
-
+    bias (bool): whether or not to include a bias term.
     num_input_blocks (int): The number of rows (from the top) reserved for input blocks.
-    num_output_blocks (int): The number of rows (from the bottom) reserved for output blocks.
 
     densities (Union[List[List[float]], float]): 
         Defines the densities for each block[i, j] in blocks.
@@ -37,13 +22,23 @@ Args:
         - If a float:
             Sets all linear blocks to the specified density.
             
-    flat_init (Boolean): 
-        Whether or not to initialize each block's weights separately or as one big matrix.  This is important
-        as the default PyTorch init for nn.Linear samples from U(-√k, √k) where k = 1 / in_features.  Thus
-        a 1000x1000 matrix would have different initial weights than 100 100x100 matrices. (We are often using 
-        many smaller matrices instead of one large one so that we can assign different weight densities to each).
-        
-        This can have a very large affect on loss when training.
+    weight_init: either 'standard', 'uniform', 'weighted'
+        - standard:
+            Initializes each linear blocks weights with PyTorch's default settings (kaiming uniform).
+            This is sub-optimal when there are many small blocks, and generally should not be used.
+            
+        - uniform:
+            Initializes each linear block's weights uniformly from (-bound, bound) where bound is equal
+            to 1 / sqrt(sum(in_features)). This is the same as kaiming uniform initialization on a single
+            large matrix, however when split up into many separate blocks each individual matrix has a much 
+            smaller in_features[i] instead of the sum. 
+            
+        - weighted:
+            Initializes each row of linear block's weights uniformly from (-bound, bound) where bound is
+            equal to 1 / sqrt(sum(in_features * densities[row])). This is a similar concept to the `uniform`
+            initialization above, however since each row can be sparse the effective amount of in_features
+            is actually smaller as (1 - density)% get ignored on average. This initialization accounts for 
+            this by calculating the "real" amount of in_features per row/block of output and using that instead.
 
 Returns:
     blocks: A 2D array of blocks
@@ -79,10 +74,6 @@ def build_blocks(
 
     # Build blocks
     blocks = np.empty((len(out_features), len(in_features)), dtype=object)
-
-    for i in range(len(out_features)):
-        row_densities = densities[i] if isinstance(densities, list) else densities
-        print(sum(torch.tensor(in_features) * torch.tensor(row_densities)))
 
     for i in range(len(out_features)):
         for j in range(len(in_features)):

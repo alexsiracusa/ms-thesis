@@ -17,7 +17,7 @@ def random_mask(rows, cols, percent):
     values = torch.tensor([True] * num_true + [False] * (total_elements - num_true))
     shuffled_values = values[torch.randperm(total_elements)]
 
-    return shuffled_values.view(rows, cols)
+    return shuffled_values.view(rows, cols).to(torch.float32)
 
 
 """

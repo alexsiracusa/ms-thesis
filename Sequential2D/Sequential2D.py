@@ -160,6 +160,9 @@ class LinearSequential2D(torch.nn.Module):
             - If a float:
                 Sets all linear blocks to the specified density.
 
+        weighted_init (bool): Whether to initialize the weights of each row based on its density.
+                              See 'MaskedLinear' for more details.
+
     Example:
         Although this does not implement 'blocks' the same way as the other Sequential2D modules, it can still
         be thought of the same way as a special case as seen below.
@@ -185,6 +188,7 @@ class LinearSequential2D(torch.nn.Module):
             bias=True,
             num_input_blocks=1,
             densities=1,
+            weighted_init=True,
     ):
         super(LinearSequential2D, self).__init__()
 
@@ -195,7 +199,8 @@ class LinearSequential2D(torch.nn.Module):
             sizes,
             sizes[num_input_blocks:],
             bias=bias,
-            densities=densities[num_input_blocks:] if isinstance(densities, list) else densities
+            densities=densities[num_input_blocks:] if isinstance(densities, list) else densities,
+            weighted_init=weighted_init,
         )
 
     # pads input with zeros to be the correct length

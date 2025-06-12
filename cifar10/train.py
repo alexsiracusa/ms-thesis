@@ -24,19 +24,21 @@ output_sizes = [10]
 sizes = input_sizes + hidden_sizes + output_sizes
 print(sum(sizes))
 
+densities = torch.empty((len(sizes), len(sizes))).uniform_(0, 1)
+
 model = build_sequential2d(
     sizes,
-    type='flat',
+    type='linear',
     num_input_blocks=len(input_sizes),
     num_output_blocks=len(output_sizes),
     num_iterations=4,
-    densities=0.73,
+    densities=densities.tolist(),
     weight_init='weighted',
 )
 
 criterion = nn.CrossEntropyLoss()
 optim = optim.Adam(model.parameters(), lr=1e-4)
-num_epochs = 25
+num_epochs = 1
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f'Device: {device}')
@@ -60,6 +62,6 @@ for epoch in range(num_epochs):
         losses.append(loss.item())
         print(f'Loss: {loss.item():.5f}')
 
-    print(f'Epoch {epoch}/{num_epochs} Loss: {sum(losses) / len(losses):.5f}')
+    print(f'Epoch {epoch+1}/{num_epochs} Loss: {sum(losses) / len(losses):.5f}')
 
 

@@ -1,4 +1,5 @@
 import torch.nn.functional as F
+import inspect
 
 from Sequential2D.IterativeSequential2D import IterativeSequential2D, FlatIterativeSequential2D, LinearIterativeSequential2D
 from Sequential2D.RecurrentSequential2D import RecurrentSequential2D, FlatRecurrentSequential2D
@@ -14,7 +15,8 @@ Note:
       
 Args:
     sizes (N): A list of input feature sizes, one for each column of blocks.
-    bias (bool): Whether the Sequential2D model should include a trainable bias
+    type (str): The type of Sequential2D model: "standard", "flat", or "linear"
+    recurrent (Boolean): Whether the Sequential2D model should take in sequences of inputs
     
     activations (Union[List[Optional[nn.Module]], nn.Module]):
         Defines the activation functions applied to each row of the output blocks.
@@ -30,11 +32,10 @@ Args:
             - `activations = [nn.ReLU(), None, nn.Tanh()]`  # Per-row specification
             - `activations = nn.ReLU()`  # Shared activation, will be skipped for I/O rows
     
-    type (str): The type of Sequential2D model: "standard", "flat", or "linear"
-    recurrent (Boolean): Whether the Sequential2D model should take in sequences of inputs
+    bias (bool): Whether the Sequential2D model should include a trainable bias
+    num_iterations (int):   How many times to iterate the sequential2d model on each input
     num_input_blocks (int): The number of rows (from the top) reserved for input blocks.
     num_output_blocks (int): The number of rows (from the bottom) reserved for output blocks.
-    num_iterations (int):   How many times to iterate the sequential2d model on each input
     
     densities (Union[List[List[float]], float]): 
         Defines the densities for each block[i, j] in blocks.
@@ -47,14 +48,23 @@ Args:
         - If a float:
             Sets all linear blocks to the specified density.
             
-    flat_init (Boolean): 
-        Whether or not to initialize each block's weights separately or as one big matrix.  This is important
-        as the default PyTorch init for nn.Linear samples from U(-√k, √k) where k = 1 / in_features.  Thus
-        a 1000x1000 matrix would have different initial weights than 100 100x100 matrices. These differences can 
-        have a very large affect on loss when training (flat_init=True is generally better).
-        
-        This is essentially always set to `True` when `type="linear` as we are literally initializing one big
-        matrix in that case, and the actual value of `flat_init` has no effect.
+    weight_init: either 'standard', 'uniform', 'weighted'
+        - standard:
+            Initializes each linear blocks weights with PyTorch's default settings (kaiming uniform).
+            This is sub-optimal when there are many small blocks, and generally should not be used.
+            
+        - uniform:
+            Initializes each linear block's weights uniformly from (-bound, bound) where bound is equal
+            to 1 / sqrt(sum(in_features)). This is the same as kaiming uniform initialization on a single
+            large matrix, however when split up into many separate blocks each individual matrix has a much 
+            smaller in_features[i] instead of the sum. 
+            
+        - weighted:
+            Initializes each row of linear block's weights uniformly from (-bound, bound) where bound is
+            equal to 1 / sqrt(sum(in_features * densities[row])). This is a similar concept to the `uniform`
+            initialization above, however since each row can be sparse the effective amount of in_features
+            is actually smaller as (1 - density)% get ignored on average. This initialization accounts for 
+            this by calculating the "real" amount of in_features per row/block of output and using that instead.
     
 Returns:
     model: A sequential2d model
@@ -80,18 +90,8 @@ def build_sequential2d(
     if weight_init not in valid_weight_inits:
         raise ValueError(f"Invalid type '{weight_init}'. Must be one of: {valid_weight_inits}")
 
+    # build model components
     activations = build_activations(len(sizes), num_input_blocks, num_output_blocks, activations)
-
-    if type == 'linear':
-        return LinearIterativeSequential2D(
-            sizes,
-            activations=activations,
-            bias=bias,
-            num_iterations=num_iterations,
-            num_input_blocks=num_input_blocks,
-            densities=densities,
-        )
-
     blocks = build_blocks(
         sizes, sizes,
         bias=bias,
@@ -100,24 +100,36 @@ def build_sequential2d(
         weight_init=weight_init,
     )
 
-    if type == 'standard' and not recurrent:
-        return IterativeSequential2D(
-            blocks=blocks,
-            activations=activations,
-            num_iterations=num_iterations,
-        )
-
     model_type = (
-        IterativeSequential2D     if not recurrent and type == 'standard' else
+        IterativeSequential2D if not recurrent and type == 'standard' else
+        RecurrentSequential2D if recurrent and type == 'standard' else
+
         FlatIterativeSequential2D if not recurrent and type == 'flat' else
-        RecurrentSequential2D     if recurrent and type == 'standard' else
-        FlatRecurrentSequential2D if recurrent and type == 'flat'
-        else None
+        FlatRecurrentSequential2D if recurrent and type == 'flat' else
+
+        LinearIterativeSequential2D if not recurrent and type == 'linear' else
+        # TODO: Recurrent LinearSequential2D not implemented
+        None
     )
 
-    return model_type(
+    def create_model(model_type, **kwargs):
+        if model_type is None:
+            raise ValueError("Invalid model type")
+
+        # Get valid constructor parameters
+        sig = inspect.signature(model_type.__init__)
+        valid_params = {k: v for k, v in kwargs.items() if k in sig.parameters}
+
+        return model_type(**valid_params)
+
+    return create_model(
+        model_type=model_type,
         blocks=blocks,
         sizes=sizes,
         activations=activations,
+        bias=bias,
         num_iterations=num_iterations,
+        num_input_blocks=num_input_blocks,
+        densities=densities,
+        weighted_init=weight_init == 'weighted'
     )

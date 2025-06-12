@@ -8,8 +8,8 @@ class RecurrentSequential2D(nn.Module):
     def __init__(
         self,
         blocks,
+        activations=F.relu,
         num_iterations=1,
-        activations=F.relu
     ):
         super(RecurrentSequential2D, self).__init__()
 

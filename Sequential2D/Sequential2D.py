@@ -146,6 +146,7 @@ class LinearSequential2D(torch.nn.Module):
 
     Args:
         sizes (N): A list of the sizes for each linear block such that blocks[i][j] has shape (sizes[i], sizes[j])
+        bias (bool): Whether the Sequential2D model should include a trainable bias
         num_input_blocks: The number of blocks reserved for input features.
 
         densities (Union[List[List[float]], float]):
@@ -216,9 +217,9 @@ class LinearSequential2D(torch.nn.Module):
     """
     def forward(self, X):
         X = self.format_input(X)
-        hidden = self.linear(X)
+        h = self.linear(X)
         input_size = sum(self.sizes[:self.num_input_blocks])
-        return torch.cat((X[..., :input_size], hidden), dim=1)
+        return torch.cat((X[..., :input_size], h), dim=1)
 
 
 

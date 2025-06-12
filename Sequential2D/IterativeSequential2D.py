@@ -1,5 +1,5 @@
 from torch import nn
-from Sequential2D import Sequential2D, FlatSequential2D
+from Sequential2D import Sequential2D, FlatSequential2D, LinearSequential2D
 import torch.nn.functional as F
 
 
@@ -70,7 +70,56 @@ class FlatIterativeSequential2D(nn.Module):
         y (batch_size, out_features): The output features
     """
     def forward(self, X):
-        activations = self.activations if type(self.activations) is list else [self.activations] * len(self.blocks)
+        activations = self.activations if type(self.activations) is list else [self.activations] * len(self.sizes)
+
+        for _ in range(self.num_iterations):
+            X = self.sequential.forward(X)
+
+            # do activation functions
+            for i in range(len(self.sizes)):
+                start = sum(self.sizes[:i])
+                end = sum(self.sizes[:i + 1])
+                X[:, start:end] = activations[i](X[:, start:end]) if activations[i] else X[:, start:end]
+
+        return X
+
+
+class LinearIterativeSequential2D(nn.Module):
+    def __init__(
+            self,
+            sizes,
+            bias=True,
+            num_iterations=1,
+            activations=F.relu,
+            num_input_blocks=1,
+            densities=1,
+    ):
+        super(LinearIterativeSequential2D, self).__init__()
+
+        self.sizes = sizes
+        self.num_iterations = num_iterations
+        self.activations = activations
+
+        self.sequential = LinearSequential2D(
+            sizes,
+            num_input_blocks=num_input_blocks,
+            bias=bias,
+            densities=densities,
+        )
+
+    """
+    Parameter Values:
+        'batch_size'   - number of samples in the mini-batch
+        'num_features' - the total number of input features = total number of output features
+
+    Args:
+        X (batch_size, in_features): The input features. Will pad input with 0's if necessary
+
+    Returns:
+        y (batch_size, out_features): The output features
+    """
+    def forward(self, X):
+        activations = self.activations if type(self.activations) is list else [self.activations] * len(self.sizes)
 
         for _ in range(self.num_iterations):
             X = self.sequential.forward(X)

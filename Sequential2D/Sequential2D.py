@@ -180,9 +180,9 @@ class LinearSequential2D(torch.nn.Module):
     """
     def __init__(
             self,
-            sizes: list,
-            num_input_blocks=1,
+            sizes,
             bias=True,
+            num_input_blocks=1,
             densities=1,
     ):
         super(LinearSequential2D, self).__init__()
@@ -194,7 +194,7 @@ class LinearSequential2D(torch.nn.Module):
             sizes,
             sizes[num_input_blocks:],
             bias=bias,
-            densities=densities[num_input_blocks:]
+            densities=densities[num_input_blocks:] if isinstance(densities, list) else densities
         )
 
     # pads input with zeros to be the correct length

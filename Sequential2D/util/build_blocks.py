@@ -2,8 +2,7 @@ import torch.nn.functional as F
 import torch
 import numpy as np
 
-# from Sequential2D import MaskedLinear
-from ..MaskedLinear import MaskedLinear
+from Sequential2D.MaskedLinear import MaskedLinear
 
 """
 Args:
@@ -48,7 +47,6 @@ Args:
 
 Returns:
     blocks: A 2D array of blocks
-    activations: A list of activation functions for each row in `blocks`
     
     Example:
     
@@ -69,9 +67,8 @@ Returns:
 def build_blocks(
         in_features,
         out_features,
-        activations=F.relu,
+        bias=True,
         num_input_blocks=1,
-        num_output_blocks=1,
         densities=1,
         flat_init=True,
 ):
@@ -88,8 +85,13 @@ def build_blocks(
                     blocks[i, j] = None
             else:
                 density = densities[i][j] if isinstance(densities, list) else densities
-                # only have bias when i==j to ensure only one bias per row
-                masked_linear = MaskedLinear.sparse_random(in_features[j], out_features[i], percent=density, bias=i == j)
+
+                # only have bias when i == j to ensure only one bias per row
+                masked_linear = MaskedLinear.sparse_random(
+                    in_features[j], out_features[i],
+                    percent=density,
+                    bias=i == j and bias
+                )
 
                 if flat_init:
                     with torch.no_grad():
@@ -100,16 +102,4 @@ def build_blocks(
 
                 blocks[i, j] = masked_linear
 
-    # Build activations
-    if isinstance(activations, list):
-        activations = activations + [None] * (len(out_features) - len(activations))
-    elif activations is not None:
-        activations = (
-            [None] * num_input_blocks +
-            [activations] * (len(out_features) - num_input_blocks - num_output_blocks) +
-            [None] * num_output_blocks
-        )
-    else:
-        activations = None
-
-    return blocks, activations
+    return blocks

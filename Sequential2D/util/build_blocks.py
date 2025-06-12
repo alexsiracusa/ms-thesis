@@ -1,6 +1,6 @@
-import torch.nn.functional as F
 import torch
 import numpy as np
+import math
 
 from Sequential2D.MaskedLinear import MaskedLinear
 
@@ -70,11 +70,19 @@ def build_blocks(
         bias=True,
         num_input_blocks=1,
         densities=1,
-        flat_init=True,
+        weight_init='uniform',
 ):
+    # Valid parameters
+    valid_weight_inits = ["standard", "uniform", "weighted"]
+    if weight_init not in valid_weight_inits:
+        raise ValueError(f"Invalid type '{weight_init}'. Must be one of: {valid_weight_inits}")
+
     # Build blocks
     blocks = np.empty((len(out_features), len(in_features)), dtype=object)
-    weights = torch.nn.Linear(sum(in_features), sum(out_features[num_input_blocks:])).weight.data
+
+    for i in range(len(out_features)):
+        row_densities = densities[i] if isinstance(densities, list) else densities
+        print(sum(torch.tensor(in_features) * torch.tensor(row_densities)))
 
     for i in range(len(out_features)):
         for j in range(len(in_features)):
@@ -93,12 +101,16 @@ def build_blocks(
                     bias=i == j and bias
                 )
 
-                if flat_init:
-                    with torch.no_grad():
-                        masked_linear.linear.weight.data = weights[
-                            sum(out_features[num_input_blocks:i]):sum(out_features[num_input_blocks:i+1]),
-                            sum(in_features[:j]):sum(in_features[:j+1])
-                        ]
+                # Custom initialization for weights
+                with torch.no_grad():
+                    if weight_init == 'uniform':
+                        bound = 1 / math.sqrt(sum(in_features))
+                        masked_linear.linear.weight.data.uniform_(-bound, bound)
+
+                    elif weight_init == 'weighted':
+                        row_densities = densities[i] if isinstance(densities, list) else densities
+                        bound = 1 / math.sqrt(sum(torch.tensor(in_features) * torch.tensor(row_densities)))
+                        masked_linear.linear.weight.data.uniform_(-bound, bound)
 
                 blocks[i, j] = masked_linear
 

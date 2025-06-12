@@ -1,16 +1,17 @@
 import torch.nn.functional as F
 
-from ..IterativeSequential2D import IterativeSequential2D, FlatIterativeSequential2D, LinearIterativeSequential2D
-from ..RecurrentSequential2D import RecurrentSequential2D, FlatRecurrentSequential2D
-from .build_blocks import build_blocks
-from .build_activations import build_activations
+from Sequential2D.IterativeSequential2D import IterativeSequential2D, FlatIterativeSequential2D, LinearIterativeSequential2D
+from Sequential2D.RecurrentSequential2D import RecurrentSequential2D, FlatRecurrentSequential2D
+from Sequential2D.util.build_blocks import build_blocks
+from Sequential2D.util.build_activations import build_activations
 
 
 """
-NOTE: See `build_blocks.py` for more detailed documentation on how the blocks and activation functions are determined
-NOTE: See `IterativeSequential2D` and/or `RecurrentSequential2D` for more detailed on how the `flat` and 'recurrent`
+Note: 
+    - See `build_blocks.py` for more detailed documentation on how the blocks and activation functions are determined
+    - See `IterativeSequential2D` and/or `RecurrentSequential2D` for more detailed on how the `flat` and 'recurrent`
       parameters affect the model's expected input and output shapes.
-
+      
 Args:
     sizes (N): A list of input feature sizes, one for each column of blocks.
     bias (bool): Whether the Sequential2D model should include a trainable bias
@@ -60,28 +61,33 @@ Returns:
 """
 def build_sequential2d(
         sizes,
-        bias=True,
-        activations=F.relu,
         type='standard',
         recurrent=False,
+        activations=F.relu,
+        bias=True,
+        num_iterations=1,
         num_input_blocks=1,
         num_output_blocks=1,
-        num_iterations=1,
         densities=None,
-        flat_init=True,
+        weight_init='uniform',
 ):
+    # Valid parameters
     valid_types = ["standard", "flat", "linear"]
     if type not in valid_types:
         raise ValueError(f"Invalid type '{type}'. Must be one of: {valid_types}")
+
+    valid_weight_inits = ["standard", "uniform", "weighted"]
+    if weight_init not in valid_weight_inits:
+        raise ValueError(f"Invalid type '{weight_init}'. Must be one of: {valid_weight_inits}")
 
     activations = build_activations(len(sizes), num_input_blocks, num_output_blocks, activations)
 
     if type == 'linear':
         return LinearIterativeSequential2D(
             sizes,
+            activations=activations,
             bias=bias,
             num_iterations=num_iterations,
-            activations=activations,
             num_input_blocks=num_input_blocks,
             densities=densities,
         )
@@ -91,8 +97,15 @@ def build_sequential2d(
         bias=bias,
         num_input_blocks=num_input_blocks,
         densities=densities,
-        flat_init=flat_init,
+        weight_init=weight_init,
     )
+
+    if type == 'standard' and not recurrent:
+        return IterativeSequential2D(
+            blocks=blocks,
+            activations=activations,
+            num_iterations=num_iterations,
+        )
 
     model_type = (
         IterativeSequential2D     if not recurrent and type == 'standard' else
@@ -105,6 +118,6 @@ def build_sequential2d(
     return model_type(
         blocks=blocks,
         sizes=sizes,
-        num_iterations=num_iterations,
         activations=activations,
+        num_iterations=num_iterations,
     )

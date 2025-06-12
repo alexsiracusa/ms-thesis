@@ -26,11 +26,12 @@ print(sum(sizes))
 
 model = build_sequential2d(
     sizes,
-    type='linear',
+    type='flat',
     num_input_blocks=len(input_sizes),
     num_output_blocks=len(output_sizes),
     num_iterations=4,
     densities=0.73,
+    weight_init='weighted',
 )
 
 criterion = nn.CrossEntropyLoss()

@@ -17,4 +17,4 @@ def masked_model(sizes, sparsity):
             else:
                 blocks[i, j] = MaskedLinear.sparse_random(sizes[j], sizes[i], percent=sparsity)
 
-    return IterativeSequential2D(blocks, len(sizes), F.relu)
+    return IterativeSequential2D(blocks, activations=F.relu, num_iterations=len(sizes))

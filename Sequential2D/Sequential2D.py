@@ -2,6 +2,8 @@ import torch
 import numpy as np
 import torch.nn.functional as F
 
+from .MaskedLinear import MaskedLinear
+
 
 class Sequential2D(torch.nn.Module):
     """
@@ -81,6 +83,10 @@ class Sequential2D(torch.nn.Module):
 
 class FlatSequential2D(torch.nn.Module):
     """
+    A version of Sequential2D that takes in a single flat tensor for all blocks, and instead of requiring
+    them to already be seperated in a list. FlatSequential2D takes in an X of size (batch_size, in_features)
+    instead of (num_blocks, batch_size, block_size) like in Sequential2D.
+
     Args:
         blocks: A 2D list of lists of torch.nn.Module objects. The blocks[i][j] is the block that takes
                 in_features[i] features and outputs out_features[j] features.  If blocks[i][j] is None,
@@ -133,21 +139,86 @@ class FlatSequential2D(torch.nn.Module):
         return out
 
 
-# class LinearSequential2D(torch.nn.Module):
-#
-#     def __init__(
-#             self,
-#             in_features: list,
-#             out_features: list,
-#             num_input_blocks=1,
-#             num_output_blocks=1,
-#             densities=1,
-#     ):
-#         super(LinearSequential2D, self).__init__()
-#
-#         self.in_features = in_features
-#         self.out_features = out_features
-#
+class LinearSequential2D(torch.nn.Module):
+    """
+    An optimized purely linear version of FlatSequential2D by combining all linear blocks together into one
+    large tensor for efficiency. It also allows for different densities for each block to be specified
+
+    Args:
+        sizes (N): A list of the sizes for each linear block such that blocks[i][j] has shape (sizes[i], sizes[j])
+        num_input_blocks: The number of blocks reserved for input features.
+
+        densities (Union[List[List[float]], float]):
+            Defines the densities for each block[i, j] in blocks.
+
+            - If a list:
+                A 2D list of shape (N, N) specifying the density (from 0.0 to 1.0) for each linear layer
+                in the resulting `Sequential2D` block matrix where blocks[i][j] has density densities[i][j].
+                (The first `num_input_blocks` rows are ignored as they are all set to torch.Identity or None)
+
+            - If a float:
+                Sets all linear blocks to the specified density.
+
+    Example:
+        Although this does not implement 'blocks' the same way as the other Sequential2D modules, it can still
+        be thought of the same way as a special case as seen below.
+
+        sizes = [a, b, c, d, e]
+        num_input_blocks = 2
+
+        Blocks:
+          a      b      c      d      e        Size
+        [[I      None   None   None   None ]   a      } Input space = `num_input_blocks`
+         [None   I      None   None   None ]   b      }
+         [w      w      w      w      w    ]   c
+         [w      w      w      w      w    ]   d
+         [w      w      w      w      w    ]]  e
+
+        Where the first `num_input_blocks` rows serve as an identity map for the first `num_input_blocks` blocks
+        given, and the remaining rows are a single sparse matrix with varying densities as determined by the
+        `densities` parameter.
+    """
+    def __init__(
+            self,
+            sizes: list,
+            num_input_blocks=1,
+            bias=True,
+            densities=1,
+    ):
+        super(LinearSequential2D, self).__init__()
+
+        self.sizes = sizes
+        self.num_input_blocks = num_input_blocks
+
+        self.linear = MaskedLinear.variable_random(
+            sizes,
+            sizes[num_input_blocks:],
+            bias=bias,
+            densities=densities[num_input_blocks:]
+        )
+
+    # pads input with zeros to be the correct length
+    def format_input(self, X):
+        pad_amount = sum(self.sizes) - X.size(1)
+        return F.pad(X, (0, pad_amount))
+
+    """
+    Parameter Values:
+        'batch_size'   - number of samples in the mini-batch
+        'in_features'  - the total number of input features = sum(self.in_features)
+        'out_features' - the total number of output features = sum(self.out_features)
+
+    Args:
+        X (batch_size, in_features): The input features. Will pad input with 0's if necessary
+
+    Returns:
+        y (batch_size, out_features): The output features
+    """
+    def forward(self, X):
+        X = self.format_input(X)
+        hidden = self.linear(X)
+        input_size = sum(self.sizes[:self.num_input_blocks])
+        return torch.cat((X[..., :input_size], hidden), dim=1)
 
 
 

@@ -32,8 +32,8 @@ Args:
         
         - If a list:
             A 2D list of shape (N, N) specifying the density (from 0.0 to 1.0) for each linear layer 
-            in the resulting `Sequential2D` block matrix. The first `num_input_blocks` rows are ignored 
-            as they are all set to torch.Identity or None.
+            in the resulting `Sequential2D` block matrix where blocks[i][j] has density densities[i][j]. 
+            (The first `num_input_blocks` rows are ignored as they are all set to torch.nn.Identity or None)
             
         - If a float:
             Sets all linear blocks to the specified density.

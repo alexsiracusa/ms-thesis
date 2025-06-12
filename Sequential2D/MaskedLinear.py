@@ -30,11 +30,24 @@ class MaskedLinear(torch.nn.Module):
     def _mask_grad(self, grad):
         return grad * self.mask  # Apply mask during backpropagation
 
+    """
+    See `random_mask` in `mask.py` for parameter details
+    """
     @staticmethod
     def sparse_random(in_features, out_features, bias=True, percent=0.5):
-        from .util.mask import random_mask, variable_mask
+        from .util.mask import random_mask
 
         mask = random_mask(out_features, in_features, percent)
         return MaskedLinear(in_features, out_features, bias=bias, mask=mask)
+
+    """
+    See `variable_mask` in `mask.py` for parameter details
+    """
+    @staticmethod
+    def variable_random(in_features, out_features, bias=True, densities=1):
+        from .util.mask import variable_mask
+
+        mask = variable_mask(out_features, in_features, densities)
+        return MaskedLinear(sum(in_features), sum(out_features), bias=bias, mask=mask)
 
 

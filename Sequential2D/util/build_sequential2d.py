@@ -98,7 +98,7 @@ def build_sequential2d(
         num_input_blocks=num_input_blocks,
         densities=densities,
         weight_init=weight_init,
-    )
+    ) if type != 'linear' else None
 
     model_type = (
         IterativeSequential2D if not recurrent and type == 'standard' else

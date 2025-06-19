@@ -36,7 +36,6 @@ def train_cifar(
         train_loader, test_loader = load_cifar(data_folder, batch_size=128)
 
     sizes = input_sizes + hidden_sizes + output_sizes
-    print(sum(sizes))
 
     model = build_sequential2d(
         sizes,
@@ -50,7 +49,7 @@ def train_cifar(
 
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=1e-4)
-    num_epochs = 1
+    num_epochs = 2
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f'Device: {device}')
@@ -73,13 +72,13 @@ def train_cifar(
             optimizer.zero_grad()
 
             losses.append(loss.item())
-            # print(f'Loss: {loss.item():.5f}')
 
         print(f'Epoch {epoch+1}/{num_epochs} Loss: {sum(losses) / len(losses):.5f}')
 
     # final training loss
     train_loss = average_loss(model, train_loader, device)
     test_loss = average_loss(model, test_loader, device)
+    print(f'train: {train_loss:.5f}, test: {test_loss:.5f}')
 
     return train_loss, test_loss
 

@@ -100,7 +100,7 @@ def build_blocks(
 
                     elif weight_init == 'weighted':
                         row_densities = densities[i] if isinstance(densities, list) else densities
-                        bound = 1 / math.sqrt(sum(torch.tensor(in_features) * torch.tensor(row_densities)))
+                        bound = 1 / max(math.sqrt(sum(torch.tensor(in_features) * torch.tensor(row_densities))), 1e-6)
                         masked_linear.linear.weight.data.uniform_(-bound, bound)
 
                 blocks[i, j] = masked_linear

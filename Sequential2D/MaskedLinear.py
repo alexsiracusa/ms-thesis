@@ -38,7 +38,7 @@ class MaskedLinear(torch.nn.Module):
             one_counts = (self.mask != 0).sum(dim=1)
 
             for i in range(weight.shape[0]):
-                bound = 1 / math.sqrt(one_counts[i])
+                bound = 1 / max(math.sqrt(one_counts[i]), 1)
                 weight[i].uniform_(-bound, bound)
 
             with torch.no_grad():

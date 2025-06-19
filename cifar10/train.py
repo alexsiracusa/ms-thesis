@@ -26,7 +26,14 @@ def average_loss(model, loader, device):
     return sum(losses) / len(losses)
 
 
-def train_cifar(input_sizes, hidden_sizes, output_sizes, num_iterations, densities):
+def train_cifar(
+        input_sizes, hidden_sizes, output_sizes,
+        num_iterations, densities,
+        train_loader=None, test_loader=None,
+):
+    if train_loader is None or test_loader is None:
+        data_folder = "../data"
+        train_loader, test_loader = load_cifar(data_folder, batch_size=128)
 
     sizes = input_sizes + hidden_sizes + output_sizes
     print(sum(sizes))

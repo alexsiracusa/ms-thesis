@@ -58,5 +58,10 @@ if __name__ == '__main__':
 
     densities = random_densities((150, 150))
     plt.imshow(densities, cmap='gray')
-    plt.savefig('densities.png')
+    plt.savefig('../images/densities.png')
+
+    noise = generate_perlin_noise_2d((150, 150))
+    plt.imshow(noise, cmap='gray')
+    plt.savefig('../images/noise.png')
+
 

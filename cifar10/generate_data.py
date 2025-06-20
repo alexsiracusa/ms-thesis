@@ -1,9 +1,8 @@
-import torch
 import json
-import random
 
-from train import train_cifar
-from load_cifar import load_cifar
+from cifar10.util.train import train_cifar
+from cifar10.util.load_cifar import load_cifar
+from cifar10.util.random_densities import random_densities
 
 
 data_folder = "../data"
@@ -19,22 +18,7 @@ num_blocks = len(input_sizes + hidden_sizes + output_sizes)
 num_iterations = 4
 
 
-def random_densities():
-    shape = (num_blocks, num_blocks)
-
-    p_random = 0.25 * random.random() + 0.01
-    print(f"p_random: {p_random}")
-
-    random_tensor = torch.rand(shape)
-    mask = torch.rand(shape) < p_random
-
-    base_tensor = torch.zeros(shape)
-    base_tensor[mask] = random_tensor[mask]
-
-    return base_tensor
-
-
-for _ in range(300):
+for _ in range(999):
     densities = random_densities()
 
     train_loss, test_loss = train_cifar(

@@ -2,6 +2,7 @@ import random
 import torch
 import numpy as np
 from noise import pnoise2
+from perlin_noise import PerlinNoise
 
 
 def random_densities(shape):
@@ -17,50 +18,26 @@ def random_densities(shape):
     return base_tensor
 
 
-def generate_perlin_noise_2d(shape, scale=100.0, octaves=1, persistence=0.5, lacunarity=2.0, base=0):
-    """
-    Generate a 2D NumPy array filled with Perlin noise.
+def generate_perlin_noise_2d(shape):
+    width, height = shape
 
-    Args:
-        shape: Tuple (height, width) for the output array shape.
-        scale: Controls the "zoom" level of the noise.
-        octaves: Number of layers of noise to combine.
-        persistence: Amplitude decrease per octave.
-        lacunarity: Frequency increase per octave.
-        base: Base offset for noise generation.
+    noise = PerlinNoise(octaves=3)
+    noise_array = np.array([[noise([i/width, j/height]) for j in range(width)] for i in range(height)])
 
-    Returns:
-        A NumPy array of shape `shape` filled with Perlin noise values.
-    """
-    height, width = shape
-    noise_array = np.zeros((height, width))
-
-    for i in range(height):
-        for j in range(width):
-            x = j / scale
-            y = i / scale
-            noise_val = pnoise2(
-                x, y,
-                octaves=octaves,
-                persistence=persistence,
-                lacunarity=lacunarity,
-                repeatx=width,
-                repeaty=height,
-                base=base
-            )
-            noise_array[i][j] = noise_val
-
-    return noise_array
+    normalized_noise = (noise_array + 1) / 2
+    return normalized_noise
 
 
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
 
-    densities = random_densities((150, 150))
+    shape = (150, 150)
+
+    densities = random_densities(shape)
     plt.imshow(densities, cmap='gray')
     plt.savefig('../images/densities.png')
 
-    noise = generate_perlin_noise_2d((150, 150))
+    noise = generate_perlin_noise_2d(shape)
     plt.imshow(noise, cmap='gray')
     plt.savefig('../images/noise.png')
 

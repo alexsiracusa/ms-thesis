@@ -2,8 +2,8 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 
-from load_cifar import load_cifar
-from flatten_images import flatten_images
+from cifar10.util.load_cifar import load_cifar
+from cifar10.util.flatten_images import flatten_images
 from Sequential2D.util import build_sequential2d
 
 

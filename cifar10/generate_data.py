@@ -23,7 +23,6 @@ for _ in range(999):
     # densities = random_densities((num_blocks, num_blocks))
     densities = generate_perlin_noise_2d((num_blocks, num_blocks))
     densities[densities < 0.5] = 0
-    densities = normalize(densities)
 
 
     train_loss, test_loss = train_cifar(

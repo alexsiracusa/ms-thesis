@@ -1,7 +1,6 @@
 import random
 import torch
 import numpy as np
-from noise import pnoise2
 from perlin_noise import PerlinNoise
 
 
@@ -18,13 +17,21 @@ def random_densities(shape):
     return base_tensor
 
 
+def normalize(arr):
+    min_val = np.min(arr)
+    max_val = np.max(arr)
+    if max_val == min_val:
+        return np.zeros_like(arr)
+    return (arr - min_val) / (max_val - min_val)
+
+
 def generate_perlin_noise_2d(shape):
     width, height = shape
 
     noise = PerlinNoise(octaves=3)
     noise_array = np.array([[noise([i/width, j/height]) for j in range(width)] for i in range(height)])
 
-    normalized_noise = (noise_array + 1) / 2
+    normalized_noise = normalize(noise_array)
     return normalized_noise
 
 
@@ -40,5 +47,9 @@ if __name__ == '__main__':
     noise = generate_perlin_noise_2d(shape)
     plt.imshow(noise, cmap='gray')
     plt.savefig('../images/noise.png')
+
+    noise[noise < 0.5] = 0
+    plt.imshow(noise, cmap='gray')
+    plt.savefig('../images/threshold.png')
 
 

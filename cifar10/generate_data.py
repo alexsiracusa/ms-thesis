@@ -2,7 +2,7 @@ import json
 
 from cifar10.util.train import train_cifar
 from cifar10.util.load_cifar import load_cifar
-from cifar10.util.random_densities import random_densities, generate_perlin_noise_2d
+from cifar10.util.random_densities import random_densities, generate_perlin_noise_2d, normalize
 
 
 data_folder = "../data"
@@ -22,6 +22,9 @@ num_iterations = 4
 for _ in range(999):
     # densities = random_densities((num_blocks, num_blocks))
     densities = generate_perlin_noise_2d((num_blocks, num_blocks))
+    densities[densities < 0.5] = 0
+    densities = normalize(densities)
+
 
     train_loss, test_loss = train_cifar(
         input_sizes, hidden_sizes, output_sizes,

@@ -5,7 +5,7 @@ from perlin_noise import PerlinNoise
 
 
 def sparse_random_densities(shape):
-    p_random = random.random()
+    p_random = 0.25 * random.random()
     print(f"p_random: {p_random}")
 
     random_tensor = torch.rand(shape)

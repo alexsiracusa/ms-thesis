@@ -4,8 +4,8 @@ import numpy as np
 from perlin_noise import PerlinNoise
 
 
-def random_densities(shape):
-    p_random = 0.25 * random.random() + 0.01
+def sparse_random_densities(shape):
+    p_random = random.random()
     print(f"p_random: {p_random}")
 
     random_tensor = torch.rand(shape)
@@ -17,12 +17,11 @@ def random_densities(shape):
     return base_tensor
 
 
-def normalize(arr):
-    min_val = np.min(arr)
-    max_val = np.max(arr)
-    if max_val == min_val:
-        return np.zeros_like(arr)
-    return (arr - min_val) / (max_val - min_val)
+def perlin_densities(shape):
+    densities = generate_perlin_noise_2d(shape)
+    densities[densities < 0.5] = 0
+
+    return densities
 
 
 def generate_perlin_noise_2d(shape):
@@ -35,12 +34,20 @@ def generate_perlin_noise_2d(shape):
     return normalized_noise
 
 
+def normalize(arr):
+    min_val = np.min(arr)
+    max_val = np.max(arr)
+    if max_val == min_val:
+        return np.zeros_like(arr)
+    return (arr - min_val) / (max_val - min_val)
+
+
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
 
     shape = (150, 150)
 
-    densities = random_densities(shape)
+    densities = sparse_random_densities(shape)
     plt.imshow(densities, cmap='gray')
     plt.savefig('../images/densities.png')
 

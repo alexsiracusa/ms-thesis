@@ -30,9 +30,10 @@ def train_cifar(
         input_sizes, hidden_sizes, output_sizes,
         num_iterations, densities,
         train_loader=None, test_loader=None,
+        num_epochs=1,
 ):
     if train_loader is None or test_loader is None:
-        data_folder = "../data"
+        data_folder = "../../data"
         train_loader, test_loader = load_cifar(data_folder, batch_size=128)
 
     sizes = input_sizes + hidden_sizes + output_sizes
@@ -49,7 +50,6 @@ def train_cifar(
 
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=1e-4)
-    num_epochs = 2
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f'Device: {device}')
@@ -84,7 +84,7 @@ def train_cifar(
 
 
 if __name__ == '__main__':
-    data_folder = "../data"
+    data_folder = "../../data"
     train_loader, test_loader = load_cifar(data_folder, batch_size=128)
 
     input_sizes = [75] * 100

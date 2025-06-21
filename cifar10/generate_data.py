@@ -2,13 +2,13 @@ import json
 
 from cifar10.util.train import train_cifar
 from cifar10.util.load_cifar import load_cifar
-from cifar10.util.random_densities import sparse_random_densities, perlin_densities
+from cifar10.util.random_densities import sparse_random, sparse_perlin
 
 
 def generate_data(
         data_folder='../data',
         output_file='./train_data.txt',
-        density_fn=sparse_random_densities,
+        density_fn=sparse_random,
 ):
     train_loader, test_loader = load_cifar(data_folder, batch_size=128, shuffle=False)
 
@@ -26,7 +26,7 @@ def generate_data(
             input_sizes, hidden_sizes, output_sizes,
             num_iterations, densities,
             train_loader, test_loader,
-            num_epochs=1,
+            num_epochs=3,
         )
 
         data = {
@@ -45,6 +45,6 @@ if __name__ == '__main__':
     generate_data(
         data_folder='../data',
         output_file='./train_data.txt',
-        density_fn=sparse_random_densities,
+        density_fn=sparse_random,
     )
 

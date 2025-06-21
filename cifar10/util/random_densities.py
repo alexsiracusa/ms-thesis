@@ -4,8 +4,8 @@ import numpy as np
 from perlin_noise import PerlinNoise
 
 
-def sparse_random_densities(shape):
-    p_random = 0.25 * random.random()
+def sparse_random(shape):
+    p_random = random.random()
     print(f"p_random: {p_random}")
 
     random_tensor = torch.rand(shape)
@@ -17,24 +17,29 @@ def sparse_random_densities(shape):
     return base_tensor
 
 
-def perlin_densities(shape):
-    densities = generate_perlin_noise_2d(shape)
-    densities[densities < 0.5] = 0
+def sparse_perlin(shape):
+    densities = generate_perlin_noise_2d(shape, square=True)
+    densities = _normalize((densities - 0.33).clip(0, 1))
 
     return densities
 
 
-def generate_perlin_noise_2d(shape):
-    width, height = shape
+def generate_perlin_noise_2d(shape, octaves=8, square=True):
+    rows, cols = shape
+    noise = PerlinNoise(octaves=octaves)
 
-    noise = PerlinNoise(octaves=3)
-    noise_array = np.array([[noise([i/width, j/height]) for j in range(width)] for i in range(height)])
+    if square:
+        dim = max(rows, cols)
+        noise_array = np.array([[noise([i / dim, j / dim]) for j in range(dim)] for i in range(dim)])
+        noise_array = noise_array[:rows, :cols]
+    else:
+        noise_array = np.array([[noise([i/cols, j/rows]) for j in range(cols)] for i in range(rows)])
 
-    normalized_noise = normalize(noise_array)
+    normalized_noise = _normalize(noise_array)
     return normalized_noise
 
 
-def normalize(arr):
+def _normalize(arr):
     min_val = np.min(arr)
     max_val = np.max(arr)
     if max_val == min_val:
@@ -45,18 +50,19 @@ def normalize(arr):
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
 
-    shape = (150, 150)
+    shape = (45, 145)
+    plt.axis('off')
 
-    densities = sparse_random_densities(shape)
+    densities = sparse_random(shape)
     plt.imshow(densities, cmap='gray')
-    plt.savefig('../images/densities.png')
+    plt.savefig('../images/sparse_random.png', bbox_inches='tight', pad_inches=0)
 
     noise = generate_perlin_noise_2d(shape)
     plt.imshow(noise, cmap='gray')
-    plt.savefig('../images/noise.png')
+    plt.savefig('../images/perlin.png', bbox_inches='tight', pad_inches=0)
 
-    noise[noise < 0.5] = 0
+    noise = _normalize((noise - 0.33).clip(0, 1))
     plt.imshow(noise, cmap='gray')
-    plt.savefig('../images/threshold.png')
+    plt.savefig('../images/sparse_perlin.png', bbox_inches='tight', pad_inches=0)
 
 

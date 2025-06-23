@@ -5,7 +5,7 @@ from perlin_noise import PerlinNoise
 
 
 def sparse_random(shape):
-    p_random = random.random()
+    p_random = 0.75 * random.random() + 0.25
     print(f"p_random: {p_random}")
 
     random_tensor = torch.rand(shape)
@@ -61,7 +61,7 @@ if __name__ == '__main__':
     plt.imshow(noise, cmap='gray')
     plt.savefig('../images/perlin.png', bbox_inches='tight', pad_inches=0)
 
-    noise = _normalize((noise - 0.33).clip(0, 1))
+    noise = sparse_perlin(shape)
     plt.imshow(noise, cmap='gray')
     plt.savefig('../images/sparse_perlin.png', bbox_inches='tight', pad_inches=0)
 

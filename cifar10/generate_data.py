@@ -44,7 +44,7 @@ def generate_data(
 if __name__ == '__main__':
     generate_data(
         data_folder='../data',
-        output_file='./train_data.txt',
+        output_file='train_epoch=3/train_data.txt',
         density_fn=sparse_random,
     )
 

@@ -2,15 +2,19 @@ import matplotlib.pyplot as plt
 import numpy as np
 import json
 
-input_sizes = [75] * 100
-hidden_sizes = [50] * 44
-output_sizes = [10]
-sizes = input_sizes + hidden_sizes + output_sizes
 
-num_parameters = np.array([
-    [row_size * col_size for col_size in sizes]
-    for row_size in sizes
-])
+def get_num_trainable(densities):
+    input_sizes = [75] * 100
+    hidden_sizes = [50] * 44
+    output_sizes = [10]
+    sizes =  input_sizes + hidden_sizes + output_sizes
+
+    num_parameters = np.array([
+        [row_size * col_size for col_size in sizes]
+        for row_size in sizes
+    ])
+
+    return (np.array(densities) * num_parameters[len(input_sizes):]).sum()
 
 
 def generate_graphs(
@@ -25,10 +29,7 @@ def generate_graphs(
             datasets.append(dataset)
 
     for i, dataset in enumerate(datasets):
-        trainable_parameters = [
-            (np.array(data['densities']) * num_parameters[len(input_sizes):]).sum()
-            for data in dataset
-        ]
+        trainable_parameters = [get_num_trainable((data['densities'])) for data in dataset]
         test_losses = [data['test_loss'] for data in dataset]
         # trainable_parameters, test_losses = zip(*[(n_param, loss) for n_param, loss in zip(trainable_parameters, test_losses) if n_param < 0.5e7])
 

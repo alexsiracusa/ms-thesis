@@ -3,6 +3,7 @@ import json
 from cifar10.util.train import train_cifar
 from cifar10.util.load_cifar import load_cifar
 from cifar10.util.random_densities import sparse_random, sparse_perlin
+from util import input_sizes, hidden_sizes, output_sizes
 
 
 def generate_data(
@@ -11,10 +12,6 @@ def generate_data(
         density_fn=sparse_random,
 ):
     train_loader, test_loader = load_cifar(data_folder, batch_size=128, shuffle=False)
-
-    input_sizes = [75] * 100
-    hidden_sizes = [50] * 44
-    output_sizes = [10]
 
     num_blocks = len(input_sizes + hidden_sizes + output_sizes)
     num_iterations = 4

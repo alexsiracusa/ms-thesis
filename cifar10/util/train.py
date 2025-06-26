@@ -2,8 +2,8 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 
-from cifar10.util.load_cifar import load_cifar
-from cifar10.util.flatten_images import flatten_images
+from .load_cifar import load_cifar
+from .flatten_images import flatten_images
 from Sequential2D.util import build_sequential2d
 
 
@@ -84,12 +84,10 @@ def train_cifar(
 
 
 if __name__ == '__main__':
+    from sizes import input_sizes, hidden_sizes, output_sizes
+
     data_folder = "../../data"
     train_loader, test_loader = load_cifar(data_folder, batch_size=128)
-
-    input_sizes = [75] * 100
-    hidden_sizes = [50] * 44
-    output_sizes = [10]
 
     num_blocks = len(input_sizes + hidden_sizes + output_sizes)
 

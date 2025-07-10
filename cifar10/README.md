@@ -28,11 +28,11 @@ num_epochs = 1
 ## Random Model Architectures
 There are two ways we generate random model architectures to train and add to the dataset. The first has a random percent of the blocks sparsities be set to a random sparsity between 0-1, and the rest set to 0. An example of this can be seen below.
 
-![plot](./images/sparse_random.png)
+![plot](images/noise/sparse_random.png)
 
 The second uses perlin noise normalized between 0-1, then setting all blocks with a sparsity < 0.5 to 0.
 
-![plot](./images/sparse_perlin.png)
+![plot](images/noise/sparse_perlin.png)
 
 ## Resulting dataset
 

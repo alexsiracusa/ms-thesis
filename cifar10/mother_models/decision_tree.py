@@ -34,4 +34,5 @@ print(mse)
 num_trainable = [get_num_trainable(data['densities']) for data in train_data][train_cut:]
 plt.scatter(num_trainable, y_test)
 plt.scatter(num_trainable, y_pred)
+plt.figtext(0.5, 0.5, f'Loss: {mse:.7f}', fontsize=12, color='red')
 plt.savefig('graph.png')

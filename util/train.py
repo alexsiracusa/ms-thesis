@@ -7,10 +7,10 @@ def train(
     train_loader,
     criterion,
     optimizer,
-    epochs = 1,
-    print_batch = None,
-    print_epoch = 1,
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu'),
+    epochs=1,
+    print_batch=None,
+    print_epoch=1,
+    device=torch.device('cuda' if torch.cuda.is_available() else 'cpu'),
 ):
     model = model.to(device)
     criterion = criterion.to(device)

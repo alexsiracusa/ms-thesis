@@ -44,28 +44,30 @@ train_loader = DataLoader(
 # TRAIN MODEL
 model = nn.Sequential(
     nn.Linear(6525, 2000),
-    nn.ReLU(),
+    nn.Tanh(),
     nn.Linear(2000, 500),
-    nn.ReLU(),
-    nn.Linear(500, 1),
-    nn.ReLU()
+    nn.Tanh(),
+    nn.Linear(500, 1)
 )
 
 criterion = nn.MSELoss()
-optimizer = optim.Adam(model.parameters(), lr=1e-4)
-train(model, train_loader, criterion, optimizer, epochs=3)
+optimizer = optim.Adam(model.parameters(), lr=1e-3)
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+train(model, train_loader, criterion, optimizer, epochs=50, device=device)
 
 
 # EVALUATE MODEL
-y_pred = model.forward(X_test)
-loss = criterion(y_pred, y_test)
+y_pred = model.forward(X_test.to(device))
+loss = criterion(y_pred, y_test.to(device))
 
 print(loss.item())
 
 num_trainable = [get_num_trainable(data['densities']) for data in train_data][train_cut:]
-plt.scatter(num_trainable, y_test.detach().numpy())
-plt.scatter(num_trainable, y_pred.detach().numpy())
+plt.scatter(num_trainable, y_test.detach().cpu().numpy())
+plt.scatter(num_trainable, y_pred.detach().cpu().numpy())
+plt.figtext(0.5, 0.5, f'Loss: {loss.item():.7f}', fontsize=12, color='red')
 plt.savefig('graph.png')
+
 
 
 

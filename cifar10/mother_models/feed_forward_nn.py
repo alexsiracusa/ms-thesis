@@ -44,9 +44,9 @@ train_loader = DataLoader(
 # TRAIN MODEL
 model = nn.Sequential(
     nn.Linear(6525, 2000),
-    nn.Tanh(),
+    nn.Sigmoid(),
     nn.Linear(2000, 500),
-    nn.Tanh(),
+    nn.Sigmoid(),
     nn.Linear(500, 1)
 )
 

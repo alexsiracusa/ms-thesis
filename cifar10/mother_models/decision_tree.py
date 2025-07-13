@@ -35,4 +35,4 @@ num_trainable = [get_num_trainable(data['densities']) for data in train_data][tr
 plt.scatter(num_trainable, y_test)
 plt.scatter(num_trainable, y_pred)
 plt.figtext(0.5, 0.5, f'Loss: {mse:.7f}', fontsize=12, color='red')
-plt.savefig('graph.png')
+plt.savefig('decision_tree.png')

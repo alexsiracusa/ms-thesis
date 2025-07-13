@@ -23,7 +23,7 @@ with open('../train_epoch=3/train_data.txt', 'r') as f:
     random.shuffle(train_data)
     train_cut = int(0.8 * len(train_data))
 
-X = np.array([np.array(data['densities']).flatten() for data in train_data])
+X = [[get_num_trainable(data['densities']) / 1e7] for data in train_data]
 y = np.array([[data['test_loss']] for data in train_data])
 
 X_train, y_train = X[:train_cut], y[:train_cut]
@@ -40,20 +40,19 @@ train_loader = DataLoader(
     shuffle=True
 )
 
-
-# TRAIN MODEL
+size = 64
 model = nn.Sequential(
-    nn.Linear(6525, 2000),
-    nn.Sigmoid(),
-    nn.Linear(2000, 500),
-    nn.Sigmoid(),
-    nn.Linear(500, 1)
+    nn.Linear(1, size),
+    nn.ReLU(),
+    nn.Linear(size, size),
+    nn.ReLU(),
+    nn.Linear(size, 1),
 )
 
 criterion = nn.MSELoss()
-optimizer = optim.Adam(model.parameters(), lr=1e-3)
+optimizer = optim.Adam(model.parameters(), lr=1e-3, weight_decay=1e-5)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-train(model, train_loader, criterion, optimizer, epochs=50, device=device)
+train(model, train_loader, criterion, optimizer, epochs=100, device=device)
 
 
 # EVALUATE MODEL
@@ -66,7 +65,7 @@ num_trainable = [get_num_trainable(data['densities']) for data in train_data][tr
 plt.scatter(num_trainable, y_test.detach().cpu().numpy())
 plt.scatter(num_trainable, y_pred.detach().cpu().numpy())
 plt.figtext(0.5, 0.5, f'Loss: {loss.item():.7f}', fontsize=12, color='red')
-plt.savefig('feed_forward.png')
+plt.savefig('mini.png')
 
 
 

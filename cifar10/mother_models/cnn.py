@@ -81,7 +81,7 @@ num_trainable = [get_num_trainable(data['densities']) for data in train_data][tr
 plt.scatter(num_trainable, y_test.detach().cpu().numpy())
 plt.scatter(num_trainable, y_pred.detach().cpu().numpy())
 plt.figtext(0.5, 0.5, f'Loss: {loss.item():.7f}', fontsize=12, color='red')
-plt.savefig('graph.png')
+plt.savefig('cnn.png')
 
 
 

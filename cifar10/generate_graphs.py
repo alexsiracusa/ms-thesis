@@ -33,6 +33,7 @@ def generate_graphs(
 
     plt.xlabel('Num. Trainable Parameters')
     plt.ylabel('Test Loss')
+    plt.legend(loc='upper right')
     # plt.xscale('log')
     plt.savefig(graph_file)
 
@@ -40,7 +41,7 @@ def generate_graphs(
 if __name__ == '__main__':
     generate_graphs(
         data_files=['./train_epoch=3/perlin_data.txt', './train_epoch=3/train_data.txt'],
-        labels=['sparse_perlin', 'sparse random'],
+        labels=['Sparse perlin', 'Sparse random'],
         graph_file='graph.png',
     )
 

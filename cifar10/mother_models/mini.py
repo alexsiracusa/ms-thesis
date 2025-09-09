@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 random.seed(0)
 
 # LOAD DATA
-with open('../train_epoch=3/train_data.txt', 'r') as f:
+with open('../train_epoch=3/perlin_data.txt', 'r') as f:
     train_data = [json.loads(line) for line in f]
     random.shuffle(train_data)
     train_cut = int(0.8 * len(train_data))
@@ -52,7 +52,7 @@ model = nn.Sequential(
 criterion = nn.MSELoss()
 optimizer = optim.Adam(model.parameters(), lr=1e-3, weight_decay=1e-5)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-train(model, train_loader, criterion, optimizer, epochs=100, device=device)
+train(model, train_loader, criterion, optimizer, epochs=150, device=device)
 
 
 # EVALUATE MODEL
@@ -62,9 +62,17 @@ loss = criterion(y_pred, y_test.to(device))
 print(loss.item())
 
 num_trainable = [get_num_trainable(data['densities']) for data in train_data][train_cut:]
-plt.scatter(num_trainable, y_test.detach().cpu().numpy())
-plt.scatter(num_trainable, y_pred.detach().cpu().numpy())
-plt.figtext(0.5, 0.5, f'Loss: {loss.item():.7f}', fontsize=12, color='red')
+plt.scatter(num_trainable, y_test.detach().cpu().numpy(), label='Data points')
+plt.scatter(num_trainable, y_pred.detach().cpu().numpy(), label='Predictions')
+plt.text(
+    1, 1.05, f'Loss: {loss.item():.7f}',
+    transform=plt.gca().transAxes,
+    ha="right", va="top",
+    fontsize=12, color="red"
+)
+plt.legend(loc='upper right')
+plt.xlabel('Num. Trainable Parameters')
+plt.ylabel('Test Loss')
 plt.savefig('mini.png')
 
 

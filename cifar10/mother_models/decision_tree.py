@@ -10,7 +10,7 @@ from cifar10.util import get_num_trainable
 
 random.seed(0)
 
-with open('../train_epoch=3/train_data.txt', 'r') as f:
+with open('../train_epoch=3/perlin_data.txt', 'r') as f:
     train_data = [json.loads(line) for line in f]
     random.shuffle(train_data)
     train_cut = int(0.8 * len(train_data))
@@ -32,7 +32,15 @@ mse = mean_squared_error(y_test, y_pred)
 print(mse)
 
 num_trainable = [get_num_trainable(data['densities']) for data in train_data][train_cut:]
-plt.scatter(num_trainable, y_test)
-plt.scatter(num_trainable, y_pred)
-plt.figtext(0.5, 0.5, f'Loss: {mse:.7f}', fontsize=12, color='red')
+plt.scatter(num_trainable, y_test, label='Data points')
+plt.scatter(num_trainable, y_pred, label='Predictions')
+plt.text(
+    1, 1.05, f'Loss: {mse:.7f}',
+    transform=plt.gca().transAxes,
+    ha="right", va="top",
+    fontsize=12, color="red"
+)
+plt.legend(loc='upper right')
+plt.xlabel('Num. Trainable Parameters')
+plt.ylabel('Test Loss')
 plt.savefig('decision_tree.png')

@@ -1,6 +1,7 @@
 from mnist.util.sizes import *
 from mnist.util import load_mnist, train_mnist, sparse_random
 from Sequential2D.util import build_sequential2d
+from Sequential2D.util import random_mask
 import json
 
 
@@ -16,8 +17,10 @@ def generate_data(
     )
 
     model_densities = []
+    # for _ in range(25):
+    #     model_densities.append(sparse_random((num_blocks, num_blocks), 0.33))
     for _ in range(25):
-        model_densities.append(sparse_random((num_blocks, num_blocks), 0.33))
+        model_densities.append(random_mask(num_blocks, num_blocks, 0.33))
 
     for densities in model_densities:
         for _ in range(25):
@@ -49,7 +52,12 @@ def generate_data(
 
 
 if __name__ == '__main__':
+    # generate_data(
+    #     data_folder='../data',
+    #     output_file='./train_data.txt',
+    # )
+
     generate_data(
         data_folder='../data',
-        output_file='./train_data.txt',
+        output_file='./mask_data.txt',
     )

@@ -25,15 +25,10 @@ def average_loss(model, loader, device):
 
 def train_mnist(
         model,
-        dataset='MNIST',
+        train_loader,
+        test_loader,
         epochs=3
 ):
-    train_loader, test_loader = load_mnist(
-        '../data',
-        dataset=dataset,
-        flatten=True,
-        batch_size=128
-    )
 
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=1e-4)
@@ -73,6 +68,13 @@ if __name__ == '__main__':
     from Sequential2D.util import build_sequential2d
     from mnist.util.sizes import *
 
+    train_loader, test_loader = load_mnist(
+        '../data',
+        dataset='MNIST',
+        flatten=True,
+        batch_size=128
+    )
+
     model = build_sequential2d(
         sizes,
         type='linear',
@@ -83,4 +85,4 @@ if __name__ == '__main__':
         weight_init='weighted',
     )
 
-    train_mnist(model)
+    train_mnist(model, train_loader, test_loader)

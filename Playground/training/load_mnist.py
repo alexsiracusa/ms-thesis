@@ -3,9 +3,9 @@ from torchvision.datasets import MNIST
 from torch.utils.data import DataLoader
 
 
-def load_mnist(data_folder, flat=False):
+def load_mnist(data_folder, flat=False, size=(50, 50)):
     transform_list = [
-        transforms.Resize((50, 50)),
+        transforms.Resize(size),
         transforms.ToTensor(),
     ]
 

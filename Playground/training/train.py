@@ -42,7 +42,8 @@ def train(
                 torch.cuda.synchronize()
             start = time.time()  # TIMER START
             loss = criterion(output, labels)
-            losses.append(loss.item())
+            if nth_batch is not None and (batch - 1) % nth_batch == 0:
+                losses.append(loss.item())
             loss.backward()
             optimizer.step()
             optimizer.zero_grad()

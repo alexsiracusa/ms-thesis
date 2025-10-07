@@ -52,6 +52,8 @@ def train_cifar(
     optimizer = optim.Adam(model.parameters(), lr=1e-4)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    if torch.mps.is_available():
+        device = torch.device("mps")
     print(f'Device: {device}')
 
     model.to(device)

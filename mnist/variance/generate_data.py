@@ -59,5 +59,5 @@ if __name__ == '__main__':
 
     generate_data(
         data_folder='../data',
-        output_file='./mask_data.txt',
+        output_file='mask_data.txt',
     )

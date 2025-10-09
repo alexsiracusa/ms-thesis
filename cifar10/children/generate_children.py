@@ -8,7 +8,7 @@ from cifar10.util.load_cifar import load_cifar
 from cifar10.util import input_sizes, hidden_sizes, output_sizes
 from cifar10.util.train import train_cifar
 
-model.load_state_dict(torch.load("./mother_models/feed_forward.pth"))
+model.load_state_dict(torch.load("../mother_models/feed_forward.pth"))
 
 for param in model.parameters():
     param.requires_grad = False
@@ -35,7 +35,7 @@ def generate_children(input_file, output_file, data_folder):
 
             with torch.no_grad():
                 x -= 10 * x.grad
-                x.clamp(min=0, max=1)
+                x = x.clamp(min=0, max=1)
                 x.grad.zero_()
 
         generated = x.reshape(45, 145).detach().numpy()
@@ -75,7 +75,7 @@ def generate_children(input_file, output_file, data_folder):
 
 if __name__ == "__main__":
     generate_children(
-        input_file='./train_epoch=3/perlin_data.txt',
-        output_file='./train_epoch=3/perlin_generated.txt',
-        data_folder='../data',
+        input_file='../train_epoch=3/perlin_data.txt',
+        output_file='../train_epoch=3/perlin_generated.txt',
+        data_folder='../../data',
     )

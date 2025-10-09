@@ -6,8 +6,8 @@ from cifar10.util import get_num_trainable
 
 
 def generate_graphs(
-    data_file='./train_epoch=3/perlin_generated.txt',
-    background_file='./train_epoch=3/perlin_data.txt',
+    data_file='../train_epoch=3/perlin_generated.txt',
+    background_file='../train_epoch=3/perlin_data.txt',
     graph_file='children.png',
 ):
     with open(data_file, 'r') as f:
@@ -22,7 +22,7 @@ def generate_graphs(
     trainable_parameters = [get_num_trainable((data['original'])) for data in dataset]
     test_losses = [data['original_test_loss'] for data in dataset]
 
-    generated_parameters = [get_num_trainable(np.array(data['generated']).reshape(45, 145)) for data in dataset]
+    generated_parameters = [get_num_trainable(np.array(data['generated']).reshape(45, 145).clip(0,1)) for data in dataset]
     generated_losses = [data['generated_test_loss'] for data in dataset]
 
     plt.scatter(
@@ -36,14 +36,14 @@ def generate_graphs(
         trainable_parameters, test_losses,
         label='Original',
         alpha=1,
-        s=25,
+        s=40,
     )
 
     plt.scatter(
         generated_parameters, generated_losses,
         label='Generated',
         alpha=1,
-        s=25,
+        s=40,
     )
 
     plt.xlabel('Num. Trainable Parameters')
@@ -67,7 +67,7 @@ def generate_graphs(
 
 if __name__ == '__main__':
     generate_graphs(
-        data_file='./train_epoch=3/perlin_generated.txt',
+        data_file='../train_epoch=3/perlin_generated.txt',
         graph_file='children.png',
     )
 

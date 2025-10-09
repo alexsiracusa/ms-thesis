@@ -36,14 +36,14 @@ def generate_graphs(
         trainable_parameters, test_losses,
         label='Original',
         alpha=1,
-        s=15,
+        s=25,
     )
 
     plt.scatter(
         generated_parameters, generated_losses,
         label='Generated',
         alpha=1,
-        s=15,
+        s=25,
     )
 
     plt.xlabel('Num. Trainable Parameters')

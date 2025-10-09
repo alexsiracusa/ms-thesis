@@ -6,7 +6,7 @@ import json
 
 
 def generate_data(
-        data_folder='../data',
+        data_folder='../../data',
         output_file='./train_data.txt',
 ):
     train_loader, test_loader = load_mnist(
@@ -58,6 +58,6 @@ if __name__ == '__main__':
     # )
 
     generate_data(
-        data_folder='../data',
+        data_folder='../../data',
         output_file='mask_data.txt',
     )

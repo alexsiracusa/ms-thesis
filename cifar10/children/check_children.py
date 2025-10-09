@@ -16,7 +16,7 @@ for i, child in enumerate(dataset):
     densities = np.array(child['generated']).reshape(45, 145)
     original = np.array(child['original']).reshape(45, 145)
 
-    if get_num_trainable(densities) < 2e6:
+    if get_num_trainable(densities) < 4e6:
         densities = densities.clip(min=0, max=1)
         # print(np.min(densities), np.max(densities))
 

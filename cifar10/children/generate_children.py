@@ -20,7 +20,7 @@ def generate_children(input_file, output_file, data_folder):
 
     train_loader, test_loader = load_cifar(data_folder, batch_size=128, shuffle=False)
 
-    for _ in range(3):
+    for _ in range(10):
         fig, axes = plt.subplots(2, 1, figsize=(10, 5))
 
         data = np.random.choice(dataset)
@@ -35,9 +35,9 @@ def generate_children(input_file, output_file, data_folder):
 
             with torch.no_grad():
                 x -= 10 * x.grad
-                x = x.clamp(min=0, max=1)
                 x.grad.zero_()
 
+        x = x.clamp(min=0, max=1)
         generated = x.reshape(45, 145).detach().numpy()
         axes[1].imshow(generated, cmap='gray')
         plt.show()

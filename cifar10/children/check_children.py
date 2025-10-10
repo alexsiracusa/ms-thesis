@@ -17,12 +17,8 @@ for i, child in enumerate(dataset):
     original = np.array(child['original']).reshape(45, 145)
 
     if get_num_trainable(densities) < 4e6:
-        densities = densities.clip(min=0, max=1)
-        # print(np.min(densities), np.max(densities))
-
         plt.imshow(densities, cmap='gray', vmin=0, vmax=1)
         plt.savefig(f'child_{i}.png', bbox_inches='tight', pad_inches=0)
 
-        # print(np.min(original), np.max(original))
         plt.imshow(original, cmap='gray', vmin=0, vmax=1)
         plt.savefig(f'original_{i}.png', bbox_inches='tight', pad_inches=0)

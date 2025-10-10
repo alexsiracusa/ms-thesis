@@ -30,6 +30,7 @@ def generate_graphs(
         label='Original',
         alpha=0.1,
         s=5,
+        zorder=0,
     )
 
     plt.scatter(
@@ -37,6 +38,7 @@ def generate_graphs(
         label='Original',
         alpha=1,
         s=40,
+        zorder=2,
     )
 
     plt.scatter(
@@ -44,7 +46,11 @@ def generate_graphs(
         label='Generated',
         alpha=1,
         s=40,
+        zorder=2,
     )
+
+    for x1, y1, x2, y2 in zip(trainable_parameters, test_losses, generated_parameters, generated_losses):
+        plt.plot([x1, x2], [y1, y2], color='gray', linestyle='--', zorder=1, alpha=0.45)
 
     plt.xlabel('Num. Trainable Parameters')
     plt.ylabel('Test Loss')

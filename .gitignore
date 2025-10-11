@@ -3,6 +3,7 @@ data/
 .idea/
 */wandb/
 */artifacts/
+*/parquets/
 
 # TEMPLATE
 

@@ -12,7 +12,7 @@ datasets = {
     'dig_mnist': 10,
     'overhead_mnist': 10,
     'simpsons_mnist': 10,
-    'notMNIST': 10,
+    'not_mnist': 10,
     'path_mnist': 9,
     'chest_mnist': 2,
     'dermal_mnist': 7,

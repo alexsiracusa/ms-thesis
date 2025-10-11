@@ -15,8 +15,8 @@ Args:
         Defines the densities for each block[i, j] in blocks.
         
         - If a list:
-            A 2D list of shape (N, N) specifying the density (from 0.0 to 1.0) for each linear layer 
-            in the resulting `Sequential2D` block matrix where blocks[i][j] has density densities[i][j]. 
+            A 2D list of shape (N - num_input_blocks, N) specifying the density (from 0.0 to 1.0) for each linear 
+            layer in the resulting `Sequential2D` block matrix where blocks[i][j] has density densities[i][j]. 
             (The first `num_input_blocks` rows are ignored as they are all set to torch.nn.Identity or None)
             
         - If a float:
@@ -83,7 +83,7 @@ def build_blocks(
                 else:
                     blocks[i, j] = None
             else:
-                density = densities[i][j] if isinstance(densities, list) else densities
+                density = densities if isinstance(densities, float) else densities[i - num_input_blocks][j]
 
                 # only have bias when i == j to ensure only one bias per row
                 masked_linear = MaskedLinear.sparse_random(
@@ -99,7 +99,7 @@ def build_blocks(
                         masked_linear.linear.weight.data.uniform_(-bound, bound)
 
                     elif weight_init == 'weighted':
-                        row_densities = densities[i] if isinstance(densities, list) else densities
+                        row_densities = densities if isinstance(densities, float) else densities[i - num_input_blocks]
                         bound = 1 / max(math.sqrt(sum(torch.tensor(in_features) * torch.tensor(row_densities))), 1e-6)
                         masked_linear.linear.weight.data.uniform_(-bound, bound)
 

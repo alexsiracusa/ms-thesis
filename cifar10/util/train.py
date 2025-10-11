@@ -44,7 +44,7 @@ def train_cifar(
         num_input_blocks=len(input_sizes),
         num_output_blocks=len(output_sizes),
         num_iterations=num_iterations,
-        densities=densities.tolist(),
+        densities=densities,
         weight_init='weighted',
     )
 

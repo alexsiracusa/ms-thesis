@@ -14,10 +14,11 @@ def generate_data(
     train_loader, test_loader = load_cifar(data_folder, batch_size=128, shuffle=False)
 
     num_blocks = len(input_sizes + hidden_sizes + output_sizes)
+    input_blocks = len(input_sizes)
     num_iterations = 4
 
     for _ in range(999):
-        densities = density_fn((num_blocks, num_blocks))
+        densities = density_fn((num_blocks - input_blocks, num_blocks))
 
         train_loss, test_loss = train_cifar(
             input_sizes, hidden_sizes, output_sizes,
@@ -27,7 +28,7 @@ def generate_data(
         )
 
         data = {
-            "densities": densities[len(input_sizes):].tolist(),
+            "densities": densities.tolist(),
             "train_loss": train_loss,
             "test_loss": test_loss,
         }

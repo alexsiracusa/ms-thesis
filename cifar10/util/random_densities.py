@@ -14,7 +14,7 @@ def sparse_random(shape):
     base_tensor = torch.zeros(shape)
     base_tensor[mask] = random_tensor[mask]
 
-    return base_tensor
+    return base_tensor.numpy()
 
 
 def sparse_perlin(shape):

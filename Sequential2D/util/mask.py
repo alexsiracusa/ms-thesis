@@ -1,3 +1,4 @@
+import numpy as np
 import torch
 
 
@@ -63,7 +64,7 @@ def variable_mask(row_blocks, col_blocks, densities):
             c_start = sum(col_blocks[:j])
             c_end = sum(col_blocks[:j + 1])
 
-            density = densities[i][j] if isinstance(densities, list) else densities
+            density = densities if isinstance(densities, float) else densities[i][j]
             mask_part = random_mask(row_blocks[i], col_blocks[j], density)
             mask[r_start:r_end, c_start:c_end].copy_(mask_part)
 

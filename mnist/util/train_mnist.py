@@ -2,7 +2,8 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 
-from mnist.util import load_mnist
+from mnist.util import load_mnist, create_model
+from mnist.util.random_densities import sparse_perlin
 
 
 def average_loss(model, loader, device):
@@ -27,14 +28,13 @@ def train_mnist(
         model,
         train_loader,
         test_loader,
-        epochs=3
+        epochs=3,
+        device=torch.device("cuda" if torch.cuda.is_available() else "cpu")
 ):
+    print(f'Device: {device}')
 
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=1e-4)
-
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print(f'Device: {device}')
 
     model.to(device)
 
@@ -65,24 +65,14 @@ def train_mnist(
 
 
 if __name__ == '__main__':
-    from Sequential2D.util import build_sequential2d
-    from mnist.util.sizes import *
-
     train_loader, test_loader = load_mnist(
-        '../data',
+        '../../data',
         dataset='MNIST',
         flatten=True,
         batch_size=128
     )
 
-    model = build_sequential2d(
-        sizes,
-        type='linear',
-        num_input_blocks=len(input_sizes),
-        num_output_blocks=len(output_sizes),
-        num_iterations=4,
-        densities=0.5,
-        weight_init='weighted',
-    )
+    densities = sparse_perlin((11, 36), clip=0.33)
+    model = create_model(densities)
 
-    train_mnist(model, train_loader, test_loader)
+    train_mnist(model, train_loader, test_loader, device=torch.device("mps"), epochs=2)

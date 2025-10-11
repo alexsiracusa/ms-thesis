@@ -65,6 +65,8 @@ def train_mnist(
 
 
 if __name__ == '__main__':
+    from mnist.util.sizes import num_blocks, num_input
+
     train_loader, test_loader = load_mnist(
         '../../data',
         dataset='MNIST',
@@ -72,7 +74,7 @@ if __name__ == '__main__':
         batch_size=128
     )
 
-    densities = sparse_perlin((11, 36), clip=0.33)
+    densities = sparse_perlin((num_blocks - num_input, num_blocks), clip=0.33)
     model = create_model(densities)
 
     train_mnist(model, train_loader, test_loader, device=torch.device("mps"), epochs=2)

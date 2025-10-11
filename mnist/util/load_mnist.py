@@ -41,3 +41,9 @@ def load_mnist(
     test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
 
     return train_loader, test_loader
+
+
+if __name__ == '__main__':
+    train_loader, test_loader = load_mnist('../../data', dataset='FashionMNIST')
+    print(len(train_loader.dataset), len(test_loader.dataset))
+

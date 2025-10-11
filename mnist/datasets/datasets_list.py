@@ -1,10 +1,10 @@
 
 datasets = {
     'mnist': 10,
-    'kmnist': 10,
-    'fashion_mnist': 10,
     'emnist_letters': 37,
     'emnist_balanced': 47,
+    'kmnist': 10,
+    'fashion_mnist': 10,
     'cifar10': 15,
     'sign_mnist': 24,
     'chinese_mnist': 15,

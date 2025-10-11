@@ -1,5 +1,6 @@
-
 # Datasets
+MNIST-like datasets were gathered from the following sources and standardized to black and white 50x50 images if not already in that format.  Datasets that did not already have an existing train/test split were randomly split 80/20.  Datasets with an existing validation set where merged into the test set (this only applies to MedMNIST datasets).
+
 | Name                | Num Classes | Num Train | Num Test  | URL                                                                             |
 |---------------------|-------------|-----------|-----------|---------------------------------------------------------------------------------|
 | MNIST               | 10          | 60,000    | 10,000    |                                                                                 |
@@ -7,13 +8,14 @@
 | EMNIST Balanced     | 47          | 112,800   | 18,800    | https://github.com/hosford42/EMNIST                                             |
 | FashionMNIST        | 10          | 60,000    | 10,000    | https://github.com/zalandoresearch/fashion-mnist                                |
 | KMNIST              | 10          | 60,000    | 10,000    | https://github.com/rois-codh/kmnist                                             |
+| CIFAR10             | 10          | 50,000    | 10,000    | https://www.cs.toronto.edu/~kriz/cifar.html                                     |
 | Sign Language MNIST | 24          | 27,455    | 7,172     | https://www.kaggle.com/datasets/datamunge/sign-language-mnist?resource=download |
 | Chinese MNIST       | 15          | 15,000    | -         | https://data.ncl.ac.uk/articles/dataset/Handwritten_Chinese_Numbers/10280831/1  |
 | Kannada MNIST       | 10          | 60,000    | 10,000    | https://www.kaggle.com/datasets/higgstachyon/kannada-mnist                      |
 | Dig MNIST           | 10          | 10,240    | -         | https://www.kaggle.com/datasets/higgstachyon/kannada-mnist                      |
 | Overhead MNIST      | 10          | 8,519     | 1,066     | https://www.kaggle.com/datasets/datamunge/overheadmnist/                        |
 | Simpsons MNIST      | 10          | 8,000     | 2,000     | https://github.com/alvarobartt/simpsons-mnist                                   |
-| notMNIST            | 10          | 19,000    | -         | https://www.kaggle.com/datasets/lubaroli/notmnist                               |
+| notMNIST            | 10          | 18,724    | -         | https://www.kaggle.com/datasets/lubaroli/notmnist                               |
 | PathMNIST           | 9           | 89,996    | 17,184    | https://github.com/MedMNIST/MedMNIST?tab=readme-ov-file                         |
 | ChestMNIST          | 14 or 2     | 78,468    | 33,652    | https://github.com/MedMNIST/MedMNIST?tab=readme-ov-file                         |
 | DermaMNIST          | 7           | 7,007     | 3,008     | https://github.com/MedMNIST/MedMNIST?tab=readme-ov-file                         |

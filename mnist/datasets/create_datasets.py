@@ -216,10 +216,10 @@ def create_med_mnist(output_dir, version, **kwargs):
 if __name__ == '__main__':
     # Load from torchvision.datasets (the easy ones)
     # create_mnist('parquets/mnist', version=MNIST)
-    # create_mnist('parquets/kmnist', version=KMNIST)
-    # create_mnist('parquets/fashion_mnist', version=FashionMNIST)
     # create_mnist('parquets/emnist_letters', version=EMNIST, split='letters')
     # create_mnist('parquets/emnist_balanced', version=EMNIST, split='balanced')
+    # create_mnist('parquets/kmnist', version=KMNIST)
+    # create_mnist('parquets/fashion_mnist', version=FashionMNIST)
     # create_mnist('parquets/cifar10', version=CIFAR10)
 
     # Load from downloaded folders (need to manually download originals before processing)

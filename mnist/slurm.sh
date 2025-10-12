@@ -34,4 +34,4 @@ python -m pip install .
 SWEEP_ID="z5t9nxdv"
 KEY=""
 
-python -m mnist.run_sweep.py agent ${SWEEP_ID} ${KEY}
+python -m mnist.run_sweep.py ${SWEEP_ID} ${KEY}

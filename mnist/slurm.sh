@@ -2,13 +2,13 @@
 
 # The partition we want (short=24 hours, long=7 days)
 #SBATCH --partition=short
-#SBATCH --time=01:00:00
+#SBATCH --time=024:00:00
 #SBATCH -N 1
 #SBATCH -n 1
 #SBATCH --mem=32gb
 #SBATCH --gres=gpu:1
 
-##SBATCH --array=0-3
+#SBATCH --array=0-7
 
 module load git
 module load python/3.11.12
@@ -36,7 +36,7 @@ poetry install
 which python
 python -m pip list
 
-SWEEP_ID="d77uvkc9"
+SWEEP_ID="uoti03wp"
 KEY=""
 
 source "$ENV_DIR/bin/activate"

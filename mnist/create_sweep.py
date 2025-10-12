@@ -14,6 +14,9 @@ sweep_config = {
         'dataset': {
             'values': datasets
         },
+        'noise': {
+            'values': ['sparse_random', 'sparse_perlin']
+        },
         'epochs': {
             'values': [epochs]
         },

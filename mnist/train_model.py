@@ -1,8 +1,9 @@
 import wandb
 import torch
 import numpy as np
+import random
 from mnist.datasets import datasets, load_parquet
-from mnist.util import train_mnist, create_model, sparse_perlin, flatten_images
+from mnist.util import train_mnist, create_model, sparse_perlin, flatten_images, sparse_random
 from mnist.util.sizes import num_input, num_blocks
 from torch.utils.data import DataLoader, TensorDataset
 
@@ -10,6 +11,7 @@ from torch.utils.data import DataLoader, TensorDataset
 def train_model():
     run = wandb.init()
     dataset = run.config.dataset
+    noise = run.config.noise
     epochs = run.config.epochs
     run_id = run.config.run_id
 
@@ -26,11 +28,18 @@ def train_model():
     train_dataset = TensorDataset(train_images, train_labels)
     test_dataset = TensorDataset(test_images, test_labels)
 
-    train_loader = DataLoader(train_dataset, batch_size=128, shuffle=True)
-    test_loader = DataLoader(test_dataset, batch_size=128, shuffle=True)
+    train_loader = DataLoader(train_dataset, batch_size=256, shuffle=True)
+    test_loader = DataLoader(test_dataset, batch_size=256, shuffle=True)
 
     # Train model
-    densities = sparse_perlin((num_blocks - num_input, num_blocks), clip=0.33)
+    if noise == 'sparse_random':
+        p_random = 0.99 * random.random() + 0.01
+        wandb.log({"p_random": p_random})
+        densities = sparse_random((num_blocks - num_input, num_blocks), p_random=p_random)
+    elif noise == 'sparse_perlin':
+        clip = 0.99 * random.random() + 0.01
+        wandb.log({"clip": clip})
+        densities = sparse_perlin((num_blocks - num_input, num_blocks), clip=clip)
     output_size = datasets[dataset]
     model = create_model(densities, output_size=output_size)
 

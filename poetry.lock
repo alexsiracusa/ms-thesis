@@ -1193,6 +1193,18 @@ test = ["hypothesis (>=6.46.1)", "pytest (>=7.3.2)", "pytest-xdist (>=2.2.0)"]
 xml = ["lxml (>=4.9.2)"]
 
 [[package]]
+name = "perlin-noise"
+version = "1.14"
+description = "Python implementation for Perlin Noise with unlimited coordinates space"
+optional = false
+python-versions = "<3.13,>=3.9"
+groups = ["main"]
+files = [
+    {file = "perlin_noise-1.14-py3-none-any.whl", hash = "sha256:3ecfae6437860c3e51d5f4bac0a7ceea1b9193a4a83c6d775edd5d47a918bc62"},
+    {file = "perlin_noise-1.14.tar.gz", hash = "sha256:21ab04c26d728904234e38b1354ba2dcc137847d82e8c331f84d0e11a1a4152e"},
+]
+
+[[package]]
 name = "pillow"
 version = "11.3.0"
 description = "Python Imaging Library (Fork)"
@@ -1905,7 +1917,7 @@ description = "Easily download, build, install, upgrade, and uninstall Python pa
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
-markers = "platform_system == \"Linux\" and platform_machine == \"x86_64\" or python_version >= \"3.12\""
+markers = "platform_system == \"Linux\" and platform_machine == \"x86_64\" and python_version == \"3.11\" or python_version == \"3.12\""
 files = [
     {file = "setuptools-80.9.0-py3-none-any.whl", hash = "sha256:062d34222ad13e0cc312a4c02d73f059e86a4acbfbdea8f8f76b28c99f306922"},
     {file = "setuptools-80.9.0.tar.gz", hash = "sha256:f36b47402ecde768dbfafc46e8e4207b4360c654f1f3bb84475f0a28628fb19c"},
@@ -2209,5 +2221,5 @@ workspaces = ["wandb-workspaces"]
 
 [metadata]
 lock-version = "2.1"
-python-versions = ">=3.11,<3.14"
-content-hash = "a5df942219f8dfb9cf0314ed494a4e9920f87ec6799f7924738765be12680100"
+python-versions = ">=3.11,<3.13"
+content-hash = "79edd8d6b3c94a5627f6d25aa2ec72d74f750bec366b29505b978b5fbba1c54a"

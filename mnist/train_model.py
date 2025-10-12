@@ -36,7 +36,7 @@ def train_model():
 
     train_loss, test_loss = train_mnist(
         model, train_loader, test_loader,
-        device=torch.device("mps"),
+        device=torch.device("cuda" if torch.cuda.is_available() else "cpu"),
         epochs=epochs,
         output_size=output_size,
     )

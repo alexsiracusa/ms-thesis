@@ -1,26 +1,26 @@
 #!/bin/bash
 
 # The partition we want (short=24 hours, long=7 days)
-#SBATCH --partition short
-# Job duration (1 hour for test)
+#SBATCH --partition=short
 #SBATCH --time=01:00:00
-# One node
 #SBATCH -N 1
-# Number of tasks on that node
 #SBATCH -n 1
-# Please give me a GPU
-##SBATCH --gres=gpu
-
-# Ask for memory
 #SBATCH --mem=32gb
+#SBATCH --gres=gpu:1
+
 
 module load git
 module load python/3.11.12
 
 
 REPO_DIR="$HOME/ms-thesis"
-git clone https://github.com/alexsiracusa/ms-thesis.git "$REPO_DIR"
-cd "$REPO_DIR"
+if [ -d "$REPO_DIR" ]; then
+    cd "$REPO_DIR"
+    git pull
+else
+    git clone https://github.com/alexsiracusa/ms-thesis.git "$REPO_DIR"
+    cd "$REPO_DIR"
+fi
 
 
 ENV_DIR="$REPO_DIR/env"

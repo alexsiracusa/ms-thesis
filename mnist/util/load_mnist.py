@@ -11,6 +11,13 @@ def flatten_image(images, kernel_size, **kwargs):
     patches = patches.transpose(1, 0)
     return patches.flatten()
 
+def flatten_images(images, kernel_size, **kwargs):
+    unfold = torch.nn.Unfold(kernel_size=kernel_size, **kwargs)
+    patches = unfold(images)
+    patches = patches.transpose(1, 2)
+    flattened = patches.reshape(images.size(0), -1)
+    return flattened
+
 
 def load_mnist(
         data_folder,

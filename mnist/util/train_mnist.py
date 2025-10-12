@@ -29,6 +29,7 @@ def train_mnist(
         train_loader,
         test_loader,
         epochs=3,
+        output_size=10,
         device=torch.device("cuda" if torch.cuda.is_available() else "cpu")
 ):
     print(f'Device: {device}')
@@ -45,7 +46,7 @@ def train_mnist(
             images = images.to(device)
             labels = labels.to(device)
 
-            output = model.forward(images)[:, -10:]
+            output = model.forward(images)[:, -output_size:]
             loss = criterion(output, labels)
 
             loss.backward()
@@ -75,6 +76,6 @@ if __name__ == '__main__':
     )
 
     densities = sparse_perlin((num_blocks - num_input, num_blocks), clip=0.33)
-    model = create_model(densities)
+    model = create_model(densities, output_size=10)
 
-    train_mnist(model, train_loader, test_loader, device=torch.device("mps"), epochs=2)
+    train_mnist(model, train_loader, test_loader, device=torch.device("mps"), epochs=2, output_size=10)

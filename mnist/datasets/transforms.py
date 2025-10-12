@@ -9,12 +9,6 @@ from functools import partial
 def binary_target_transform(label):
     return int(label.sum() > 0)
 
-def flatten_image(images, kernel_size, **kwargs):
-    unfold = torch.nn.Unfold(kernel_size=kernel_size, **kwargs)
-    patches = unfold(images)
-    patches = patches.transpose(1, 0)
-    return patches.flatten()
-
 transform_list = [
     transforms.Grayscale(num_output_channels=1),
     transforms.Resize((50, 50)),
@@ -58,14 +52,3 @@ def upscale_to_df(images, labels, size=(50, 50)):
     df = pd.DataFrame(upscaled_flat.numpy(), columns=[f"x{i}" for i in range(50 * 50)])
     df["label"] = labels
     return df
-
-
-if __name__ == "__main__":
-    image = torch.tensor([
-        [ 1,  2,  3,  4],
-        [ 5,  6,  7,  8],
-        [ 9, 10, 11, 12],
-        [13, 14, 15, 16],
-    ], dtype=torch.float32).unsqueeze(0)
-
-    print(flatten_image(image, kernel_size=(2, 2), stride=2, padding=0))

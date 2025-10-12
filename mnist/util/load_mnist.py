@@ -3,20 +3,7 @@ from torchvision import transforms
 from functools import partial
 from torchvision.datasets import MNIST, KMNIST, FashionMNIST
 from torch.utils.data import DataLoader
-
-
-def flatten_image(images, kernel_size, **kwargs):
-    unfold = torch.nn.Unfold(kernel_size=kernel_size, **kwargs)
-    patches = unfold(images)
-    patches = patches.transpose(1, 0)
-    return patches.flatten()
-
-def flatten_images(images, kernel_size, **kwargs):
-    unfold = torch.nn.Unfold(kernel_size=kernel_size, **kwargs)
-    patches = unfold(images)
-    patches = patches.transpose(1, 2)
-    flattened = patches.reshape(images.size(0), -1)
-    return flattened
+from mnist.util.flatten_images import flatten_image
 
 
 def load_mnist(

@@ -1,8 +1,7 @@
 import wandb
 from mnist.datasets import datasets
+from mnist.wandb_project import project_name
 
-
-project_name = 'density-map-test'
 
 run = wandb.init(project=project_name, name="dataset-upload")
 api = wandb.Api()

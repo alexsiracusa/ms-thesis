@@ -4,7 +4,7 @@ from mnist.datasets import datasets
 
 # List of datasets
 datasets = list(datasets.keys())
-N = 2000
+N = 1000
 epochs = 5
 
 # Sweep configuration

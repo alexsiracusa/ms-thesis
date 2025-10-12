@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
+import wandb
 
 from mnist.util import load_mnist, create_model
 from mnist.util.random_densities import sparse_perlin
@@ -55,7 +56,13 @@ def train_mnist(
 
             losses.append(loss.item())
 
-        print(f'Epoch {epoch + 1}/{epochs} Loss: {sum(losses) / len(losses):.5f}')
+        loss = sum(losses) / len(losses)
+        print(f'Epoch {epoch + 1}/{epochs} Loss: {loss:.5f}')
+
+        try:
+            wandb.log({"epoch_loss": loss})
+        except:
+            pass
 
     # final training loss
     train_loss = average_loss(model, train_loader, device)

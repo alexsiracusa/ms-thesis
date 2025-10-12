@@ -1,10 +1,7 @@
 from mnist.util.sizes import num_output, num_input, sizes, num_iterations
 from Sequential2D.util import build_sequential2d
 
-def create_model(densities, output_size=None):
-    if output_size is not None:
-        sizes[-1] = output_size
-
+def create_model(densities):
     return build_sequential2d(
         sizes,
         type='linear',

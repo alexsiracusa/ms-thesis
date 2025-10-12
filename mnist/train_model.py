@@ -41,7 +41,7 @@ def train_model():
         wandb.log({"clip": clip})
         densities = sparse_perlin((num_blocks - num_input, num_blocks), clip=clip)
     output_size = datasets[dataset]
-    model = create_model(densities, output_size=output_size)
+    model = create_model(densities)
 
     train_loss, test_loss = train_mnist(
         model, train_loader, test_loader,

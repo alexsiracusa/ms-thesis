@@ -56,14 +56,12 @@ if __name__ == '__main__':
     shape = (11, 36)
     plt.axis('off')
 
-    densities = sparse_random(shape)
+    densities = sparse_random(shape, p_random=0.33)
+    print(f'Sparse Random {densities.sum().item()}')
     plt.imshow(densities, cmap='gray')
     plt.savefig('./sparse_random.png', bbox_inches='tight', pad_inches=0)
 
-    noise = generate_perlin_noise_2d(shape)
-    plt.imshow(noise, cmap='gray')
-    plt.savefig('./perlin.png', bbox_inches='tight', pad_inches=0)
-
-    noise = sparse_perlin(shape, clip=0.33)
-    plt.imshow(noise, cmap='gray')
+    densities = sparse_perlin(shape, clip=0.33)
+    print(f'Sparse Perlin {densities.sum().item()}')
+    plt.imshow(densities, cmap='gray')
     plt.savefig('./sparse_perlin.png', bbox_inches='tight', pad_inches=0)

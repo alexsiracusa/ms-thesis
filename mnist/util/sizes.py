@@ -3,7 +3,7 @@ num_iterations = 4
 
 input_sizes = [100] * 25
 hidden_sizes = [100] * 10
-output_sizes = [10]
+output_sizes = [100]
 
 # input_sizes = [500] * 5
 # hidden_sizes = [250] * 4

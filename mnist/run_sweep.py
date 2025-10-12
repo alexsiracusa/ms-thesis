@@ -15,6 +15,6 @@ wandb.agent(
     sweep_id=sweep_id,
     function=train_model,
     project=project_name,
-    count=1,
+    count=4,
 )
 

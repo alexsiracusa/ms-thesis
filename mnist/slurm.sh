@@ -24,14 +24,19 @@ fi
 
 
 ENV_DIR="$REPO_DIR/env"
-python -m venv "$ENV_DIR"
+python3 -m venv "$ENV_DIR"
 source "$ENV_DIR/bin/activate"
 
 python -m ensurepip --upgrade
-python -m pip install --upgrade pip setuptools wheel
+python -m pip install --upgrade pip setuptools wheel poetry
 python -m pip install .
+poetry install
+
+which python
+python -m pip list
 
 SWEEP_ID="z5t9nxdv"
 KEY=""
 
+source "$ENV_DIR/bin/activate"
 python -m mnist.run_sweep.py ${SWEEP_ID} ${KEY}

@@ -1,63 +1,55 @@
+import os
+
 import wandb
-import numpy as np
 import json
-import matplotlib.pyplot as plt
 from wandb_project import project_name
 
-api = wandb.Api(timeout=60)
-runs = api.runs(f"alexander-siracusa-worcester-polytechnic-institute/{project_name}", per_page=500)
 
-test_losses = []
-sum_densities = []
+def download_dataset(dataset, noise, data_dir='./data'):
+    output_dir = f'{data_dir}/{dataset}'
+    os.makedirs(output_dir, exist_ok=True)
 
-perlin_test_losses = []
-perlin_sum_densities = []
+    api = wandb.Api(timeout=60)
+    runs = api.runs(
+        path=f"alexander-siracusa-worcester-polytechnic-institute/{project_name}",
+        filters={'config.dataset': dataset, 'config.noise': noise}
+    )
 
-print(len(runs))
-for i, run in enumerate(runs[:2000]):
-    print(i)
-    try:
+    print(len(runs))
+
+    arr = []
+
+    for i, run in enumerate(runs):
+        print(i)
+
         summary = json.loads(run.summary._json_dict)
         config = json.loads(run.config)
 
-        noise = config["noise"]["value"]
-        densities = summary["density_map"]
-        test_loss = summary["test_loss"]
+        data = {
+            'test_loss': summary["test_loss"],
+            'train_loss': summary["train_loss"],
+            'epoch_losses': run.history(keys=['epoch_loss'])['epoch_loss'].to_numpy().tolist(),
+            'epochs': config['epochs'],
+            'dataset': config['dataset'],
+            'batch_size': summary["batch_size"],
+            'noise': config["noise"]["value"],
+            'p_random': summary["p_random"] if "p_random" in summary else None,
+            'clip': summary["clip"] if "clip" in summary else None,
+            'average_density': summary["average_density"],
+            'density_map': summary["density_map"],
+        }
 
-        if noise == 'sparse_random':
-            test_losses.append(test_loss)
-            sum_densities.append(np.sum(densities))
-        else:
-            perlin_test_losses.append(test_loss)
-            perlin_sum_densities.append(np.sum(densities))
+        arr.append(data)
 
-        # if True:
-        #     plt.imshow(densities, cmap="grey")
-        #     plt.text(
-        #         0, 0, f"{test_loss}",
-        #         color='red', fontsize=8, weight='bold', ha='left', va='top'
-        #     )
-        #     plt.show()
+    with open(f'{output_dir}/{noise}.txt', 'w') as f:
+        for data in arr:
+            f.write(json.dumps(data) + '\n')
 
-    except Exception as e:
-        print(f'error: {e}')
-        continue
 
-plt.scatter(
-    sum_densities, test_losses,
-    label='Sparse Random',
-    alpha=0.5,
-    s=5,
-)
-plt.scatter(
-    perlin_sum_densities, perlin_test_losses,
-    label='Sparse Perlin',
-    alpha=0.5,
-    s=5,
-)
 
-plt.xlabel('Num. Trainable Parameters')
-plt.ylabel('Test Loss')
-plt.legend(loc='upper right')
-plt.show()
+if __name__ == '__main__':
+    # download_dataset('mnist', 'sparse_random')
+    # download_dataset('mnist', 'sparse_perlin')
+    download_dataset('emnist_letters', 'sparse_random')
+
 

@@ -1,13 +1,11 @@
 import wandb
 import numpy as np
-import os
 import json
 import matplotlib.pyplot as plt
 from wandb_project import project_name
-from wandb import Run
 
-api = wandb.Api()
-runs = api.runs(f"alexander-siracusa-worcester-polytechnic-institute/{project_name}")
+api = wandb.Api(timeout=60)
+runs = api.runs(f"alexander-siracusa-worcester-polytechnic-institute/{project_name}", per_page=500)
 
 test_losses = []
 sum_densities = []
@@ -15,7 +13,9 @@ sum_densities = []
 perlin_test_losses = []
 perlin_sum_densities = []
 
-for run in runs:
+print(len(runs))
+for i, run in enumerate(runs[:2000]):
+    print(i)
     try:
         summary = json.loads(run.summary._json_dict)
         config = json.loads(run.config)
@@ -28,7 +28,7 @@ for run in runs:
             test_losses.append(test_loss)
             sum_densities.append(np.sum(densities))
         else:
-            perlin_test_losses.append(test_losses)
+            perlin_test_losses.append(test_loss)
             perlin_sum_densities.append(np.sum(densities))
 
         # if True:
@@ -50,7 +50,7 @@ plt.scatter(
     s=5,
 )
 plt.scatter(
-    perlin_test_losses, perlin_test_losses,
+    perlin_sum_densities, perlin_test_losses,
     label='Sparse Perlin',
     alpha=0.5,
     s=5,
@@ -58,5 +58,6 @@ plt.scatter(
 
 plt.xlabel('Num. Trainable Parameters')
 plt.ylabel('Test Loss')
+plt.legend(loc='upper right')
 plt.show()
 

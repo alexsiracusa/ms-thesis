@@ -12,7 +12,8 @@ def download_dataset(dataset, noise, data_dir='./data'):
     api = wandb.Api(timeout=60)
     runs = api.runs(
         path=f"alexander-siracusa-worcester-polytechnic-institute/{project_name}",
-        filters={'config.dataset': dataset, 'config.noise': noise}
+        filters={'config.dataset': dataset, 'config.noise': noise},
+        per_page=50,
     )
 
     print(len(runs))
@@ -50,6 +51,36 @@ def download_dataset(dataset, noise, data_dir='./data'):
 if __name__ == '__main__':
     # download_dataset('mnist', 'sparse_random')
     # download_dataset('mnist', 'sparse_perlin')
-    download_dataset('emnist_letters', 'sparse_random')
 
+    # download_dataset('emnist_letters', 'sparse_random')
+    # download_dataset('emnist_letters', 'sparse_perlin')
+
+    # download_dataset('emnist_balanced', 'sparse_random')
+    # download_dataset('emnist_balanced', 'sparse_perlin')
+
+    # download_dataset('kmnist', 'sparse_random')
+    # download_dataset('kmnist', 'sparse_perlin')
+
+    # download_dataset('fashion_mnist', 'sparse_random')
+    # download_dataset('fashion_mnist', 'sparse_perlin')
+
+    # download_dataset('cifar10', 'sparse_random')
+    # download_dataset('cifar10', 'sparse_perlin')
+
+    # --------
+
+    download_dataset('sign_mnist', 'sparse_random')
+    download_dataset('sign_mnist', 'sparse_perlin')
+
+    download_dataset('chinese_mnist', 'sparse_random')
+    download_dataset('chinese_mnist', 'sparse_perlin')
+
+    download_dataset('kannada_mnist', 'sparse_random')
+    download_dataset('kannada_mnist', 'sparse_perlin')
+
+    download_dataset('dig_mnist', 'sparse_random')
+    download_dataset('dig_mnist', 'sparse_perlin')
+
+    download_dataset('overhead_mnist', 'sparse_random')
+    download_dataset('overhead_mnist', 'sparse_perlin')
 

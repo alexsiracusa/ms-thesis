@@ -19,6 +19,8 @@ def graph_data(
         # trainable_parameters = [get_num_trainable((data['density_map'])) for data in dataset]
         trainable_parameters = [data['average_density'] for data in dataset]
         test_losses = [data['test_loss'] for data in dataset]
+        # test_losses = [data['epoch_losses'][2] for data in dataset]
+
 
         plt.scatter(
             trainable_parameters, test_losses,
@@ -59,11 +61,13 @@ def show_noises(data_file):
 
 
 if __name__ == '__main__':
+    dataset = './data/cifar10'
+
     graph_data(
-        data_files=['./data/emnist_letters/sparse_random.txt'],
+        data_files=[f'{dataset}/sparse_random.txt', f'{dataset}/sparse_perlin.txt'],
         labels=['Sparse Random', 'Sparse Perlin'],
         graph_file='graph.png',
     )
 
-    # show_noises('./data/mnist/sparse_perlin.txt')
+    # show_noises(f'{dataset}/sparse_perlin.txt')
 

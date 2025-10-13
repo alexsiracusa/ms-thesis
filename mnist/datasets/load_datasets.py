@@ -21,7 +21,7 @@ if __name__ == "__main__":
     #     if actual_classes != num_classes or num_classes - 1 != a:
     #         print(f'Error: {dataset} {actual_classes} {num_classes} {a}')
 
-    train_images, train_labels = load_parquet("./parquets/sign_mnist/train.parquet")
+    train_images, train_labels = load_parquet("./parquets/fashion_mnist/train.parquet")
 
     fig, axes = plt.subplots(5, 5, figsize=(5, 5), facecolor="black")
 
@@ -37,5 +37,8 @@ if __name__ == "__main__":
     plt.tight_layout()
     plt.show()
 
+    unique_values, counts = np.unique(train_labels, return_counts=True)
+
     print(train_images.shape, train_labels.shape)
     print(np.sort(np.unique(train_labels)))
+    print(counts)

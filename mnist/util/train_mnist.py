@@ -7,7 +7,7 @@ from mnist.util import load_mnist, create_model
 from mnist.util.random_densities import sparse_perlin
 
 
-def average_loss(model, loader, device):
+def average_loss(model, loader, device, output_size):
     model.to(device)
     criterion = nn.CrossEntropyLoss()
 
@@ -18,7 +18,7 @@ def average_loss(model, loader, device):
             images = images.to(device)
             labels = labels.to(device)
 
-            output = model.forward(images)[:, -10:]
+            output = model.forward(images)[:, -output_size:]
             loss = criterion(output, labels)
             losses.append(loss.item())
 
@@ -65,8 +65,8 @@ def train_mnist(
             pass
 
     # final training loss
-    train_loss = average_loss(model, train_loader, device)
-    test_loss = average_loss(model, test_loader, device)
+    train_loss = average_loss(model, train_loader, device, output_size=output_size)
+    test_loss = average_loss(model, test_loader, device, output_size=output_size)
     print(f'train: {train_loss:.5f}, test: {test_loss:.5f}')
 
     return train_loss, test_loss
@@ -83,6 +83,6 @@ if __name__ == '__main__':
     )
 
     densities = sparse_perlin((num_blocks - num_input, num_blocks), clip=0.33)
-    model = create_model(densities, output_size=10)
+    model = create_model(densities)
 
     train_mnist(model, train_loader, test_loader, device=torch.device("mps"), epochs=2, output_size=10)

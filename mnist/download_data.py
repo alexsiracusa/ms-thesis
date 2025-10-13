@@ -4,6 +4,7 @@ import os
 import json
 import matplotlib.pyplot as plt
 from wandb_project import project_name
+from wandb import Run
 
 api = wandb.Api()
 runs = api.runs(f"alexander-siracusa-worcester-polytechnic-institute/{project_name}")
@@ -14,32 +15,32 @@ sum_densities = []
 perlin_test_losses = []
 perlin_sum_densities = []
 
-for run in runs[:200]:
+for run in runs:
     try:
-        noise_value = json.loads(run.config)['noise']['value']
-        final_test_loss = run.history(keys=["test_loss"])["test_loss"].iloc[-1]
+        summary = json.loads(run.summary._json_dict)
+        config = json.loads(run.config)
 
-        for artifact in run.logged_artifacts():
-            if artifact.name.startswith("density_map"):
-                artifact_dir = artifact.download(skip_cache=False)
-                arr = np.load(os.path.join(artifact_dir, 'density_map.npy'))
+        noise = config["noise"]["value"]
+        densities = summary["density_map"]
+        test_loss = summary["test_loss"]
 
-                if noise_value == 'sparse_random':
-                    test_losses.append(final_test_loss)
-                    sum_densities.append(np.sum(arr))
-                else:
-                    perlin_test_losses.append(final_test_loss)
-                    perlin_sum_densities.append(np.sum(arr))
+        if noise == 'sparse_random':
+            test_losses.append(test_loss)
+            sum_densities.append(np.sum(densities))
+        else:
+            perlin_test_losses.append(test_losses)
+            perlin_sum_densities.append(np.sum(densities))
 
-                # print(final_test_loss, np.sum(arr))
+        # if True:
+        #     plt.imshow(densities, cmap="grey")
+        #     plt.text(
+        #         0, 0, f"{test_loss}",
+        #         color='red', fontsize=8, weight='bold', ha='left', va='top'
+        #     )
+        #     plt.show()
 
-                # plt.imshow(arr, cmap="grey")
-                # plt.text(
-                #     0, 0, f"{final_test_loss}",
-                #     color='red', fontsize=8, weight='bold', ha='left', va='top'
-                # )
-                # plt.show()
-    except:
+    except Exception as e:
+        print(f'error: {e}')
         continue
 
 plt.scatter(

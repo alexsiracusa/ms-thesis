@@ -3,9 +3,10 @@ import numpy as np
 import os
 import json
 import matplotlib.pyplot as plt
+from wandb_project import project_name
 
 api = wandb.Api()
-runs = api.runs("alexander-siracusa-worcester-polytechnic-institute/density-map-test")
+runs = api.runs(f"alexander-siracusa-worcester-polytechnic-institute/{project_name}")
 
 test_losses = []
 sum_densities = []

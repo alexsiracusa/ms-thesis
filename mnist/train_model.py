@@ -1,6 +1,7 @@
 import wandb
 import torch
 import numpy as np
+import math
 import random
 from mnist.datasets import datasets, load_parquet
 from mnist.util import train_mnist, create_model, sparse_perlin, flatten_images, sparse_random
@@ -28,8 +29,9 @@ def train_model():
     train_dataset = TensorDataset(train_images, train_labels)
     test_dataset = TensorDataset(test_images, test_labels)
 
-    train_loader = DataLoader(train_dataset, batch_size=256, shuffle=True)
-    test_loader = DataLoader(test_dataset, batch_size=256, shuffle=True)
+    batch_size = math.ceil(len(train_dataset) / 200)
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+    test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
 
     # Train model
     if noise == 'sparse_random':
@@ -51,12 +53,16 @@ def train_model():
     )
 
     # Save results
-    np.save("density_map.npy", densities)
+    # np.save("density_map.npy", densities)
+    # artifact_name = f"density_map_{wandb.run.id}"
+    # artifact = wandb.Artifact(artifact_name, type="density_map")
+    # artifact.add_file("density_map.npy")
+    # wandb.log_artifact(artifact)
 
-    artifact_name = f"density_map_{wandb.run.id}"
-    artifact = wandb.Artifact(artifact_name, type="density_map")
-    artifact.add_file("density_map.npy")
-    wandb.log_artifact(artifact)
+    densities = np.array(densities)
+    wandb.run.summary["density_map"] = densities.tolist()
 
+    wandb.log({"batch_size": batch_size})
+    wandb.log({"average_density": densities.mean()})
     wandb.log({"train_loss": train_loss})
     wandb.log({"test_loss": test_loss})

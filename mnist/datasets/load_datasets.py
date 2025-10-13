@@ -17,10 +17,11 @@ if __name__ == "__main__":
     # for dataset, num_classes in datasets.items():
     #     train_images, train_labels = load_parquet(f"./parquets/{dataset}/train.parquet")
     #     actual_classes = len(np.unique(train_labels))
-    #     if actual_classes != num_classes:
-    #         print(f'Error: {dataset} {actual_classes} {num_classes}')
+    #     a = np.max(np.unique(train_labels))
+    #     if actual_classes != num_classes or num_classes - 1 != a:
+    #         print(f'Error: {dataset} {actual_classes} {num_classes} {a}')
 
-    train_images, train_labels = load_parquet("./parquets/emnist_balanced/train.parquet")
+    train_images, train_labels = load_parquet("./parquets/sign_mnist/train.parquet")
 
     fig, axes = plt.subplots(5, 5, figsize=(5, 5), facecolor="black")
 

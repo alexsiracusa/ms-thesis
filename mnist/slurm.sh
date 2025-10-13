@@ -8,7 +8,7 @@
 #SBATCH --mem=32gb
 #SBATCH --gres=gpu:1
 
-#SBATCH --array=0-7
+#SBATCH --array=0-11
 
 module load git
 module load python/3.11.12
@@ -36,13 +36,9 @@ poetry install
 which python
 python -m pip list
 
-SWEEP_ID="uoti03wp"
+SWEEP_ID="mgqjtf19"
 KEY=""
 
 source "$ENV_DIR/bin/activate"
-
-#for ((i = 0; i < 8; i++)); do
-#  srun --mem-per-cpu=4G python -m mnist.run_sweep.py ${SWEEP_ID} ${KEY}
-#done
 python -m mnist.run_sweep.py ${SWEEP_ID} ${KEY}
 

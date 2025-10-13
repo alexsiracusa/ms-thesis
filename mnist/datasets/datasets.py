@@ -1,12 +1,12 @@
 
 datasets = {
     'mnist': 10,
-    'emnist_letters': 27,
+    'emnist_letters': 27,  # actually 26, but they start at 1 and 0 is missing
     'emnist_balanced': 47,
     'kmnist': 10,
     'fashion_mnist': 10,
     'cifar10': 10,
-    'sign_mnist': 24,
+    'sign_mnist': 25,  # actually 24, but 9 is missing
     'chinese_mnist': 15,
     'kannada_mnist': 10,
     'dig_mnist': 10,

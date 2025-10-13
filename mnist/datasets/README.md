@@ -4,12 +4,12 @@ MNIST-like datasets were gathered from the following sources and standardized to
 | Name                | Num Classes | Num Train | Num Test  | URL                                                                             |
 |---------------------|-------------|-----------|-----------|---------------------------------------------------------------------------------|
 | MNIST               | 10          | 60,000    | 10,000    |                                                                                 |
-| EMNIST Letters      | 37          | 88,800    | 14,800    | https://github.com/hosford42/EMNIST                                             |
+| EMNIST Letters      | 27*         | 88,800    | 14,800    | https://github.com/hosford42/EMNIST                                             |
 | EMNIST Balanced     | 47          | 112,800   | 18,800    | https://github.com/hosford42/EMNIST                                             |
 | FashionMNIST        | 10          | 60,000    | 10,000    | https://github.com/zalandoresearch/fashion-mnist                                |
 | KMNIST              | 10          | 60,000    | 10,000    | https://github.com/rois-codh/kmnist                                             |
 | CIFAR10             | 10          | 50,000    | 10,000    | https://www.cs.toronto.edu/~kriz/cifar.html                                     |
-| Sign Language MNIST | 24          | 27,455    | 7,172     | https://www.kaggle.com/datasets/datamunge/sign-language-mnist?resource=download |
+| Sign Language MNIST | 25*         | 27,455    | 7,172     | https://www.kaggle.com/datasets/datamunge/sign-language-mnist?resource=download |
 | Chinese MNIST       | 15          | 15,000    | -         | https://data.ncl.ac.uk/articles/dataset/Handwritten_Chinese_Numbers/10280831/1  |
 | Kannada MNIST       | 10          | 60,000    | 10,000    | https://www.kaggle.com/datasets/higgstachyon/kannada-mnist                      |
 | Dig MNIST           | 10          | 10,240    | -         | https://www.kaggle.com/datasets/higgstachyon/kannada-mnist                      |

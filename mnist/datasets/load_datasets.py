@@ -20,7 +20,7 @@ if __name__ == "__main__":
     #     if actual_classes != num_classes:
     #         print(f'Error: {dataset} {actual_classes} {num_classes}')
 
-    train_images, train_labels = load_parquet("./parquets/not_mnist/train.parquet")
+    train_images, train_labels = load_parquet("./parquets/emnist_balanced/train.parquet")
 
     fig, axes = plt.subplots(5, 5, figsize=(5, 5), facecolor="black")
 

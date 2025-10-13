@@ -1,7 +1,7 @@
 
 datasets = {
     'mnist': 10,
-    'emnist_letters': 26,
+    'emnist_letters': 27,
     'emnist_balanced': 47,
     'kmnist': 10,
     'fashion_mnist': 10,

@@ -1,8 +1,10 @@
 import json
+import numpy as np
 import matplotlib.pyplot as plt
 from mnist.util import get_num_trainable
 
-def visualize_data(
+
+def graph_data(
     data_files=['./data/mnist/sparse_random.txt'],
     labels=None,
     graph_file='graph.png',
@@ -33,10 +35,35 @@ def visualize_data(
     # plt.savefig(graph_file)
 
 
+def show_noises(data_file):
+    with open(data_file, 'r') as f:
+        dataset = [json.loads(line) for line in f]
+
+    arr = np.random.choice(dataset, size=6)
+
+    fig, axes = plt.subplots(3, 2, figsize=(5, 4), facecolor="black")
+
+    for data, ax in zip(arr, axes.flat):
+        density_map = data['density_map']
+        test_loss = data['test_loss']
+
+        ax.imshow(density_map, cmap='gray')
+        ax.text(
+            0, -3, f"{test_loss:.5f}",
+            color='red', fontsize=8, weight='bold', ha='left', va='top'
+        )
+        ax.axis('off')
+
+    plt.tight_layout()
+    plt.show()
+
+
 if __name__ == '__main__':
-    visualize_data(
-        data_files=['./data/mnist/sparse_random.txt', './data/mnist/sparse_perlin.txt'],
+    graph_data(
+        data_files=['./data/emnist_letters/sparse_random.txt'],
         labels=['Sparse Random', 'Sparse Perlin'],
         graph_file='graph.png',
     )
+
+    # show_noises('./data/mnist/sparse_perlin.txt')
 

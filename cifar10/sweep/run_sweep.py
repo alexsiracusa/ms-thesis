@@ -1,7 +1,7 @@
 import wandb
 import sys
-from cifar10.wandb_project import project_name
-from cifar10.wandb_run import wandb_run
+from cifar10.sweep.wandb_project import project_name
+from cifar10.sweep.wandb_run import wandb_run
 
 sweep_id = sys.argv[1]
 

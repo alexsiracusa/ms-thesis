@@ -36,7 +36,7 @@ def wandb_run():
 
     # Log model parameters
     wandb.log({"average_density": densities.mean()})
-    wandb.run.summary["density_map"] = np.array(densities.tolist())
+    wandb.run.summary["density_map"] = np.array(densities).tolist()
     wandb.log({"batch_size": batch_size})
 
     train_losses, test_losses, epoch_losses = train_cifar(

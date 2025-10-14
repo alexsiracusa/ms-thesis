@@ -40,5 +40,5 @@ SWEEP_ID="5vcmdg6f"
 KEY=""
 
 source "$ENV_DIR/bin/activate"
-python -m cifar10.run_sweep.py ${SWEEP_ID} ${KEY}
+python -m cifar10.sweep.run_sweep.py ${SWEEP_ID} ${KEY}
 

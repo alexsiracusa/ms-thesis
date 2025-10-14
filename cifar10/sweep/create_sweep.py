@@ -1,5 +1,5 @@
 import wandb
-from cifar10.wandb_project import project_name
+from cifar10.sweep.wandb_project import project_name
 
 N = 2000
 epochs = 5

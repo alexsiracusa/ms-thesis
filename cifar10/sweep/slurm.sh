@@ -36,8 +36,8 @@ poetry install
 which python
 python -m pip list
 
-SWEEP_ID="5vcmdg6f"
-KEY=""
+SWEEP_ID="1ci019ty"
+KEY="cef3dd8145cbd009db5a8d1e3938589896bdc25c"
 
 source "$ENV_DIR/bin/activate"
 python -m cifar10.sweep.run_sweep.py ${SWEEP_ID} ${KEY}

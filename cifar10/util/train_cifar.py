@@ -44,7 +44,7 @@ def train_cifar(
     for epoch in range(epochs):
         losses = []
         for images, labels in train_loader:
-            images = flatten_images(images, kernel_size=5, stride=5)
+            images = flatten_images(images, kernel_size=10, stride=10, padding=0)
             images = images.to(device)
             labels = labels.to(device)
 

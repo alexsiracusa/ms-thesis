@@ -18,7 +18,7 @@ def graph_data(
     for i, dataset in enumerate(datasets):
         # trainable_parameters = [get_num_trainable((data['density_map'])) for data in dataset]
         trainable_parameters = [data['average_density'] for data in dataset]
-        test_losses = [data['test_loss'] for data in dataset]
+        test_losses = ([data['test_loss'] for data in dataset])
         # test_losses = [data['epoch_losses'][2] for data in dataset]
 
 
@@ -32,7 +32,7 @@ def graph_data(
     plt.xlabel('Num. Trainable Parameters')
     plt.ylabel('Test Loss')
     plt.legend(loc='upper right')
-    plt.ylim(0, None)
+    # plt.ylim(0, None)
     plt.show()
     # plt.savefig(graph_file)
 
@@ -61,7 +61,7 @@ def show_noises(data_file):
 
 
 if __name__ == '__main__':
-    dataset = './data/cifar10'
+    dataset = './data/mnist'
 
     graph_data(
         data_files=[f'{dataset}/sparse_random.txt', f'{dataset}/sparse_perlin.txt'],

@@ -67,20 +67,27 @@ if __name__ == '__main__':
     # download_dataset('cifar10', 'sparse_random')
     # download_dataset('cifar10', 'sparse_perlin')
 
-    # --------
+    # download_dataset('sign_mnist', 'sparse_random')
+    # download_dataset('sign_mnist', 'sparse_perlin')
 
-    download_dataset('sign_mnist', 'sparse_random')
-    download_dataset('sign_mnist', 'sparse_perlin')
+    # download_dataset('chinese_mnist', 'sparse_random')
+    # download_dataset('chinese_mnist', 'sparse_perlin')
 
-    download_dataset('chinese_mnist', 'sparse_random')
-    download_dataset('chinese_mnist', 'sparse_perlin')
+    # download_dataset('kannada_mnist', 'sparse_random')
+    # download_dataset('kannada_mnist', 'sparse_perlin')
 
-    download_dataset('kannada_mnist', 'sparse_random')
-    download_dataset('kannada_mnist', 'sparse_perlin')
-
-    download_dataset('dig_mnist', 'sparse_random')
-    download_dataset('dig_mnist', 'sparse_perlin')
+    # download_dataset('dig_mnist', 'sparse_random')
+    # download_dataset('dig_mnist', 'sparse_perlin')
 
     download_dataset('overhead_mnist', 'sparse_random')
     download_dataset('overhead_mnist', 'sparse_perlin')
+
+    download_dataset('simpsons_mnist', 'sparse_random')
+    download_dataset('simpsons_mnist', 'sparse_perlin')
+
+    download_dataset('not_mnist', 'sparse_random')
+    download_dataset('not_mnist', 'sparse_perlin')
+
+    download_dataset('path_mnist', 'sparse_random')
+    download_dataset('path_mnist', 'sparse_perlin')
 

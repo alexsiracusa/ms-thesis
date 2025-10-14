@@ -9,8 +9,8 @@ import torch.optim as optim
 from torch.utils.data import TensorDataset
 from torch.utils.data import DataLoader
 
-from util import train
-from cifar10.util import get_num_trainable
+from cifar10_old.mother_models.train import train
+from cifar10_old.util import get_num_trainable
 
 import matplotlib.pyplot as plt
 

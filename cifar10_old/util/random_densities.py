@@ -1,12 +1,12 @@
-import torch
 import random
+import torch
 import numpy as np
 from perlin_noise import PerlinNoise
 
 
-def sparse_random(shape, p_random=None):
-    if p_random is None:
-        p_random = 0.99 * random.random() + 0.01
+def sparse_random(shape):
+    p_random = 0.75 * random.random() + 0.25
+    print(f"p_random: {p_random}")
 
     random_tensor = torch.rand(shape)
     mask = torch.rand(shape) < p_random
@@ -14,15 +14,12 @@ def sparse_random(shape, p_random=None):
     base_tensor = torch.zeros(shape)
     base_tensor[mask] = random_tensor[mask]
 
-    return base_tensor
+    return base_tensor.numpy()
 
 
-def sparse_perlin(shape, clip=None):
-    if clip is None:
-        clip = 0.99 * random.random() + 0.01
-
+def sparse_perlin(shape):
     densities = generate_perlin_noise_2d(shape, square=True)
-    densities = _normalize((densities - clip).clip(0, 1))
+    densities = _normalize((densities - 0.33).clip(0, 1))
 
     return densities
 
@@ -53,15 +50,19 @@ def _normalize(arr):
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
 
-    shape = (11, 36)
+    shape = (45, 145)
     plt.axis('off')
 
-    densities = sparse_random(shape, p_random=0.33)
-    print(f'Sparse Random {densities.sum().item()}')
+    densities = sparse_random(shape)
     plt.imshow(densities, cmap='gray')
-    plt.savefig('./sparse_random.png', bbox_inches='tight', pad_inches=0)
+    plt.savefig('../images/sparse_random.png', bbox_inches='tight', pad_inches=0)
 
-    densities = sparse_perlin(shape, clip=0.33)
-    print(f'Sparse Perlin {densities.sum().item()}')
-    plt.imshow(densities, cmap='gray')
-    plt.savefig('./sparse_perlin.png', bbox_inches='tight', pad_inches=0)
+    noise = generate_perlin_noise_2d(shape)
+    plt.imshow(noise, cmap='gray')
+    plt.savefig('../images/perlin.png', bbox_inches='tight', pad_inches=0)
+
+    noise = sparse_perlin(shape)
+    plt.imshow(noise, cmap='gray')
+    plt.savefig('../images/sparse_perlin.png', bbox_inches='tight', pad_inches=0)
+
+

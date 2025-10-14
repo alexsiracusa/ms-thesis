@@ -3,7 +3,7 @@ from torchvision.datasets import CIFAR10
 from torch.utils.data import DataLoader
 
 
-def load_cifar(data_folder, batch_size=128, shuffle=True):
+def load_cifar(data_folder, batch_size=64, shuffle=True):
     transform_list = [
         transforms.Resize((50, 50)),
         transforms.ToTensor(),

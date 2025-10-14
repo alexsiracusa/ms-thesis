@@ -3,7 +3,7 @@ from scipy.stats import binned_statistic_2d
 import numpy as np
 import json
 
-from cifar10.util import get_num_trainable
+from cifar10_old.util import get_num_trainable
 
 
 def rectangular_identity(rows, cols):

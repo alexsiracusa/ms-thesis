@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import json
 
-from cifar10.util import get_num_trainable
+from cifar10_old.util import get_num_trainable
 
 
 data_file='../train_epoch=3/perlin_generated.txt'

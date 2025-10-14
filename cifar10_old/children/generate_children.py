@@ -3,10 +3,10 @@ import json
 import numpy as np
 import matplotlib.pyplot as plt
 
-from cifar10.mother_models.feed_forward_nn import model
-from cifar10.util.load_cifar import load_cifar
-from cifar10.util import input_sizes, hidden_sizes, output_sizes
-from cifar10.util.train import train_cifar
+from cifar10_old.mother_models.feed_forward_nn import model
+from cifar10_old.util.load_cifar import load_cifar
+from cifar10_old.util import input_sizes, hidden_sizes, output_sizes
+from cifar10_old.util.train import train_cifar
 
 model.load_state_dict(torch.load("../mother_models/feed_forward.pth"))
 

@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import json
 
-from cifar10.util import get_num_trainable
+from cifar10_old.util import get_num_trainable
 
 
 def generate_graphs(

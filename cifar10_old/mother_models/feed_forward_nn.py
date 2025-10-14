@@ -4,12 +4,11 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 
-from util import train
-from cifar10.util import get_num_trainable
+from cifar10_old.util import get_num_trainable
 
 import matplotlib.pyplot as plt
-
-from cifar10.mother_models.load_data import load_data
+from cifar10_old.mother_models.train import train
+from cifar10_old.mother_models.load_data import load_data
 
 
 model = nn.Sequential(

@@ -79,11 +79,11 @@ if __name__ == '__main__':
     # download_dataset('dig_mnist', 'sparse_random')
     # download_dataset('dig_mnist', 'sparse_perlin')
 
-    download_dataset('overhead_mnist', 'sparse_random')
-    download_dataset('overhead_mnist', 'sparse_perlin')
+    # download_dataset('overhead_mnist', 'sparse_random')
+    # download_dataset('overhead_mnist', 'sparse_perlin')
 
-    download_dataset('simpsons_mnist', 'sparse_random')
-    download_dataset('simpsons_mnist', 'sparse_perlin')
+    # download_dataset('simpsons_mnist', 'sparse_random')
+    # download_dataset('simpsons_mnist', 'sparse_perlin')
 
     download_dataset('not_mnist', 'sparse_random')
     download_dataset('not_mnist', 'sparse_perlin')

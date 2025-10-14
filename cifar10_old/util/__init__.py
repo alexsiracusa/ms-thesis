@@ -3,5 +3,4 @@ from .get_num_trainable import *
 from .load_cifar import *
 from .random_densities import *
 from .sizes import *
-from .train_cifar import *
-from .create_model import create_model
+from .train import *

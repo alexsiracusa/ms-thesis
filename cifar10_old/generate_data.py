@@ -1,9 +1,9 @@
 import json
 
-from cifar10.util.train import train_cifar
-from cifar10.util.load_cifar import load_cifar
-from cifar10.util.random_densities import sparse_random, sparse_perlin
-from cifar10.util import input_sizes, hidden_sizes, output_sizes
+from cifar10_old.util.train import train_cifar
+from cifar10_old.util.load_cifar import load_cifar
+from cifar10_old.util.random_densities import sparse_random, sparse_perlin
+from cifar10_old.util import input_sizes, hidden_sizes, output_sizes
 
 
 def generate_data(

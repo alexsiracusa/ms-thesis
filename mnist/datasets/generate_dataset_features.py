@@ -6,7 +6,7 @@ from sklearn.metrics import log_loss
 
 
 def generate_dataset_features(include):
-    for dataset, num_classes in datasets.items():
+    for dataset, num_classes in list(datasets.items())[15:-3]:
         # load existing features
         feature_file_path = f'../data/{dataset}/dataset_features.json'
         try:
@@ -41,4 +41,4 @@ def generate_dataset_features(include):
 
 
 if __name__ == "__main__":
-    generate_dataset_features(include=[])
+    generate_dataset_features(include=['linear_regression'])

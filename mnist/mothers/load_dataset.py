@@ -17,6 +17,7 @@ def load_dataset(
 ):
     features = []
     targets = []
+    jsons = []
 
     for dataset_name, noise in itertools.product(include, noise_types):
         data_file = f'{data_dir}/{dataset_name}/{noise}.txt'
@@ -27,28 +28,28 @@ def load_dataset(
         with open(features_file, 'r') as f:
              dataset_features = json.load(f)
 
-
         for data in dataset:
             if not min_cut_off <= data['average_density'] <= max_cut_off:
                 continue
             if data[target] > max_target:
                 continue
 
+            jsons.append(data)
             targets.append(data[target])
+
             data_features = []
             for feature in feature_set:
                 data_features += np.array(data[feature]).flatten().tolist()
-
             for feature in dataset_feature_set:
                 data_features += [dataset_features[feature]]
 
             features.append(data_features)
 
-    return torch.tensor(features), torch.tensor(targets)
+    return torch.tensor(features), torch.tensor(targets), jsons
 
 
 if __name__ == '__main__':
-    features, targets = load_dataset(
+    features, targets, jsons = load_dataset(
         include=['mnist', 'emnist_letters', 'emnist_balanced', 'fashion_mnist', 'kmnist', 'cifar10', 'sign_mnist'],
         noise_types=['sparse_random'],
         feature_set=['average_density'],
@@ -58,3 +59,4 @@ if __name__ == '__main__':
 
     print(features.shape)
     print(targets.shape)
+    print(len(jsons))

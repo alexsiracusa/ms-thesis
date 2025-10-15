@@ -2,6 +2,7 @@ import json
 import numpy as np
 import matplotlib.pyplot as plt
 from cifar10.util import get_num_trainable
+import cifar10_old.util as util
 
 
 def graph_data(
@@ -15,14 +16,26 @@ def graph_data(
             dataset = [json.loads(line) for line in f]
             datasets.append(dataset)
 
-    for i, dataset in enumerate(datasets):
-        # trainable_parameters = [get_num_trainable((data['density_map'])) for data in dataset]
-        trainable_parameters = [data['average_density'] for data in dataset]
-        test_losses = ([data['test_losses'][-1] for data in dataset])
+    for i, dataset in enumerate(datasets[:2]):
+        trainable_parameters = [get_num_trainable((data['density_map'])) for data in dataset]
+        # trainable_parameters = [data['average_density'] for data in dataset]
+        test_losses = ([data['test_losses'][2] for data in dataset])
 
         plt.scatter(
             trainable_parameters, test_losses,
             label=labels[i] if labels is not None else None,
+            alpha=0.5,
+            s=5,
+        )
+
+    for i, dataset in enumerate(datasets[2:]):
+        trainable_parameters = [util.get_num_trainable((data['densities'])) for data in dataset]
+        # trainable_parameters = [data['average_density'] for data in dataset]
+        test_losses = ([data['test_loss'] for data in dataset])
+
+        plt.scatter(
+            trainable_parameters, test_losses,
+            label=labels[i+2] if labels is not None else None,
             alpha=0.5,
             s=5,
         )
@@ -58,11 +71,21 @@ def show_noises(data_file):
 
 if __name__ == '__main__':
 
-    # graph_data(
-    #     data_files=[f'./data/sparse_random.txt'],
-    #     labels=['Sparse Random'],
-    #     graph_file='graph.png',
-    # )
+    graph_data(
+        data_files=[
+            './data/sparse_random.txt',
+            './data/sparse_perlin.txt',
+            # '../cifar10_old/train_epoch=3/train_data.txt',
+            # '../cifar10_old/train_epoch=3/perlin_data.txt',
+        ],
+        labels=[
+            'Sparse Random',
+            'Sparse Perlin',
+            'Random Old',
+            'Perlin Old',
+        ],
+        graph_file='graph.png',
+    )
 
-    show_noises(f'./data/sparse_random.txt')
+    # show_noises(f'./data/sparse_random.txt')
 

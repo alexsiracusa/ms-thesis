@@ -85,9 +85,43 @@ if __name__ == '__main__':
     # download_dataset('simpsons_mnist', 'sparse_random')
     # download_dataset('simpsons_mnist', 'sparse_perlin')
 
-    download_dataset('not_mnist', 'sparse_random')
-    download_dataset('not_mnist', 'sparse_perlin')
+    # download_dataset('not_mnist', 'sparse_random')
+    # download_dataset('not_mnist', 'sparse_perlin')
 
-    download_dataset('path_mnist', 'sparse_random')
-    download_dataset('path_mnist', 'sparse_perlin')
+    # download_dataset('path_mnist', 'sparse_random')
+    # download_dataset('path_mnist', 'sparse_perlin')
+
+    # download_dataset('chest_mnist', 'sparse_random')
+    # download_dataset('chest_mnist', 'sparse_perlin')
+
+    download_dataset('dermal_mnist', 'sparse_random')
+    download_dataset('dermal_mnist', 'sparse_perlin')
+
+    # download_dataset('oct_mnist', 'sparse_random')
+    # download_dataset('oct_mnist', 'sparse_perlin')
+
+    # download_dataset('pneumonia_mnist', 'sparse_random')
+    # download_dataset('pneumonia_mnist', 'sparse_perlin')
+
+    # download_dataset('retina_mnist', 'sparse_random')
+    # download_dataset('retina_mnist', 'sparse_perlin')
+
+    # download_dataset('breast_mnist', 'sparse_random')
+    # download_dataset('breast_mnist', 'sparse_perlin')
+
+    # download_dataset('blood_mnist', 'sparse_random')
+    # download_dataset('blood_mnist', 'sparse_perlin')
+
+    # download_dataset('tissue_mnist', 'sparse_random')
+    # download_dataset('tissue_mnist', 'sparse_perlin')
+
+    # ----
+    # download_dataset('organ_a_mnist', 'sparse_random')
+    # download_dataset('organ_a_mnist', 'sparse_perlin')
+    #
+    # download_dataset('organ_c_mnist', 'sparse_random')
+    # download_dataset('organ_c_mnist', 'sparse_perlin')
+    #
+    # download_dataset('organ_s_mnist', 'sparse_random')
+    # download_dataset('organ_s_mnist', 'sparse_perlin')
 

@@ -94,8 +94,8 @@ if __name__ == '__main__':
     # download_dataset('chest_mnist', 'sparse_random')
     # download_dataset('chest_mnist', 'sparse_perlin')
 
-    download_dataset('dermal_mnist', 'sparse_random')
-    download_dataset('dermal_mnist', 'sparse_perlin')
+    # download_dataset('dermal_mnist', 'sparse_random')
+    # download_dataset('dermal_mnist', 'sparse_perlin')
 
     # download_dataset('oct_mnist', 'sparse_random')
     # download_dataset('oct_mnist', 'sparse_perlin')
@@ -115,13 +115,14 @@ if __name__ == '__main__':
     # download_dataset('tissue_mnist', 'sparse_random')
     # download_dataset('tissue_mnist', 'sparse_perlin')
 
-    # ----
     # download_dataset('organ_a_mnist', 'sparse_random')
     # download_dataset('organ_a_mnist', 'sparse_perlin')
-    #
+
     # download_dataset('organ_c_mnist', 'sparse_random')
     # download_dataset('organ_c_mnist', 'sparse_perlin')
-    #
+
     # download_dataset('organ_s_mnist', 'sparse_random')
     # download_dataset('organ_s_mnist', 'sparse_perlin')
+
+    pass
 

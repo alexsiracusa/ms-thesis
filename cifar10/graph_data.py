@@ -19,7 +19,7 @@ def graph_data(
     for i, dataset in enumerate(datasets[:2]):
         trainable_parameters = [get_num_trainable((data['density_map'])) for data in dataset]
         # trainable_parameters = [data['average_density'] for data in dataset]
-        test_losses = ([data['test_losses'][2] for data in dataset])
+        test_losses = ([data['test_losses'][-1] for data in dataset])
 
         plt.scatter(
             trainable_parameters, test_losses,
@@ -44,6 +44,9 @@ def graph_data(
     plt.ylabel('Test Loss')
     plt.legend(loc='upper right')
     plt.show()
+
+    if graph_file is not None:
+        plt.savefig(graph_file)
 
 
 def show_noises(data_file):

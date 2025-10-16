@@ -52,5 +52,5 @@ def download_dataset(noise, data_dir='../data'):
 
 if __name__ == '__main__':
     download_dataset('sparse_perlin')
-    # download_dataset('mnist', 'sparse_perlin')
+    # download_dataset('sparse_perlin_clip')
 

@@ -7,8 +7,12 @@
 #SBATCH -n 1
 #SBATCH --mem=32gb
 #SBATCH --gres=gpu:1
-
 #SBATCH --array=0-11
+
+# catch an errors (i.e. git pull fails)
+set -euo pipefail
+trap 'echo "❌ Error on line $LINENO. Exiting..." >&2' ERR
+
 
 module load git
 module load python/3.11.12

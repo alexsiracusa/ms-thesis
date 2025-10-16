@@ -8,7 +8,7 @@
 #SBATCH --mem=32gb
 #SBATCH --gres=gpu:1
 
-#SBATCH --array=0-7
+#SBATCH --array=0-11
 
 module load git
 module load python/3.11.12
@@ -36,7 +36,7 @@ poetry install
 which python
 python -m pip list
 
-SWEEP_ID="6olw4nzn"
+SWEEP_ID="ikg8uvsq"
 KEY=""
 
 source "$ENV_DIR/bin/activate"

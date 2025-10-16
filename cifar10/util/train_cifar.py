@@ -8,7 +8,7 @@ from cifar10.util import flatten_images
 
 
 def average_loss(model, loader, device):
-    model.to(device)
+    model = model.to(device)
     criterion = nn.CrossEntropyLoss()
 
     losses = []
@@ -34,7 +34,7 @@ def train_cifar(
     print(f'Device: {device}')
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=1e-4)
-    model.to(device)
+    model = model.to(device)
 
     epoch_losses = []
     train_losses = []

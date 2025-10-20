@@ -34,7 +34,9 @@ def graph_data(
     plt.legend(loc='upper right')
     # plt.ylim(0, None)
     plt.show()
-    # plt.savefig(graph_file)
+
+    if graph_file is not None:
+        plt.savefig(graph_file)
 
 
 def show_noises(data_file):

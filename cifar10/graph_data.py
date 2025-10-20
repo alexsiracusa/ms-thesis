@@ -43,10 +43,11 @@ def graph_data(
     plt.xlabel('Num. Trainable Parameters')
     plt.ylabel('Test Loss')
     plt.legend(loc='upper right')
-    plt.show()
 
     if graph_file is not None:
         plt.savefig(graph_file)
+
+    plt.show()
 
 
 def show_noises(data_file):
@@ -77,7 +78,7 @@ if __name__ == '__main__':
     graph_data(
         data_files=[
             './data/sparse_random.txt',
-            # './data/sparse_perlin.txt',
+            './data/sparse_perlin.txt',
             # '../cifar10_old/train_epoch=3/train_data.txt',
             # '../cifar10_old/train_epoch=3/perlin_data.txt',
         ],

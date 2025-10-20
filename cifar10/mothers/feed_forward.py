@@ -3,7 +3,6 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import TensorDataset, DataLoader
 from sklearn.model_selection import train_test_split
-from cifar10.util import get_num_trainable
 from cifar10.mothers.graphs import test_vs_pred, num_train_vs_test_graph
 import numpy as np
 import json
@@ -58,7 +57,7 @@ def train_model():
         print(f'Epoch: {sum(losses) / len(losses)}')
 
 
-    torch.save(model.state_dict(), './feed_forward.pth')
+    torch.save(model.state_dict(), './feed_forward_new.pth')
     y_pred = model.forward(X_test.to(device))
     loss = criterion(y_pred, y_test.to(device))
 

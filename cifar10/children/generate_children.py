@@ -5,13 +5,14 @@ import matplotlib.pyplot as plt
 
 from cifar10.mothers.feed_forward import model
 from cifar10.util import load_cifar, train_cifar, create_model
-from cifar10.util import input_sizes, hidden_sizes, output_sizes
-
-model.load_state_dict(torch.load("../mothers/feed_forward.pth"))
 
 
-for param in model.parameters():
+mother = model
+mother.load_state_dict(torch.load("../mothers/feed_forward.pth", map_location="cpu"))
+
+for param in mother.parameters():
     param.requires_grad = False
+
 
 def generate_children(input_file, output_file, data_folder):
     with open(input_file, 'r') as f:
@@ -19,7 +20,7 @@ def generate_children(input_file, output_file, data_folder):
 
     train_loader, test_loader = load_cifar(data_folder, batch_size=128, shuffle=False)
 
-    for _ in range(3):
+    for _ in range(10):
         fig, axes = plt.subplots(2, 1, figsize=(10, 5))
 
         data = np.random.choice(dataset)
@@ -29,7 +30,7 @@ def generate_children(input_file, output_file, data_folder):
         axes[0].imshow(x.reshape(11, 36).detach().numpy(), cmap='gray', vmin=0, vmax=1)
 
         for _ in range(300):
-            pred = model(x)
+            pred = mother(x)
             pred.backward()
 
             with torch.no_grad():
@@ -55,22 +56,20 @@ def generate_children(input_file, output_file, data_folder):
         )
 
         data = {
-            "original_density_map": data['densities'],
+            "original_density_map": data['density_map'],
             "generated_density_map": x.detach().numpy().tolist(),
 
             "original_train_losses": data['train_losses'],
             "original_test_losses": data['test_losses'],
-            "original_pred": model(torch.tensor(data['density_map']).flatten()).item(),
+            "original_pred": mother(torch.tensor(data['density_map']).flatten()).item(),
 
             "generated_train_losses": train_losses,
             "generated_test_losses": test_losses,
-            "generated_pred": model(x).item(),
+            "generated_pred": mother(x).item(),
         }
 
         with open(output_file, 'a') as f:
             f.write(json.dumps(data) + '\n')
-
-
 
 
 if __name__ == "__main__":

@@ -6,7 +6,7 @@ from sklearn.metrics import log_loss
 
 
 def generate_dataset_features(include):
-    for dataset, num_classes in list(datasets.items())[15:-3]:
+    for dataset, num_classes in list(datasets.items()):
         # load existing features
         feature_file_path = f'../data/{dataset}/dataset_features.json'
         try:

@@ -8,7 +8,7 @@ from sklearn.model_selection import train_test_split
 from mnist.mothers.graphs import num_train_vs_test_graph, test_vs_pred
 from mnist.datasets import datasets
 
-include = list(datasets.keys())[:-3]
+include = set(datasets.keys()) - {'sign_mnist', 'path_mnist'}
 super_include = ['blood_mnist', 'chinese_mnist']
 include = set(include) - set(super_include)
 
@@ -16,10 +16,7 @@ params = {
     'noise_types': ['sparse_perlin'],
     'feature_set': ['density_map'],
     'dataset_feature_set': ['ce_loss'],
-    'target': 'test_loss',
-    'min_cut_off': 0,
-    'max_cut_off': 1,
-    'max_target': 5,
+    # 'normalize_loss': True,
 }
 
 features, targets, jsons = load_dataset(**params, include=include)
@@ -50,7 +47,7 @@ optimizer = optim.Adam(model.parameters(), lr=1e-3)
 # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 device = torch.device("mps")
 model.to(device)
-epochs = 25
+epochs = 50
 
 for epoch in range(epochs):
     losses = []
@@ -68,25 +65,25 @@ for epoch in range(epochs):
     print(f'Epoch: {sum(losses) / len(losses)}')
 
 
-# y_pred = model.forward(X_test.to(device))
-# loss = criterion(y_pred, y_test.to(device))
-#
-# print(loss.item())
-#
-# # Graph
-# y_pred = y_pred.detach().cpu().numpy()
-# y_test = y_test.detach().cpu().numpy()
-#
-# num_train_vs_test_graph(
-#     y_test, y_pred, jsons_test, loss.item(),
-#     show=True
-# )
-#
-# test_vs_pred(
-#     y_test, y_pred, loss, show=True,
-#     ylim=(None, None),
-#     xlim=(None, None)
-# )
+# Test
+y_pred = model.forward(X_test.to(device))
+loss = criterion(y_pred, y_test.to(device))
+
+print(loss.item())
+
+y_pred = y_pred.detach().cpu().numpy()
+y_test = y_test.detach().cpu().numpy()
+
+num_train_vs_test_graph(
+    y_test, y_pred, jsons_test, loss.item(),
+    show=True
+)
+
+test_vs_pred(
+    y_test, y_pred, loss, show=True,
+    ylim=(None, None),
+    xlim=(None, None)
+)
 
 
 # Super test
@@ -95,7 +92,6 @@ loss = criterion(y_pred, super_targets.to(device))
 
 print(loss.item())
 
-# Graph
 y_pred = y_pred.detach().cpu().numpy()
 y_test = super_targets.detach().cpu().numpy()
 

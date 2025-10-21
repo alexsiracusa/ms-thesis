@@ -1,5 +1,6 @@
 from cifar10.util import get_num_trainable
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 def test_vs_pred(
@@ -9,9 +10,15 @@ def test_vs_pred(
         show=True,
         save=None
 ):
+    # Plot test vs. Pred
     plt.scatter(y_test, y_pred)
     plt.xlabel('Test Error')
     plt.ylabel('Prediction')
+
+    # Plot line y=x
+    points = np.append(y_test, y_pred)
+    x = np.linspace(points.min(), points.max(), 100)
+    plt.plot(x, x, linestyle='--', color='orange')
 
     plt.ylim(*ylim)
     plt.xlim(*xlim)

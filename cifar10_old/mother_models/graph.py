@@ -1,4 +1,3 @@
-from mnist.util import get_num_trainable
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -36,25 +35,20 @@ def test_vs_pred(
         plt.savefig(save)
 
 
-def num_train_vs_test_graph(
-        y_test, y_pred, jsons_test, loss,
-        show=True,
-        save=None
-):
-    num_trainable = [get_num_trainable(data['density_map']) for data in jsons_test]
-    plt.scatter(num_trainable, y_test, label='Data points')
-    plt.scatter(num_trainable, y_pred, label='Predictions')
-    plt.text(
-        1, 1.05, f'Loss: {loss:.7f}',
-        transform=plt.gca().transAxes,
-        ha="right", va="top",
-        fontsize=12, color="red"
-    )
-    plt.legend(loc='upper right')
-    plt.xlabel('Num. Trainable Parameters')
-    plt.ylabel('Test Loss')
 
-    if show:
-        plt.show()
-    if save is not None:
-        plt.savefig(save)
+from cifar10_old.mother_models.load_data import load_data
+from cifar10_old.mother_models.feed_forward_nn import model
+import torch
+
+model.load_state_dict(torch.load("../mother_models/feed_forward.pth"))
+
+for param in model.parameters():
+    param.requires_grad = False
+
+
+train_data, train_cut, train_loader, X_train, y_train, X_test, y_test = load_data('../train_epoch=3/perlin_data.txt')
+
+y_pred = model(X_test)
+test_vs_pred(y_test, y_pred, 0)
+
+

@@ -4,20 +4,22 @@ import torch
 import itertools
 from mnist.datasets import datasets
 
+
 def load_dataset(
         include,
         noise_types,
         feature_set,
         dataset_feature_set,
-        target,
+        target='test_loss',
         min_cut_off=0,
         max_cut_off=1,
-        max_target=float('inf'),
+        clip_max_loss=True,
+        normalize_loss=False,
         data_dir='../data'
 ):
-    features = []
-    targets = []
-    jsons = []
+    all_features = []
+    all_targets = []
+    all_jsons = []
 
     for dataset_name, noise in itertools.product(include, noise_types):
         data_file = f'{data_dir}/{dataset_name}/{noise}.txt'
@@ -27,6 +29,12 @@ def load_dataset(
         features_file = f'{data_dir}/{dataset_name}/dataset_features.json'
         with open(features_file, 'r') as f:
              dataset_features = json.load(f)
+
+        max_target = -np.log(1 / datasets[dataset_name]) + 0.05 if clip_max_loss else float('inf')
+
+        features = []
+        targets = []
+        jsons = []
 
         for data in dataset:
             if not min_cut_off <= data['average_density'] <= max_cut_off:
@@ -45,18 +53,35 @@ def load_dataset(
 
             features.append(data_features)
 
-    return torch.tensor(features), torch.tensor(targets), jsons
+        # normalize if specified
+        if normalize_loss:
+            targets = np.array(targets)
+            targets = (targets - targets.min()) / (targets.max() - targets.min())
+            targets = targets.tolist()
+
+        all_features += features
+        all_targets += targets
+        all_jsons += jsons
+
+    return torch.tensor(all_features), torch.tensor(all_targets), all_jsons
 
 
 if __name__ == '__main__':
+    import matplotlib.pyplot as plt
+
+    include = set(datasets.keys()) - {'sign_mnist', 'path_mnist'}
+
     features, targets, jsons = load_dataset(
-        include=['mnist', 'emnist_letters', 'emnist_balanced', 'fashion_mnist', 'kmnist', 'cifar10', 'sign_mnist'],
+        include=include,
         noise_types=['sparse_random'],
         feature_set=['average_density'],
         dataset_feature_set=['num_classes', 'ce_loss'],
-        target='test_loss'
+        normalize_loss=True,
     )
 
     print(features.shape)
     print(targets.shape)
     print(len(jsons))
+
+    plt.scatter(features[:, 0], targets)
+    plt.show()

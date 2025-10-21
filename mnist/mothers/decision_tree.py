@@ -7,18 +7,15 @@ from mnist.mothers.graphs import test_vs_pred, num_train_vs_test_graph
 from mnist.datasets import datasets
 
 
-include = list(datasets.keys())[:-3]
+include = set(datasets.keys()) - {'sign_mnist', 'path_mnist'}
 super_include = ['blood_mnist', 'chinese_mnist']
 include = set(include) - set(super_include)
 
 params = {
     'noise_types': ['sparse_perlin'],
-    'feature_set': ['density_map'],
+    'feature_set': ['average_density'],
     'dataset_feature_set': ['ce_loss'],
-    'target': 'test_loss',
-    'min_cut_off': 0,
-    'max_cut_off': 1,
-    'max_target': 5,
+    'normalize_loss': True,
 }
 
 features, targets, jsons = load_dataset(**params, include=include)
@@ -31,21 +28,21 @@ model = DecisionTreeRegressor(max_depth=8)
 model.fit(X_train, y_train)
 
 # Predict and evaluate
-# y_pred = model.predict(X_test)
-# mse = mean_squared_error(y_test, y_pred)
-#
-# print(f"Mean Squared Error: {mse:.4f}")
-#
-# num_train_vs_test_graph(
-#     y_test, y_pred, jsons_test, mse,
-#     show=True
-# )
-#
-# test_vs_pred(
-#     y_test, y_pred, mse, show=True,
-#     ylim=(None, None),
-#     xlim=(None, None)
-# )
+y_pred = model.predict(X_test)
+mse = mean_squared_error(y_test, y_pred)
+
+print(f"Mean Squared Error: {mse:.4f}")
+
+num_train_vs_test_graph(
+    y_test, y_pred, jsons_test, mse,
+    show=True
+)
+
+test_vs_pred(
+    y_test, y_pred, mse, show=True,
+    ylim=(None, None),
+    xlim=(None, None)
+)
 
 
 # Super test set

@@ -49,6 +49,6 @@ for param in model.parameters():
 train_data, train_cut, train_loader, X_train, y_train, X_test, y_test = load_data('../train_epoch=3/perlin_data.txt')
 
 y_pred = model(X_test)
-test_vs_pred(y_test, y_pred, 0)
+test_vs_pred(y_test, y_pred, 0.0001363)
 
 

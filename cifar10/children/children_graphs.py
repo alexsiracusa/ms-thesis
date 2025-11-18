@@ -27,7 +27,7 @@ def generate_graphs(
 
     plt.scatter(
         background_parameters, background_losses,
-        label='Original',
+        label='Original Children',
         alpha=0.1,
         s=5,
         zorder=0,
@@ -35,7 +35,7 @@ def generate_graphs(
 
     plt.scatter(
         trainable_parameters, test_losses,
-        label='Original',
+        label='Starting Points',
         alpha=1,
         s=40,
         zorder=2,

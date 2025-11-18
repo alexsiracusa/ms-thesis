@@ -88,7 +88,7 @@ if __name__ == '__main__':
             'Random Old',
             'Perlin Old',
         ],
-        graph_file='graph.png',
+        graph_file='images/graph.png',
     )
 
     # show_noises(f'./data/sparse_random.txt')

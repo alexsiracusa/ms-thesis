@@ -1,7 +1,12 @@
 from cifar10.util.sizes import num_output, num_input, sizes, num_iterations
 from Sequential2D.util import build_sequential2d
 
-def create_model(densities):
+def create_model(
+        densities,
+        sizes=sizes,
+        num_input=num_input,
+        num_output=num_output
+):
     return build_sequential2d(
         sizes,
         type='linear',

@@ -18,7 +18,7 @@ def wandb_run():
     num_input = int(7500 / block_size)
     num_hidden = int(3000 / block_size)
     num_output = 1
-    num_blocks = num_hidden + num_hidden + num_output
+    num_blocks = num_input + num_hidden + num_output
     sizes = [block_size] * (num_input + num_hidden) + [10]
 
     # Load dataset

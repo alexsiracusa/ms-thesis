@@ -20,5 +20,5 @@ KEY=""
 
 cd "$REPO_DIR"
 source "$ENV_DIR/bin/activate"
-python -m cifar10.sweep.run_sweep.py ${SWEEP_ID} ${KEY}
+python -m cifar10.compare_variance.run_sweep.py ${SWEEP_ID} ${KEY}
 

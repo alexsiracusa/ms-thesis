@@ -21,7 +21,6 @@ if [ -d "$REPO_DIR/.git" ]; then
 else
     echo "Cloning fresh repository..."
     git clone --depth=1 "$REPO_URL" "$REPO_DIR"
-    cd "$REPO_DIR"
 fi
 
 

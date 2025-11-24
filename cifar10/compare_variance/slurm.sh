@@ -13,10 +13,12 @@
 set -euo pipefail
 trap 'echo "❌ Error on line $LINENO. Exiting..." >&2' ERR
 
+REPO_DIR="$HOME/ms-thesis"
 ENV_DIR="$HOME/envs/ms-thesis"
 SWEEP_ID="jvdv4c6g"
 KEY=""
 
+cd "$REPO_DIR"
 source "$ENV_DIR/bin/activate"
 python -m cifar10.sweep.run_sweep.py ${SWEEP_ID} ${KEY}
 

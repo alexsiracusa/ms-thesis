@@ -15,7 +15,8 @@ include = set(include) - set(super_include)
 params = {
     'noise_types': ['sparse_perlin'],
     'feature_set': ['density_map'],
-    'dataset_feature_set': ['ce_loss'],
+    # 'dataset_feature_set': ['lr_loss'],
+    'dataset_feature_set': ['nn_loss_0.1_test', 'nn_loss_0.25_test', 'nn_loss_0.5_test'],
     # 'normalize_loss': True,
 }
 
@@ -34,7 +35,7 @@ test_loader = DataLoader(test_dataset, batch_size=64, shuffle=True)
 print(X_train.shape)
 
 model = nn.Sequential(
-    nn.Linear(397, 256),
+    nn.Linear(396 + 3, 256),
     nn.Sigmoid(),
     nn.Linear(256, 128),
     nn.Sigmoid(),

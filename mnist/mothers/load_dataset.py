@@ -56,7 +56,8 @@ def load_dataset(
         # normalize if specified
         if normalize_loss:
             targets = np.array(targets)
-            targets = (targets - targets.min()) / (targets.max() - targets.min())
+            # targets = (targets - targets.min()) / (targets.max() - targets.min())
+            targets = (targets - dataset_features['nn_loss_0.5_test']) / (dataset_features['loss_uniform'] - dataset_features['nn_loss_0.5_test'])
             targets = targets.tolist()
 
         all_features += features
@@ -75,7 +76,7 @@ if __name__ == '__main__':
         include=include,
         noise_types=['sparse_random'],
         feature_set=['average_density'],
-        dataset_feature_set=['num_classes', 'ce_loss'],
+        dataset_feature_set=['num_classes', 'lr_loss'],
         normalize_loss=True,
     )
 

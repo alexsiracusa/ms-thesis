@@ -14,8 +14,9 @@ include = set(include) - set(super_include)
 params = {
     'noise_types': ['sparse_perlin'],
     'feature_set': ['average_density'],
-    'dataset_feature_set': ['ce_loss'],
-    'normalize_loss': True,
+    # 'dataset_feature_set': ['lr_loss'],
+    'dataset_feature_set': ['nn_loss_0.1_test', 'nn_loss_0.25_test', 'nn_loss_0.5_test'],
+    # 'normalize_loss': True,
 }
 
 features, targets, jsons = load_dataset(**params, include=include)

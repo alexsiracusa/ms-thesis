@@ -14,8 +14,8 @@ include = set(include) - set(super_include)
 params = {
     'noise_types': ['sparse_perlin'],
     'feature_set': ['average_density'],
-    # 'dataset_feature_set': ['lr_loss'],
-    'dataset_feature_set': ['nn_loss_0.1_test', 'nn_loss_0.25_test', 'nn_loss_0.5_test'],
+    'dataset_feature_set': ['lr_loss'],
+    # 'dataset_feature_set': ['nn_loss_0.1_test', 'nn_loss_0.25_test', 'nn_loss_0.5_test'],
     # 'normalize_loss': True,
 }
 
@@ -25,7 +25,7 @@ super_features, super_targets, super_jsons = load_dataset(**params, include=supe
 X, y = features.numpy(), targets.numpy()
 X_train, X_test, y_train, y_test, jsons_train, jsons_test = train_test_split(X, y, jsons, test_size=0.2, random_state=42)
 
-model = DecisionTreeRegressor(max_depth=8)
+model = DecisionTreeRegressor(max_depth=12)
 model.fit(X_train, y_train)
 
 # Predict and evaluate

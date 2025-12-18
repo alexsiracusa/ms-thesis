@@ -10,10 +10,10 @@ include = set(datasets.keys()) - {'path_mnist', 'sign_mnist'}
 params = {
     'include': include,
     'feature_set': ['average_density'],
-    'dataset_feature_set': ['ce_loss'],
+    'dataset_feature_set': ['lr_loss'],
     'target': 'test_loss',
     # 'clip_max_loss': False,
-    'normalize_loss': True,
+    # 'normalize_loss': True,
 }
 
 _, targets, jsons = load_dataset(**params, noise_types=['sparse_random'])

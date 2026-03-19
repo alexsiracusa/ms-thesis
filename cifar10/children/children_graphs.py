@@ -52,6 +52,17 @@ def generate_graphs(
     for x1, y1, x2, y2 in zip(trainable_parameters, test_losses, generated_parameters, generated_losses):
         plt.plot([x1, x2], [y1, y2], color='gray', linestyle='--', zorder=1, alpha=0.45)
 
+    # Feed forward baseline
+    plt.scatter(
+        [9010935], [1.50110],
+        # label='Baseline',
+        alpha=1,
+        s=40,
+        zorder=3,
+        c='gray',
+    )
+    plt.axhline(y=1.50110, color='gray', linestyle='--', label=f'Feed-Forward Baseline')
+
     plt.xlabel('Num. Trainable Parameters')
     plt.ylabel('Test Loss')
     plt.legend(loc='upper right')

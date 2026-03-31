@@ -8,6 +8,7 @@ from sklearn.model_selection import train_test_split
 from mnist.mothers.graphs import num_train_vs_test_graph, test_vs_pred
 from mnist.datasets import datasets
 
+
 include = set(datasets.keys()) - {'sign_mnist', 'path_mnist'}
 super_include = ['blood_mnist', 'chinese_mnist']
 include = set(include) - set(super_include)
@@ -18,21 +19,8 @@ params = {
     # 'dataset_feature_set': ['lr_loss'],
     'dataset_feature_set': ['nn_loss_0.1_test', 'nn_loss_0.25_test', 'nn_loss_0.5_test'],
     # 'normalize_loss': True,
+    'min_cut_off': 0.33
 }
-
-features, targets, jsons = load_dataset(**params, include=include)
-super_features, super_targets, super_jsons = load_dataset(**params, include=super_include)
-super_targets = super_targets.unsqueeze(1)
-
-X_train, X_test, y_train, y_test, jsons_train, jsons_test = train_test_split(features, targets, jsons, test_size=0.2, random_state=42)
-y_train, y_test = y_train.unsqueeze(1), y_test.unsqueeze(1)
-train_dataset = TensorDataset(X_train, y_train)
-test_dataset = TensorDataset(X_test, y_test)
-
-train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
-test_loader = DataLoader(test_dataset, batch_size=64, shuffle=True)
-
-print(X_train.shape)
 
 model = nn.Sequential(
     nn.Linear(396 + 3, 256),
@@ -42,67 +30,87 @@ model = nn.Sequential(
     nn.Linear(128, 1)
 )
 
-# Train Model
-criterion = nn.MSELoss()
-optimizer = optim.Adam(model.parameters(), lr=1e-3)
-# device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-device = torch.device("mps")
-model.to(device)
-epochs = 50
+def train_model():
+    features, targets, jsons = load_dataset(**params, include=include)
+    super_features, super_targets, super_jsons = load_dataset(**params, include=super_include)
+    super_targets = super_targets.unsqueeze(1)
 
-for epoch in range(epochs):
-    losses = []
-    for data, labels in train_loader:
-        data = data.to(device)
-        labels = labels.to(device)
+    X_train, X_test, y_train, y_test, jsons_train, jsons_test = train_test_split(features, targets, jsons, test_size=0.2, random_state=42)
+    y_train, y_test = y_train.unsqueeze(1), y_test.unsqueeze(1)
+    train_dataset = TensorDataset(X_train, y_train)
+    test_dataset = TensorDataset(X_test, y_test)
 
-        output = model.forward(data)
-        loss = criterion(output, labels)
-        losses.append(loss.item())
-        loss.backward()
-        optimizer.step()
-        optimizer.zero_grad()
+    train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
+    test_loader = DataLoader(test_dataset, batch_size=64, shuffle=True)
 
-    print(f'Epoch: {sum(losses) / len(losses)}')
+    print(X_train.shape)
 
+    # Train Model
+    criterion = nn.MSELoss()
+    optimizer = optim.Adam(model.parameters(), lr=1e-3)
+    # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    device = torch.device("mps")
+    model.to(device)
+    epochs = 20
 
-# Test
-y_pred = model.forward(X_test.to(device))
-loss = criterion(y_pred, y_test.to(device))
+    for epoch in range(epochs):
+        losses = []
+        for data, labels in train_loader:
+            data = data.to(device)
+            labels = labels.to(device)
 
-print(loss.item())
+            output = model.forward(data)
+            loss = criterion(output, labels)
+            losses.append(loss.item())
+            loss.backward()
+            optimizer.step()
+            optimizer.zero_grad()
 
-y_pred = y_pred.detach().cpu().numpy()
-y_test = y_test.detach().cpu().numpy()
-
-num_train_vs_test_graph(
-    y_test, y_pred, jsons_test, loss.item(),
-    show=True
-)
-
-test_vs_pred(
-    y_test, y_pred, loss, show=True,
-    ylim=(None, None),
-    xlim=(None, None)
-)
+        print(f'Epoch: {sum(losses) / len(losses)}')
 
 
-# Super test
-y_pred = model.forward(super_features.to(device))
-loss = criterion(y_pred, super_targets.to(device))
+    # Test
+    torch.save(model.state_dict(), './feed_forward_new.pth')
+    y_pred = model.forward(X_test.to(device))
+    loss = criterion(y_pred, y_test.to(device))
 
-print(loss.item())
+    print(loss.item())
 
-y_pred = y_pred.detach().cpu().numpy()
-y_test = super_targets.detach().cpu().numpy()
+    y_pred = y_pred.detach().cpu().numpy()
+    y_test = y_test.detach().cpu().numpy()
 
-num_train_vs_test_graph(
-    y_test, y_pred, super_jsons, loss.item(),
-    show=True
-)
+    num_train_vs_test_graph(
+        y_test, y_pred, jsons_test, loss.item(),
+        show=True
+    )
 
-test_vs_pred(
-    y_test, y_pred, loss, show=True,
-    ylim=(None, None),
-    xlim=(None, None)
-)
+    test_vs_pred(
+        y_test, y_pred, loss, show=True,
+        ylim=(None, None),
+        xlim=(None, None)
+    )
+
+
+    # Super test
+    y_pred = model.forward(super_features.to(device))
+    loss = criterion(y_pred, super_targets.to(device))
+
+    print(loss.item())
+
+    y_pred = y_pred.detach().cpu().numpy()
+    y_test = super_targets.detach().cpu().numpy()
+
+    num_train_vs_test_graph(
+        y_test, y_pred, super_jsons, loss.item(),
+        show=True
+    )
+
+    test_vs_pred(
+        y_test, y_pred, loss, show=True,
+        ylim=(None, None),
+        xlim=(None, None)
+    )
+
+
+if __name__ == '__main__':
+    train_model()

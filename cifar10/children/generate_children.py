@@ -29,7 +29,7 @@ def generate_children(input_file, output_file, data_folder):
 
         axes[0].imshow(x.reshape(11, 36).detach().numpy(), cmap='gray', vmin=0, vmax=1)
 
-        for _ in range(300):
+        for _ in range(3000):
             pred = mother(x)
             pred.backward()
 

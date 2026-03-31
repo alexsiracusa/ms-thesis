@@ -45,6 +45,9 @@ def train_model():
 
     print(X_train.shape)
 
+    # load existing model
+    # model.load_state_dict(torch.load("../mothers/feed_forward_min_0.33.pth", map_location="cpu"))
+
     # Train Model
     criterion = nn.MSELoss()
     optimizer = optim.Adam(model.parameters(), lr=1e-3)

@@ -15,7 +15,7 @@ from mnist.util import train_mnist, create_model, sparse_perlin, flatten_images,
 
 
 mother = model
-mother.load_state_dict(torch.load("../mothers/feed_forward_new.pth", map_location="cpu"))
+mother.load_state_dict(torch.load("../mothers/feed_forward_min_0.33.pth", map_location="cpu"))
 
 for param in mother.parameters():
     param.requires_grad = False

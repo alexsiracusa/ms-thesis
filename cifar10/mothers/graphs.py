@@ -11,9 +11,12 @@ def test_vs_pred(
         save=None
 ):
     # Plot test vs. Pred
+    plt.xticks(fontsize=13)
+    plt.yticks(fontsize=13)
+
     plt.scatter(y_test, y_pred)
-    plt.xlabel('Test Error')
-    plt.ylabel('Prediction')
+    plt.xlabel('Test Error', fontsize=20)
+    plt.ylabel('Prediction', fontsize=20)
 
     # Plot line y=x
     points = np.append(y_test, y_pred)
@@ -24,16 +27,21 @@ def test_vs_pred(
     plt.xlim(*xlim)
 
     plt.text(
-        1, 1.05, f'Loss: {loss:.7f}',
+        1, 1.06, f'Loss: {loss:.7f}',
         transform=plt.gca().transAxes,
         ha="right", va="top",
-        fontsize=12, color="red"
+        fontsize=18, color="red"
     )
 
     if show:
         plt.show()
     if save is not None:
-        plt.savefig(save)
+        plt.savefig(
+            save,
+            bbox_inches='tight',
+            pad_inches=0.05,
+            dpi=300,
+        )
 
 
 def num_train_vs_test_graph(
@@ -45,16 +53,25 @@ def num_train_vs_test_graph(
     plt.scatter(num_trainable, y_test, label='Data points')
     plt.scatter(num_trainable, y_pred, label='Predictions')
     plt.text(
-        1, 1.05, f'Loss: {loss:.7f}',
+        1, 1.06, f'Loss: {loss:.7f}',
         transform=plt.gca().transAxes,
         ha="right", va="top",
-        fontsize=12, color="red"
+        fontsize=18, color="red"
     )
+
+    plt.xticks(fontsize=14)
+    plt.yticks(fontsize=14)
+
     plt.legend(loc='upper right')
-    plt.xlabel('Num. Trainable Parameters')
-    plt.ylabel('Test Loss')
+    plt.xlabel('Num. Trainable Parameters', fontsize=22)
+    plt.ylabel('Test Loss', fontsize=22)
 
     if show:
         plt.show()
     if save is not None:
-        plt.savefig(save)
+        plt.savefig(
+            save,
+            bbox_inches='tight',
+            pad_inches=0.05,
+            dpi=300,
+        )

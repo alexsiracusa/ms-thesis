@@ -39,6 +39,7 @@ def generate_graphs(
         alpha=1,
         s=40,
         zorder=2,
+        marker='D'
     )
 
     plt.scatter(
@@ -47,6 +48,7 @@ def generate_graphs(
         alpha=1,
         s=40,
         zorder=2,
+        marker='s'
     )
 
     for x1, y1, x2, y2 in zip(trainable_parameters, test_losses, generated_parameters, generated_losses):
@@ -63,10 +65,18 @@ def generate_graphs(
     )
     plt.axhline(y=1.50110, color='gray', linestyle='--', label=f'Feed-Forward Baseline')
 
-    plt.xlabel('Num. Trainable Parameters')
-    plt.ylabel('Test Loss')
-    plt.legend(loc='upper right')
-    plt.savefig(graph_file)
+    plt.xticks(fontsize=13)
+    plt.yticks(fontsize=13)
+
+    plt.xlabel('Num. Trainable Parameters', fontsize=20)
+    plt.ylabel('Test Loss', fontsize=20)
+    plt.legend(loc='upper right', fontsize=13)
+    plt.savefig(
+        graph_file,
+        bbox_inches = 'tight',
+        pad_inches = 0.05,
+        dpi=300,
+    )
 
 
 if __name__ == '__main__':

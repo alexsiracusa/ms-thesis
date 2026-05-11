@@ -16,6 +16,7 @@ def graph_data(
             dataset = [json.loads(line) for line in f]
             datasets.append(dataset)
 
+    markers = ['o', 's', 'D', '^']
     for i, dataset in enumerate(datasets[:2]):
         trainable_parameters = [get_num_trainable((data['density_map'])) for data in dataset]
         # trainable_parameters = [data['average_density'] for data in dataset]
@@ -26,6 +27,7 @@ def graph_data(
             label=labels[i] if labels is not None else None,
             alpha=0.5,
             s=5,
+            marker=markers[i]
         )
 
     for i, dataset in enumerate(datasets[2:]):
@@ -40,14 +42,23 @@ def graph_data(
             s=5,
         )
 
-    plt.xlabel('Num. Trainable Parameters')
-    plt.ylabel('Test Loss')
-    plt.legend(loc='upper right')
+    plt.xticks(fontsize=11)
+    plt.yticks(fontsize=11)
+
+    plt.xlabel('Num. Trainable Parameters', fontsize=18)
+    plt.ylabel('Test Loss', fontsize=18)
+    plt.legend(loc='upper right', markerscale=3.0, fontsize=13)
 
     if graph_file is not None:
         plt.savefig(graph_file)
 
-    plt.show()
+    # plt.show()
+    plt.savefig(
+        'children_graph.png',
+        bbox_inches='tight',
+        pad_inches=0.05,
+        dpi=300,
+    )
 
 
 def show_noises(data_file):

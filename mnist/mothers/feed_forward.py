@@ -10,7 +10,7 @@ from mnist.datasets import datasets
 
 
 include = set(datasets.keys()) - {'sign_mnist', 'path_mnist'}
-super_include = ['blood_mnist', 'chinese_mnist']
+super_include = ['blood_mnist']
 include = set(include) - set(super_include)
 
 params = {
@@ -46,7 +46,7 @@ def train_model():
     print(X_train.shape)
 
     # load existing model
-    # model.load_state_dict(torch.load("../mothers/feed_forward_min_0.33.pth", map_location="cpu"))
+    model.load_state_dict(torch.load("../mothers/feed_forward_min_0.33.pth", map_location="cpu"))
 
     # Train Model
     criterion = nn.MSELoss()
@@ -56,20 +56,20 @@ def train_model():
     model.to(device)
     epochs = 20
 
-    for epoch in range(epochs):
-        losses = []
-        for data, labels in train_loader:
-            data = data.to(device)
-            labels = labels.to(device)
-
-            output = model.forward(data)
-            loss = criterion(output, labels)
-            losses.append(loss.item())
-            loss.backward()
-            optimizer.step()
-            optimizer.zero_grad()
-
-        print(f'Epoch: {sum(losses) / len(losses)}')
+    # for epoch in range(epochs):
+    #     losses = []
+    #     for data, labels in train_loader:
+    #         data = data.to(device)
+    #         labels = labels.to(device)
+    #
+    #         output = model.forward(data)
+    #         loss = criterion(output, labels)
+    #         losses.append(loss.item())
+    #         loss.backward()
+    #         optimizer.step()
+    #         optimizer.zero_grad()
+    #
+    #     print(f'Epoch: {sum(losses) / len(losses)}')
 
 
     # Test

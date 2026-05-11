@@ -41,23 +41,24 @@ def train_model():
     model.to(device)
     epochs = 100
 
-    for epoch in range(epochs):
-        losses = []
-        for data, labels in train_loader:
-            data = data.to(device)
-            labels = labels.to(device)
+    # for epoch in range(epochs):
+    #     losses = []
+    #     for data, labels in train_loader:
+    #         data = data.to(device)
+    #         labels = labels.to(device)
+    #
+    #         output = model.forward(data)
+    #         loss = criterion(output, labels)
+    #         losses.append(loss.item())
+    #         loss.backward()
+    #         optimizer.step()
+    #         optimizer.zero_grad()
+    #
+    #     print(f'Epoch: {sum(losses) / len(losses)}')
 
-            output = model.forward(data)
-            loss = criterion(output, labels)
-            losses.append(loss.item())
-            loss.backward()
-            optimizer.step()
-            optimizer.zero_grad()
 
-        print(f'Epoch: {sum(losses) / len(losses)}')
-
-
-    torch.save(model.state_dict(), './feed_forward_new.pth')
+    # torch.save(model.state_dict(), './feed_forward_new.pth')
+    model.load_state_dict(torch.load('./feed_forward.pth'))
     y_pred = model.forward(X_test.to(device))
     loss = criterion(y_pred, y_test.to(device))
 
@@ -67,15 +68,18 @@ def train_model():
     y_pred = y_pred.detach().cpu().numpy()
     y_test = y_test.detach().cpu().numpy()
 
-    num_train_vs_test_graph(
-        y_test, y_pred, jsons_test, loss.item(),
-        show=True
-    )
+    # num_train_vs_test_graph(
+    #     y_test, y_pred, jsons_test, loss.item(),
+    #     show=False,
+    #     save='./num_train_vs_test.png'
+    # )
 
     test_vs_pred(
-        y_test, y_pred, loss, show=True,
+        y_test, y_pred, loss,
         ylim=(None, None),
-        xlim=(None, None)
+        xlim=(None, None),
+        show = False,
+        save='./test_vs_pred.png'
     )
 
 

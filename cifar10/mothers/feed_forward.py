@@ -41,24 +41,24 @@ def train_model():
     model.to(device)
     epochs = 100
 
-    # for epoch in range(epochs):
-    #     losses = []
-    #     for data, labels in train_loader:
-    #         data = data.to(device)
-    #         labels = labels.to(device)
-    #
-    #         output = model.forward(data)
-    #         loss = criterion(output, labels)
-    #         losses.append(loss.item())
-    #         loss.backward()
-    #         optimizer.step()
-    #         optimizer.zero_grad()
-    #
-    #     print(f'Epoch: {sum(losses) / len(losses)}')
+    for epoch in range(epochs):
+        losses = []
+        for data, labels in train_loader:
+            data = data.to(device)
+            labels = labels.to(device)
+
+            output = model.forward(data)
+            loss = criterion(output, labels)
+            losses.append(loss.item())
+            loss.backward()
+            optimizer.step()
+            optimizer.zero_grad()
+
+        print(f'Epoch: {sum(losses) / len(losses)}')
 
 
-    # torch.save(model.state_dict(), './feed_forward_new.pth')
-    model.load_state_dict(torch.load('./feed_forward.pth'))
+    torch.save(model.state_dict(), './feed_forward_new.pth')
+    # model.load_state_dict(torch.load('./feed_forward.pth'))
     y_pred = model.forward(X_test.to(device))
     loss = criterion(y_pred, y_test.to(device))
 
